@@ -1,0 +1,35 @@
+run:
+  deadline: 5m
+  tests: true
+
+linters:
+  enable-all: true
+  disable:
+    # Deprecated
+    - maligned
+    - scopelint
+    - golint
+    - interfacer
+    - exhaustivestruct
+    - ifshort
+    - deadcode
+    - varcheck
+    - nosnakecase
+    - structcheck
+    # Disabled becasue generics
+    - rowserrcheck
+    - sqlclosecheck
+    - wastedassign
+    # Only Disabled
+    - funlen
+    - exhaustruct
+    - ireturn
+    - wrapcheck
+    - varnamelen
+    - goerr113
+    - contextcheck
+
+  tagliatelle:
+    case:
+      rules:
+        json: snake

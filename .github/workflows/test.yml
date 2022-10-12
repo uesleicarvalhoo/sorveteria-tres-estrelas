@@ -1,0 +1,23 @@
+name: run unit tests
+
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18.x
+
+      - name: Test build
+        run: go build -v ./...
+
+      - name: Run unit tests
+        run: go test ./... -tags=unit -race -v
