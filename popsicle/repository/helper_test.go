@@ -1,4 +1,6 @@
-package repository
+//go:build integration
+
+package repository_test
 
 import (
 	"context"
@@ -11,7 +13,7 @@ import (
 const (
 	dbUser     = "username"
 	dbPassword = "password"
-	database   = "sorveteria-tres-estrelas"
+	dbName     = "sorveteria-tres-estrelas"
 )
 
 type PostgresContainer struct {
@@ -31,7 +33,7 @@ func SetupPostgres(ctx context.Context) (*PostgresContainer, error) {
 		Env: map[string]string{
 			"POSTGRES_USER":     dbUser,
 			"POSTGRES_PASSWORD": dbPassword,
-			"POSTGRES_DB":       database,
+			"POSTGRES_DB":       dbName,
 		},
 	}
 
@@ -62,7 +64,7 @@ func SetupPostgres(ctx context.Context) (*PostgresContainer, error) {
 		Container: container,
 		Username:  dbUser,
 		Password:  dbPassword,
-		Database:  database,
+		Database:  dbName,
 		Host:      hostIP,
 		Port:      port,
 	}, nil

@@ -16,8 +16,8 @@ type Reader struct {
 	mock.Mock
 }
 
-// GetByPeriod provides a mock function with given fields: ctx, start, end
-func (_m *Reader) GetByPeriod(ctx context.Context, start time.Time, end time.Time) ([]sales.Sale, error) {
+// Search provides a mock function with given fields: ctx, start, end
+func (_m *Reader) Search(ctx context.Context, start time.Time, end time.Time) ([]sales.Sale, error) {
 	ret := _m.Called(ctx, start, end)
 
 	var r0 []sales.Sale

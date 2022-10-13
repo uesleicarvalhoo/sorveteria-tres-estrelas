@@ -1,3 +1,5 @@
+//go:build integration
+
 package repository_test
 
 import (
@@ -16,7 +18,7 @@ import (
 type PopsicleTestSuite struct {
 	suite.Suite
 	ctx       context.Context //nolint:containedctx
-	container *repository.PostgresContainer
+	container *PostgresContainer
 	db        *gorm.DB
 }
 
@@ -31,10 +33,8 @@ func (suite *PopsicleTestSuite) SetupTest() {
 
 	suite.ctx = context.Background()
 
-	suite.container, err = repository.SetupPostgres(suite.ctx)
-	if err != nil {
-		suite.T().Fail()
-	}
+	suite.container, err = SetupPostgres(suite.ctx)
+	assert.NoError(suite.T(), err)
 
 	suite.db, err = database.NewPostgreConnection(
 		suite.container.Username,

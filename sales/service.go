@@ -11,7 +11,7 @@ import (
 )
 
 type Reader interface {
-	GetByPeriod(ctx context.Context, start, end time.Time) ([]Sale, error)
+	Search(ctx context.Context, start, end time.Time) ([]Sale, error)
 }
 
 type Writer interface {
@@ -74,5 +74,5 @@ func (s *Service) NewSale(ctx context.Context, description string, paymentT Paym
 }
 
 func (s *Service) GetByPeriod(ctx context.Context, start, end time.Time) ([]Sale, error) {
-	return s.repo.GetByPeriod(ctx, start, end)
+	return s.repo.Search(ctx, start, end)
 }

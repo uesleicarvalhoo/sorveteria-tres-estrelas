@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
@@ -49,14 +50,33 @@ func (r PostgresRepository) Create(ctx context.Context, s sales.Sale) error {
 	return r.db.WithContext(ctx).Create(&m).Error
 }
 
-func (r PostgresRepository) Update(ctx context.Context, s *sales.Sale) error {
-	if tx := r.db.WithContext(ctx).Delete(&SaleItemModel{}, "sale_id = ?", s.ID); tx.Error != nil {
-		return tx.Error
-	}
+func (r PostgresRepository) Update(ctx context.Context, s sales.Sale) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		m := toModel(s)
 
-	return r.db.WithContext(ctx).Save(s).Error
+		if err := tx.Delete(&SaleItemModel{}, "sale_id = ?", s.ID).Error; err != nil {
+			return err
+		}
+
+		return tx.Save(&m).Error
+	})
 }
 
 func (r PostgresRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.WithContext(ctx).Delete(&sales.Sale{}, "id = ?", id).Error
+	return r.db.WithContext(ctx).Delete(&SaleModel{}, "id = ?", id).Error
+}
+
+func (r PostgresRepository) Search(ctx context.Context, start, end time.Time) ([]sales.Sale, error) {
+	var models []SaleModel
+
+	if tx := r.db.WithContext(ctx).Preload("Items").Find(&models, "date BETWEEN ? AND ?", start, end); tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	sales := make([]sales.Sale, len(models))
+	for i, m := range models {
+		sales[i] = toEntity(m)
+	}
+
+	return sales, nil
 }
