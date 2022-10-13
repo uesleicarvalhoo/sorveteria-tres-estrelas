@@ -20,7 +20,7 @@ func (SaleItemModel) TableName() string { return "sale_items" }
 type SaleModel struct {
 	ID          uuid.UUID
 	PaymentType sales.PaymentType
-	Items       []SaleItemModel `gorm:"foreignKey:SaleID"`
+	Items       []SaleItemModel `gorm:"foreignKey:SaleID;constraint:OnDelete:CASCADE"`
 	Total       float32
 	Description string
 	Date        time.Time
