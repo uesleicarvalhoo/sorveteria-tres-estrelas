@@ -1,3 +1,5 @@
+//go:build unit
+
 package popsicle_test
 
 import (
