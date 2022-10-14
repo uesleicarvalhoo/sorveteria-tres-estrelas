@@ -19,17 +19,21 @@ format:  ## Format code
 	@gofumpt -e -l -w .
 
 ## @ Tests
-.PHONY: test coverage
-generate-mocks:  ## Generate mock files
+.PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
+generate-mocks: clean-mocks  ## Generate mock files
 	@mockery --dir popsicle --output popsicle/mocks --all
 	@mockery  --dir sales --output sales/mocks --all
+	@mockery  --dir user --output user/mocks --all
+	@mockery  --dir internal/auth --output internal/auth/mocks --all
 
 clean-mocks:  ## Clean mock files
 	@rm popsicle/mocks/*
 	@rm sales/mocks/*
+	@rm user/mocks/*
+	@rm internal/auth/mocks/*
 
-test: clean-mocks generate-mocks ## Run tests all tests
-	@go test ./... -race -v -count=1 -tags="unit integration" -coverprofile=$(COVERAGE_OUTPUT)
+test:  ## Run tests all tests
+	@go test ./... -race -v -count=1 -tags="all" -coverprofile=$(COVERAGE_OUTPUT)
 
 test/unit:  ## Run unit tests
 	@go test ./... -race -v -count=1 -tags="unit" -coverprofile=$(COVERAGE_OUTPUT)
