@@ -25,7 +25,7 @@ type SaleItem struct {
 
 type Sale struct {
 	ID          uuid.UUID   `json:"id"`
-	PaymentType PaymentType `json:"paymentType"`
+	PaymentType PaymentType `json:"payment_type"`
 	Items       []SaleItem  `json:"items" validate:"required,min=1"`
 	Total       float32     `json:"total"`
 	Description string      `json:"description"`
