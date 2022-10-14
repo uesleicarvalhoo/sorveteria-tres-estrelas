@@ -1,4 +1,4 @@
-//go:build unit
+//go:build unit || all
 
 package popsicle_test
 

@@ -6,6 +6,17 @@ CREATE TABLE popsicles (
 	CONSTRAINT popsicles_pkey PRIMARY KEY (id)
 );
 
+-- sales
+
+CREATE TABLE sales (
+	"id" uuid NOT NULL,
+	"payment_type" varchar NULL,
+	"total" numeric NULL,
+	"description" varchar NULL,
+	"date" date NULL,
+	CONSTRAINT sales_pkey PRIMARY KEY (id)
+);
+
 -- sale items
 
 CREATE TABLE sale_items (
@@ -19,14 +30,13 @@ CREATE TABLE sale_items (
 
 ALTER TABLE "sale_items" ADD CONSTRAINT fk_sales_items FOREIGN KEY (sale_id) REFERENCES sales(id);
 
+-- users
 
--- sales
-
-CREATE TABLE sales (
+CREATE TABLE users (
 	"id" uuid NOT NULL,
-	"payment_type" varchar NULL,
-	"total" numeric NULL,
-	"description" varchar NULL,
-	"date" date NULL,
-	CONSTRAINT sales_pkey PRIMARY KEY (id)
+	"name" varchar NULL,
+	"email" varchar NULL,
+	"password_hash" varchar NULL,
+	"permissions" varchar NULL,
+	CONSTRAINT users_pkey PRIMARY KEY (id)
 );

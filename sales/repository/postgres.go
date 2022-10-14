@@ -22,7 +22,7 @@ func NewPostgresRepository(db *gorm.DB) *PostgresRepository {
 func (r PostgresRepository) Get(ctx context.Context, id uuid.UUID) (sales.Sale, error) {
 	var m SaleModel
 
-	if tx := r.db.WithContext(ctx).Preload("Items").First(&m); tx.Error != nil {
+	if tx := r.db.WithContext(ctx).Preload("Items").First(&m, "id = ?", id); tx.Error != nil {
 		return sales.Sale{}, tx.Error
 	}
 

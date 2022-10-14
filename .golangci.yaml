@@ -29,6 +29,7 @@ linters:
     - goerr113
     - contextcheck
 
+linters-settings:
   tagliatelle:
     case:
       rules:
