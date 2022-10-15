@@ -21,16 +21,16 @@ format:  ## Format code
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
 generate-mocks: clean-mocks  ## Generate mock files
-	@mockery --dir popsicle --output popsicle/mocks --all
-	@mockery  --dir sales --output sales/mocks --all
-	@mockery  --dir user --output user/mocks --all
-	@mockery  --dir internal/auth --output internal/auth/mocks --all
+	@mockery --dir usecase/popsicle --output usecase/popsicle/mocks --all
+	@mockery --dir usecase/sales --output usecase/sales/mocks --all
+	@mockery --dir usecase/user --output usecase/user/mocks --all
+	@mockery --dir auth --output auth/mocks --all
 
 clean-mocks:  ## Clean mock files
-	@rm popsicle/mocks/*
-	@rm sales/mocks/*
-	@rm user/mocks/*
-	@rm internal/auth/mocks/*
+	@rm usecase/popsicle/mocks/*
+	@rm usecase/sales/mocks/*
+	@rm usecase/user/mocks/*
+	@rm auth/mocks/*
 
 test:  ## Run tests all tests
 	@go test ./... -race -v -count=1 -tags="all" -coverprofile=$(COVERAGE_OUTPUT)
