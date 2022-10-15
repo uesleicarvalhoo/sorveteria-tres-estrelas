@@ -14,7 +14,6 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth/mocks"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/password"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
 	userMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user/mocks"
 )
@@ -24,20 +23,8 @@ const secretKey = "my-super-secret-key"
 func TestLogin(t *testing.T) {
 	t.Parallel()
 
-	passwdSvc := password.NewBCrypt()
-
-	userEmail := "user.lastname@email.com.br"
-	userPassword := "my-secret-password"
-
-	passwdHash, err := passwdSvc.GenerateHash(userPassword)
-	assert.NoError(t, err)
-
-	storedUser := entity.User{
-		ID:           entity.NewID(),
-		Name:         "User Lastname",
-		Email:        userEmail,
-		PasswordHash: passwdHash,
-	}
+	password := "my-secret-password"
+	storedUser, _ := entity.NewUser("User LastName", "user.lastname@email.com", password)
 
 	t.Run("test valid", func(t *testing.T) {
 		t.Parallel()
@@ -57,10 +44,10 @@ func TestLogin(t *testing.T) {
 
 		userUc := user.NewService(repo)
 
-		sut := auth.NewService(secretKey, userUc, mockCache, passwdSvc)
+		sut := auth.NewService(secretKey, userUc, mockCache)
 
 		// Action
-		token, err := sut.Login(context.Background(), userEmail, userPassword)
+		token, err := sut.Login(context.Background(), storedUser.Email, password)
 
 		// Assert
 		assert.NoError(t, err)
@@ -93,15 +80,15 @@ func TestLogin(t *testing.T) {
 			},
 			{
 				about:          "when cache return an error",
-				email:          userEmail,
-				password:       userPassword,
+				email:          storedUser.Email,
+				password:       password,
 				repositoryUser: storedUser,
 				cacheError:     errors.New("couldn't set value into cache"),
 				expectedError:  "couldn't set value into cache",
 			},
 			{
 				about:          "when password is invalid",
-				email:          userEmail,
+				email:          storedUser.Email,
 				password:       "wrongPassword",
 				repositoryUser: storedUser,
 				expectedError:  auth.ErrNotAuthorized.Error(),
@@ -125,7 +112,7 @@ func TestLogin(t *testing.T) {
 				mockCache.On("Set", mock.Anything, accessTokenKey, mock.Anything).Return(tc.cacheError).Maybe()
 				mockCache.On("Set", mock.Anything, refreshTokenKey, mock.Anything).Return(tc.cacheError).Maybe()
 
-				sut := auth.NewService(secretKey, user.NewService(repo), mockCache, passwdSvc)
+				sut := auth.NewService(secretKey, user.NewService(repo), mockCache)
 
 				// Action
 				token, err := sut.Login(context.Background(), tc.email, tc.password)
@@ -158,7 +145,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache.On("Set", mock.Anything, refreshTokenKey, mock.Anything).Return(nil).Once()
 		mockCache.On("Get", mock.Anything, refreshTokenKey).Return(token, nil).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache, nil)
+		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -185,7 +172,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache := mocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("wrong-token", nil).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache, nil)
+		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -211,7 +198,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache := mocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("", mockError).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache, nil)
+		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -240,7 +227,7 @@ func TestAuthorize(t *testing.T) {
 		mockCache := mocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, accessTokenKey).Return(token, nil).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache, nil)
+		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
 
 		// Action
 		sub, err := sut.Authorize(context.Background(), token)
@@ -264,7 +251,7 @@ func TestAuthorize(t *testing.T) {
 		mockCache := mocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, accessTokenKey).Return("wrong-token", nil).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache, nil)
+		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
 
 		// Action
 		sub, err := sut.Authorize(context.Background(), token)
@@ -290,7 +277,7 @@ func TestAuthorize(t *testing.T) {
 		mockCache := mocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, accessTokenKey).Return("", mockError).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache, nil)
+		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
 
 		// Action
 		sub, err := sut.Authorize(context.Background(), token)
