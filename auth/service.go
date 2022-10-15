@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/password"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
 )
 
@@ -29,18 +28,16 @@ func GetDefaultUserPermissions() []entity.Permission {
 }
 
 type Service struct {
-	secret    string
-	cache     Cache
-	userUc    user.UseCase
-	passwdSvc password.Service
+	secret string
+	cache  Cache
+	userUc user.UseCase
 }
 
-func NewService(secret string, userUc user.UseCase, cache Cache, passwdSvc password.Service) *Service {
+func NewService(secret string, userUc user.UseCase, cache Cache) *Service {
 	return &Service{
-		secret:    secret,
-		userUc:    userUc,
-		cache:     cache,
-		passwdSvc: passwdSvc,
+		secret: secret,
+		userUc: userUc,
+		cache:  cache,
 	}
 }
 
@@ -101,16 +98,16 @@ func (s *Service) validateToken(ctx context.Context, prefix, token string) (enti
 }
 
 func (s *Service) Login(ctx context.Context, email, password string) (JwtToken, error) {
-	found, err := s.userUc.GetByEmail(ctx, email)
+	user, err := s.userUc.GetByEmail(ctx, email)
 	if err != nil {
 		return JwtToken{}, err
 	}
 
-	if !s.passwdSvc.CheckHash(password, found.PasswordHash) {
+	if !user.CheckPassword(password) {
 		return JwtToken{}, ErrNotAuthorized
 	}
 
-	return s.createAccessToken(ctx, found.ID)
+	return s.createAccessToken(ctx, user.ID)
 }
 
 func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, error) {

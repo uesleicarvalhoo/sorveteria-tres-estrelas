@@ -29,17 +29,17 @@ func TestCreate(t *testing.T) {
 		name := "Ueslei Carvalho"
 		email := "ueslei.carvalho@email.com"
 		password := "secret123"
-		roles := []entity.Permission{entity.ReadWritePopsicle, entity.ReadWriteSalesRole}
+		permissions := []entity.Permission{entity.ReadWritePopsicle, entity.ReadWriteSalesRole}
 
 		// Action
-		u, err := sut.Create(context.Background(), name, email, password, roles...)
+		u, err := sut.Create(context.Background(), name, email, password, permissions...)
 
 		// Assert
 		assert.NoError(t, err)
 
 		assert.NotEqual(t, entity.ID{}, u.ID)
 		assert.Equal(t, email, u.Email)
-		assert.Equal(t, roles, u.Permissions)
+		assert.Equal(t, permissions, u.Permissions)
 	})
 
 	tests := []struct {
@@ -47,7 +47,7 @@ func TestCreate(t *testing.T) {
 		name          string
 		email         string
 		password      string
-		roles         []entity.Permission
+		permissions   []entity.Permission
 		repoError     error
 		expectedError string
 	}{
@@ -94,7 +94,7 @@ func TestCreate(t *testing.T) {
 
 			sut := user.NewService(repo)
 			// Action
-			u, err := sut.Create(context.Background(), tc.name, tc.email, tc.password, tc.roles...)
+			u, err := sut.Create(context.Background(), tc.name, tc.email, tc.password, tc.permissions...)
 
 			// Assert
 			assert.Equal(t, entity.User{}, u)
@@ -106,12 +106,7 @@ func TestCreate(t *testing.T) {
 func TestGet(t *testing.T) {
 	t.Parallel()
 
-	storedUser := entity.User{
-		ID:           entity.NewID(),
-		Name:         "Name LastName",
-		Email:        "user@email.com.br",
-		PasswordHash: "fakehash:123",
-	}
+	storedUser, _ := entity.NewUser("Name LastName", "user@email.com.br", "fakehash:123")
 
 	tests := []struct {
 		about        string
@@ -159,12 +154,7 @@ func TestGet(t *testing.T) {
 func TestGetByEmail(t *testing.T) {
 	t.Parallel()
 
-	storedUser := entity.User{
-		ID:           entity.NewID(),
-		Name:         "Name LastName",
-		Email:        "user@email.com.br",
-		PasswordHash: "fakehash:123",
-	}
+	storedUser, _ := entity.NewUser("Name LastName", "user@email.com.br", "fakehash:123")
 
 	tests := []struct {
 		about        string

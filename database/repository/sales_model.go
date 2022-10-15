@@ -3,13 +3,12 @@ package repository
 import (
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 )
 
 type SaleItemModel struct {
-	ID     uuid.UUID
-	SaleID uuid.UUID
+	ID     string
+	SaleID string
 	Name   string
 	Price  float64
 	Amount int
@@ -18,7 +17,7 @@ type SaleItemModel struct {
 func (SaleItemModel) TableName() string { return "sale_items" }
 
 type SaleModel struct {
-	ID          uuid.UUID
+	ID          string
 	PaymentType entity.PaymentType
 	Items       []SaleItemModel `gorm:"foreignKey:SaleID;constraint:OnDelete:CASCADE"`
 	Total       float64
@@ -38,8 +37,10 @@ func saleToEntity(m SaleModel) entity.Sale {
 		}
 	}
 
+	id, _ := entity.StringToID(m.ID)
+
 	return entity.Sale{
-		ID:          entity.ParseUUID(m.ID),
+		ID:          id,
 		PaymentType: m.PaymentType,
 		Total:       m.Total,
 		Description: m.Description,
@@ -53,8 +54,8 @@ func saleToModel(s entity.Sale) SaleModel {
 
 	for i, item := range s.Items {
 		items[i] = SaleItemModel{
-			ID:     uuid.New(),
-			SaleID: s.ID.ToUUID(),
+			ID:     entity.NewID().String(),
+			SaleID: s.ID.String(),
 			Name:   item.Name,
 			Price:  item.Price,
 			Amount: item.Amount,
@@ -62,7 +63,7 @@ func saleToModel(s entity.Sale) SaleModel {
 	}
 
 	return SaleModel{
-		ID:          s.ID.ToUUID(),
+		ID:          s.ID.String(),
 		PaymentType: s.PaymentType,
 		Total:       s.Total,
 		Description: s.Description,

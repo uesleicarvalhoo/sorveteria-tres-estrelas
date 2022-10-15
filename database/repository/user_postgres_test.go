@@ -54,13 +54,7 @@ func (suite *PopsicleTestSuite) TeardownTest() {
 func (suite *PopsicleTestSuite) TestCRUD() {
 	repo := repository.NewUserPostgres(suite.db)
 
-	storedUser := entity.User{
-		ID:           entity.NewID(),
-		Email:        "fakeuser@email.com",
-		Name:         "Fake LastName",
-		PasswordHash: "fakehash:123",
-		Permissions:  []entity.Permission{entity.ReadWritePopsicle, entity.ReadWriteSalesRole},
-	}
+	storedUser, _ := entity.NewUser("Fake LastName", "fakeuser@email.com", "fakehash:123", entity.ReadWritePopsicle, entity.ReadWriteSalesRole)
 
 	suite.T().Run("test create a new user", func(t *testing.T) {
 		err := repo.Create(suite.ctx, storedUser)
