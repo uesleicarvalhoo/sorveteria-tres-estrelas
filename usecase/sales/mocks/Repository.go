@@ -30,6 +30,29 @@ func (_m *Repository) Create(ctx context.Context, s entity.Sale) error {
 	return r0
 }
 
+// GetAll provides a mock function with given fields: ctx
+func (_m *Repository) GetAll(ctx context.Context) ([]entity.Sale, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []entity.Sale
+	if rf, ok := ret.Get(0).(func(context.Context) []entity.Sale); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Sale)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Search provides a mock function with given fields: ctx, start, end
 func (_m *Repository) Search(ctx context.Context, start time.Time, end time.Time) ([]entity.Sale, error) {
 	ret := _m.Called(ctx, start, end)

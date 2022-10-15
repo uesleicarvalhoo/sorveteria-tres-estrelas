@@ -5,6 +5,7 @@ package entity_test
 import (
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 )
@@ -24,7 +25,7 @@ func TestNewUser(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		assert.NotEqual(t, entity.ID{}, user.ID)
+		assert.NotEqual(t, uuid.Nil, user.ID)
 		assert.Equal(t, email, user.Email)
 		assert.NotEqual(t, passwd, user.PasswordHash)
 		assert.True(t, user.CheckPassword(passwd))

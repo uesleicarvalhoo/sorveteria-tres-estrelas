@@ -7,6 +7,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
@@ -37,8 +38,10 @@ func TestCreate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 
-		assert.NotEqual(t, entity.ID{}, u.ID)
+		assert.NotEqual(t, uuid.Nil, u.ID)
 		assert.Equal(t, email, u.Email)
+		assert.NotEqual(t, password, u.PasswordHash)
+		assert.True(t, u.CheckPassword(password))
 		assert.Equal(t, permissions, u.Permissions)
 	})
 
@@ -110,7 +113,7 @@ func TestGet(t *testing.T) {
 
 	tests := []struct {
 		about        string
-		id           entity.ID
+		id           uuid.UUID
 		expectedUser entity.User
 		mockError    error
 		expectedErr  error

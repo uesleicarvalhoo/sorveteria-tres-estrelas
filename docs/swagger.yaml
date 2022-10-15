@@ -1,0 +1,407 @@
+definitions:
+  auth.JwtToken:
+    properties:
+      access_token:
+        type: string
+      expiration:
+        type: integer
+      grant_type:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  dto.CreatePopsiclePayload:
+    properties:
+      flavor:
+        type: string
+      price:
+        type: number
+    type: object
+  dto.CreateUserPayload:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.LoginPayload:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.MessageJSON:
+    properties:
+      message:
+        type: string
+    type: object
+  dto.RefreshTokenPayload:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  dto.RegisterSalePayload:
+    properties:
+      description:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/entity.CartItem'
+        type: array
+      payment_type:
+        type: string
+    type: object
+  entity.CartItem:
+    properties:
+      amount:
+        type: integer
+      id:
+        type: string
+    type: object
+  entity.Popsicle:
+    properties:
+      flavor:
+        minLength: 4
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+    required:
+    - flavor
+    - price
+    type: object
+  entity.Sale:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/entity.SaleItem'
+        minItems: 1
+        type: array
+      payment_type:
+        type: string
+      total:
+        type: number
+    required:
+    - items
+    type: object
+  entity.SaleItem:
+    properties:
+      amount:
+        type: integer
+      name:
+        type: string
+      unit_price:
+        type: number
+    type: object
+  entity.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    required:
+    - name
+    type: object
+info:
+  contact: {}
+  description: API para o cadastro de produtos, controle de vendas e fluxo de caixa
+    para a sorveteria três estrelas
+  title: Sorveteria três estrelas - API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Make login and get access-token
+      parameters:
+      - description: user info
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/auth.JwtToken'
+            type: array
+        "401":
+          description: when email or password is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Login
+      tags:
+      - Auth
+  /auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Get a new access-token, this action will be expire the last one
+      parameters:
+      - description: the refresh token
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/auth.JwtToken'
+            type: array
+        "401":
+          description: when token is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Refresh access-token
+      tags:
+      - Auth
+  /health:
+    get:
+      description: Check app and dependencies status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health Cehck
+      tags:
+      - Health check
+  /popsicles/:
+    get:
+      description: Get all popsicles data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Popsicle'
+            type: array
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Get all popsicles
+      tags:
+      - Popsicle
+    post:
+      consumes:
+      - application/json
+      description: create a new popsicle and return data
+      parameters:
+      - description: the popsicle data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePopsiclePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Popsicle'
+        "422":
+          description: when data is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Create a New Popsicle
+      tags:
+      - Popsicle
+  /popsicles/{id}:
+    delete:
+      description: Delete popscile
+      parameters:
+      - description: the id of popsicle
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Delete Popsicle by ID
+      tags:
+      - Popsicle
+    get:
+      description: Get popsicle Data
+      parameters:
+      - description: the id of popsicle
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Popsicle'
+        "422":
+          description: when id is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Get Popsicle by ID
+      tags:
+      - Popsicle
+  /sales:
+    get:
+      description: Get all sales
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Sale'
+            type: array
+        "422":
+          description: when start or end param is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: List Sales
+      tags:
+      - Sales
+    post:
+      consumes:
+      - application/json
+      description: Register a sale and return sale data
+      parameters:
+      - description: the payload data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterSalePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Sale'
+            type: array
+        "422":
+          description: when payload is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Register a new sale
+      tags:
+      - Sales
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user and return user data
+      parameters:
+      - description: the user data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.User'
+        "422":
+          description: when payload is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Create User
+      tags:
+      - User
+  /users/me:
+    get:
+      description: Get current user data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.User'
+        "401":
+          description: when user isn't logged
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Get Me
+      tags:
+      - User
+swagger: "2.0"

@@ -3,13 +3,14 @@ package repository
 import (
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 )
 
 const sep = "|"
 
 type UserModel struct {
-	ID           string
+	ID           uuid.UUID
 	Name         string
 	Email        string
 	PasswordHash string
@@ -25,7 +26,7 @@ func userToModel(u entity.User) UserModel {
 	}
 
 	return UserModel{
-		ID:           u.ID.String(),
+		ID:           u.ID,
 		Name:         u.Name,
 		Email:        u.Email,
 		PasswordHash: u.PasswordHash,
@@ -41,10 +42,8 @@ func userModelToEntity(u UserModel) entity.User {
 		permissions[i] = entity.Permission(p)
 	}
 
-	id, _ := entity.StringToID(u.ID)
-
 	return entity.User{
-		ID:           id,
+		ID:           u.ID,
 		Name:         u.Name,
 		Email:        u.Email,
 		PasswordHash: u.PasswordHash,

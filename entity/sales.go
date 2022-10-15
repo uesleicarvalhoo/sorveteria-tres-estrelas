@@ -1,15 +1,19 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type SaleItem struct {
-	Name   string  `json:"name"`
-	Price  float64 `json:"price"`
-	Amount int     `json:"amount"`
+	Name      string  `json:"name"`
+	UnitPrice float64 `json:"unit_price"`
+	Amount    int     `json:"amount"`
 }
 
 type Sale struct {
-	ID          ID          `json:"id"`
+	ID          uuid.UUID   `json:"id"`
 	PaymentType PaymentType `json:"payment_type"`
 	Items       []SaleItem  `json:"items" validate:"required,min=1"`
 	Total       float64     `json:"total"`

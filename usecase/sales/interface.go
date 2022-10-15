@@ -9,6 +9,7 @@ import (
 
 type Reader interface {
 	Search(ctx context.Context, start, end time.Time) ([]entity.Sale, error)
+	GetAll(ctx context.Context) ([]entity.Sale, error)
 }
 
 type Writer interface {
@@ -18,4 +19,10 @@ type Writer interface {
 type Repository interface {
 	Reader
 	Writer
+}
+
+type UseCase interface {
+	RegisterSale(ctx context.Context, desc string, payment entity.PaymentType, cart entity.Cart) (entity.Sale, error)
+	GetAll(ctx context.Context) ([]entity.Sale, error)
+	GetByPeriod(ctx context.Context, start, end time.Time) ([]entity.Sale, error)
 }

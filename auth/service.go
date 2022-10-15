@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
 )
@@ -19,7 +21,7 @@ const (
 	RefreshTokenDuration = time.Hour * 1    // Pegar das variavies de ambiente
 )
 
-func getCacheTokenKey(prefix string, id entity.ID) string {
+func getCacheTokenKey(prefix string, id uuid.UUID) string {
 	return fmt.Sprintf("%s-%s", prefix, id.String())
 }
 
@@ -29,11 +31,11 @@ func GetDefaultUserPermissions() []entity.Permission {
 
 type Service struct {
 	secret string
-	cache  Cache
+	cache  cache.Cache
 	userUc user.UseCase
 }
 
-func NewService(secret string, userUc user.UseCase, cache Cache) *Service {
+func NewService(secret string, userUc user.UseCase, cache cache.Cache) *Service {
 	return &Service{
 		secret: secret,
 		userUc: userUc,
@@ -41,7 +43,7 @@ func NewService(secret string, userUc user.UseCase, cache Cache) *Service {
 	}
 }
 
-func (s *Service) generateToken(ctx context.Context, id entity.ID, prefix string, exp time.Time) (string, error) {
+func (s *Service) generateToken(ctx context.Context, id uuid.UUID, prefix string, exp time.Time) (string, error) {
 	token, err := GenerateJwtToken(s.secret, id, exp)
 	if err != nil {
 		return "", err
@@ -49,14 +51,21 @@ func (s *Service) generateToken(ctx context.Context, id entity.ID, prefix string
 
 	key := getCacheTokenKey(prefix, id)
 
-	if err := s.cache.Set(ctx, key, token); err != nil {
+	var duration time.Duration
+	if prefix == accessToken {
+		duration = AccessTokenDuration
+	} else {
+		duration = RefreshTokenDuration
+	}
+
+	if err := s.cache.Set(ctx, key, token, duration); err != nil {
 		return "", err
 	}
 
 	return token, nil
 }
 
-func (s *Service) createAccessToken(ctx context.Context, id entity.ID) (JwtToken, error) {
+func (s *Service) createAccessToken(ctx context.Context, id uuid.UUID) (JwtToken, error) {
 	now := time.Now()
 	accessExp := now.Add(AccessTokenDuration)
 	refreshExp := now.Add(RefreshTokenDuration)
@@ -79,19 +88,19 @@ func (s *Service) createAccessToken(ctx context.Context, id entity.ID) (JwtToken
 	}, nil
 }
 
-func (s *Service) validateToken(ctx context.Context, prefix, token string) (entity.ID, error) {
+func (s *Service) validateToken(ctx context.Context, prefix, token string) (uuid.UUID, error) {
 	id, err := ValidateJwtToken(token, s.secret)
 	if err != nil {
-		return entity.ID{}, err
+		return uuid.Nil, err
 	}
 
 	cachedToken, err := s.cache.Get(ctx, getCacheTokenKey(prefix, id))
 	if err != nil {
-		return entity.ID{}, err
+		return uuid.Nil, err
 	}
 
 	if cachedToken != token {
-		return entity.ID{}, ErrTokenNotFound
+		return uuid.Nil, ErrTokenNotFound
 	}
 
 	return id, nil
@@ -119,6 +128,6 @@ func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, err
 	return s.createAccessToken(ctx, id)
 }
 
-func (s *Service) Authorize(ctx context.Context, token string) (entity.ID, error) {
+func (s *Service) Authorize(ctx context.Context, token string) (uuid.UUID, error) {
 	return s.validateToken(ctx, accessToken, token)
 }

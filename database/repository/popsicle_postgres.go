@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"gorm.io/gorm"
 )
@@ -17,7 +18,7 @@ func NewPopsiclePostgres(db *gorm.DB) *PopsiclePostgres {
 	}
 }
 
-func (r PopsiclePostgres) Get(ctx context.Context, id entity.ID) (entity.Popsicle, error) {
+func (r PopsiclePostgres) Get(ctx context.Context, id uuid.UUID) (entity.Popsicle, error) {
 	var m PopsicleModel
 
 	if tx := r.db.WithContext(ctx).First(&m); tx.Error != nil {
@@ -54,6 +55,6 @@ func (r PopsiclePostgres) Update(ctx context.Context, p *entity.Popsicle) error 
 	return r.db.WithContext(ctx).Save(&m).Error
 }
 
-func (r PopsiclePostgres) Delete(ctx context.Context, id entity.ID) error {
+func (r PopsiclePostgres) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).Delete(&PopsicleModel{}, "id = ?", id).Error
 }

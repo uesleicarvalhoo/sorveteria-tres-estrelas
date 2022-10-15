@@ -3,6 +3,7 @@ package popsicle
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 )
@@ -19,7 +20,7 @@ func NewService(r Repository) *Service {
 
 func (s Service) Store(ctx context.Context, flavor string, price float64) (entity.Popsicle, error) {
 	pop := entity.Popsicle{
-		ID:     entity.NewID(),
+		ID:     uuid.New(),
 		Flavor: flavor,
 		Price:  price,
 	}
@@ -35,7 +36,7 @@ func (s Service) Store(ctx context.Context, flavor string, price float64) (entit
 	return pop, nil
 }
 
-func (s Service) Get(ctx context.Context, id entity.ID) (entity.Popsicle, error) {
+func (s Service) Get(ctx context.Context, id uuid.UUID) (entity.Popsicle, error) {
 	return s.r.Get(ctx, id)
 }
 
@@ -51,6 +52,6 @@ func (s Service) Update(ctx context.Context, p *entity.Popsicle) error {
 	return s.r.Update(ctx, p)
 }
 
-func (s Service) Delete(ctx context.Context, id entity.ID) error {
+func (s Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return s.r.Delete(ctx, id)
 }

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
@@ -22,7 +23,7 @@ func TestNewSale(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedPopsicle := entity.Popsicle{ID: entity.NewID(), Flavor: "chocolate", Price: 7.5}
+		storedPopsicle := entity.Popsicle{ID: uuid.New(), Flavor: "chocolate", Price: 7.5}
 
 		description := "i'm a sale description"
 		paymentType := entity.CashPayment
@@ -44,15 +45,15 @@ func TestNewSale(t *testing.T) {
 
 		sut := sales.NewService(popReader, salesRepo)
 		// Action
-		sale, err := sut.NewSale(context.Background(), description, paymentType, cart)
+		sale, err := sut.RegisterSale(context.Background(), description, paymentType, cart)
 
 		// Assert
 		assert.NoError(t, err)
-		assert.NotEqual(t, entity.ID{}, sale.ID)
+		assert.NotEqual(t, uuid.Nil, sale.ID)
 		assert.Equal(t, description, sale.Description)
 		assert.Len(t, sale.Items, len(cart.Items))
 		assert.Equal(t, sale.Items[0].Name, "Picole de chocolate")
-		assert.Equal(t, sale.Total, float64(37.5))
+		assert.Equal(t, sale.Total, 37.5)
 		assert.False(t, sale.Date.IsZero())
 	})
 
@@ -79,7 +80,7 @@ func TestNewSale(t *testing.T) {
 			payment:     entity.AnotherPayments,
 			cart: entity.Cart{
 				Items: []entity.CartItem{
-					{PopsicleID: entity.ID{}, Amount: 10},
+					{PopsicleID: uuid.Nil, Amount: 10},
 				},
 			},
 			popsicleRepoErr: errors.New("record not found"),
@@ -91,7 +92,7 @@ func TestNewSale(t *testing.T) {
 			payment:     entity.AnotherPayments,
 			cart: entity.Cart{
 				Items: []entity.CartItem{
-					{PopsicleID: entity.ID{}, Amount: 10},
+					{PopsicleID: uuid.Nil, Amount: 10},
 				},
 			},
 			saleRepoErr: errors.New("failed to create a new sale"),
@@ -115,7 +116,7 @@ func TestNewSale(t *testing.T) {
 			sut := sales.NewService(popsicleR, salesRepo)
 
 			// Action
-			sale, err := sut.NewSale(context.Background(), tc.description, tc.payment, tc.cart)
+			sale, err := sut.RegisterSale(context.Background(), tc.description, tc.payment, tc.cart)
 
 			// Assert
 			assert.Equal(t, entity.Sale{}, sale)

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,7 +19,7 @@ const (
 const minPasswordLength = 5
 
 type User struct {
-	ID           ID           `json:"id"`
+	ID           uuid.UUID    `json:"id"`
 	Name         string       `json:"name" validate:"required"`
 	Email        string       `json:"email" validate:"email"`
 	PasswordHash string       `json:"-"`
@@ -32,7 +33,7 @@ func NewUser(name, email, password string, permissions ...Permission) (User, err
 	}
 
 	u := User{
-		ID:           NewID(),
+		ID:           uuid.New(),
 		Name:         name,
 		Email:        email,
 		PasswordHash: pwd,

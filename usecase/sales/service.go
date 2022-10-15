@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/popsicle"
@@ -22,8 +23,8 @@ func NewService(popsicleR popsicle.Reader, r Repository) *Service {
 	}
 }
 
-func (s *Service) NewSale(
-	ctx context.Context, description string, payment entity.PaymentType, cart entity.Cart,
+func (s *Service) RegisterSale(
+	ctx context.Context, desc string, payment entity.PaymentType, cart entity.Cart,
 ) (entity.Sale, error) {
 	var total float64
 
@@ -37,17 +38,17 @@ func (s *Service) NewSale(
 
 		total += (p.Price * float64(item.Amount))
 		items[i] = entity.SaleItem{
-			Name:   fmt.Sprintf("Picole de %s", p.Flavor),
-			Price:  p.Price,
-			Amount: item.Amount,
+			Name:      fmt.Sprintf("Picole de %s", p.Flavor),
+			UnitPrice: p.Price,
+			Amount:    item.Amount,
 		}
 	}
 
 	sale := entity.Sale{
-		ID:          entity.NewID(),
+		ID:          uuid.New(),
 		Total:       total,
 		Items:       items,
-		Description: description,
+		Description: desc,
 		Date:        time.Now(),
 	}
 
@@ -60,6 +61,10 @@ func (s *Service) NewSale(
 	}
 
 	return sale, nil
+}
+
+func (s *Service) GetAll(ctx context.Context) ([]entity.Sale, error) {
+	return s.repo.GetAll(ctx)
 }
 
 func (s *Service) GetByPeriod(ctx context.Context, start, end time.Time) ([]entity.Sale, error) {

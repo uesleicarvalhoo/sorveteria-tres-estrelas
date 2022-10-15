@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
@@ -36,7 +37,7 @@ func (suite *SalesPostgresTestSuite) SetupTest() {
 	suite.container, err = SetupPostgres(suite.ctx)
 	assert.NoError(suite.T(), err)
 
-	suite.db, err = database.NewPostgreConnection(
+	suite.db, err = database.NewPostgresConnection(
 		suite.container.Username,
 		suite.container.Password,
 		suite.container.Database,
@@ -56,19 +57,19 @@ func (suite *SalesPostgresTestSuite) TestCRUD() {
 	repo := repository.NewSalesPostgres(suite.db)
 
 	sale := entity.Sale{
-		ID:          entity.NewID(),
+		ID:          uuid.New(),
 		PaymentType: entity.AnotherPayments,
 		Total:       8.75,
 		Items: []entity.SaleItem{
 			{
-				Name:   "Picole de coco",
-				Amount: 10,
-				Price:  0.5,
+				Name:      "Picole de coco",
+				Amount:    10,
+				UnitPrice: 0.5,
 			},
 			{
-				Name:   "Picole de chocolate",
-				Amount: 5,
-				Price:  0.75,
+				Name:      "Picole de chocolate",
+				Amount:    5,
+				UnitPrice: 0.75,
 			},
 		},
 		Description: "i'm a sale description",
@@ -108,7 +109,7 @@ func (suite *SalesPostgresTestSuite) TestCRUD() {
 	suite.T().Run("test Update should update sales_items table", func(t *testing.T) {
 		// Arrange
 		sale.Items = []entity.SaleItem{
-			{Name: "Picole de amendoin", Amount: 1, Price: 1.0},
+			{Name: "Picole de amendoin", Amount: 1, UnitPrice: 1.0},
 		}
 
 		// Action
@@ -138,41 +139,41 @@ func (suite *SalesPostgresTestSuite) TestCRUD() {
 		// Arrange
 		storedSales := []entity.Sale{
 			{
-				ID:          entity.NewID(),
+				ID:          uuid.New(),
 				PaymentType: entity.AnotherPayments,
 				Total:       5,
 				Items: []entity.SaleItem{
-					{Name: "Picole de coco", Amount: 10, Price: 0.5},
+					{Name: "Picole de coco", Amount: 10, UnitPrice: 0.5},
 				},
 				Description: "i'm a sale description",
 				Date:        time.Date(2022, 10, 13, 0, 0, 0, 0, time.Local),
 			},
 			{
-				ID:          entity.NewID(),
+				ID:          uuid.New(),
 				PaymentType: entity.AnotherPayments,
 				Total:       3.75,
 				Items: []entity.SaleItem{
-					{Name: "Picole de chocolate", Amount: 5, Price: 0.75},
+					{Name: "Picole de chocolate", Amount: 5, UnitPrice: 0.75},
 				},
 				Description: "i'm a sale description",
 				Date:        time.Date(2022, 10, 11, 0, 0, 0, 0, time.Local),
 			},
 			{
-				ID:          entity.NewID(),
+				ID:          uuid.New(),
 				PaymentType: entity.AnotherPayments,
 				Total:       5,
 				Items: []entity.SaleItem{
-					{Name: "Picole de morango", Amount: 5, Price: 1},
+					{Name: "Picole de morango", Amount: 5, UnitPrice: 1},
 				},
 				Description: "i'm a sale description",
 				Date:        time.Date(2022, 10, 31, 0, 0, 0, 0, time.Local),
 			},
 			{
-				ID:          entity.NewID(),
+				ID:          uuid.New(),
 				PaymentType: entity.AnotherPayments,
 				Total:       6.25,
 				Items: []entity.SaleItem{
-					{Name: "Picole de coco com goiaba", Amount: 5, Price: 1.25},
+					{Name: "Picole de coco com goiaba", Amount: 5, UnitPrice: 1.25},
 				},
 				Description: "i'm a sale description",
 				Date:        time.Date(2022, 9, 1, 0, 0, 0, 0, time.Local),

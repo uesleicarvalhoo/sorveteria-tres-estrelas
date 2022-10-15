@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"gorm.io/gorm"
 )
@@ -18,7 +19,7 @@ func NewSalesPostgres(db *gorm.DB) *SalesPostgres {
 	}
 }
 
-func (r SalesPostgres) Get(ctx context.Context, id entity.ID) (entity.Sale, error) {
+func (r SalesPostgres) Get(ctx context.Context, id uuid.UUID) (entity.Sale, error) {
 	var m SaleModel
 
 	if tx := r.db.WithContext(ctx).Preload("Items").First(&m, "id = ?", id); tx.Error != nil {
@@ -61,7 +62,7 @@ func (r SalesPostgres) Update(ctx context.Context, s entity.Sale) error {
 	})
 }
 
-func (r SalesPostgres) Delete(ctx context.Context, id entity.ID) error {
+func (r SalesPostgres) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).Delete(&SaleModel{}, "id = ?", id).Error
 }
 
