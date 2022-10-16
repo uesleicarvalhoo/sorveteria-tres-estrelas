@@ -10,6 +10,14 @@ export
 help: ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make [target]\033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_/-]+:.*?##/ { printf "\033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
+## @ Tools
+.PHONY: install-tools
+install-tools:  ## Instal mockery, gofumpt, swago and golangci-lint
+	@go install mvdan.cc/gofumpt@latest
+	@go install github.com/vektra/mockery/v2@latest
+	@go install github.com/swaggo/swag/cmd/swag@latest
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.0
+
 ## @ Linter
 .PHONY: lint format
 lint:  ## Run golangci-lint
@@ -19,7 +27,7 @@ format:  ## Format code
 	@gofumpt -e -l -w .
 
 ## @ Application
-.PHONY: swagger run
+.PHONY: swagger run compose
 api/docs/*: $(wildcard api/main.go) $(wildcard api/handler/*.go)
 	@swag init --generalInfo ./api/main.go --output ./api/docs
 
