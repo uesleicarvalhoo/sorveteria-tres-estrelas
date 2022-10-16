@@ -426,12 +426,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/entity.User"
                         }
                     },
-                    "401": {
-                        "description": "when user isn't logged",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    },
                     "500": {
                         "description": "when an error occurs",
                         "schema": {

@@ -19,14 +19,15 @@ func MakeUserRoutes(r fiber.Router, userSvc user.UseCase) {
 // @Tags		User
 // @Produce		json
 // @Success		200	{object} entity.User
-// @Failure		401	{object} dto.MessageJSON "when user isn't logged"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/users/me [get].
 func getMe(svc user.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id, err := uuid.Parse(c.FormValue("userID", ""))
-		if err != nil {
-			return c.Status(http.StatusUnauthorized).JSON(dto.MessageJSON{Message: err.Error()})
+		ctxID := c.Locals("userID")
+
+		id, ok := ctxID.(uuid.UUID)
+		if !ok {
+			return c.Status(http.StatusInternalServerError).JSON(dto.MessageJSON{Message: "user data not found"})
 		}
 
 		u, err := svc.Get(c.Context(), id)

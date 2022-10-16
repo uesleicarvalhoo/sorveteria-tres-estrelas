@@ -17,6 +17,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
 )
@@ -47,15 +48,17 @@ func NewFiber(services *Services, options ...Options) (*fiber.App, error) {
 		WriteTimeout: TIMEOUT,
 	})
 
+	authMiddleware := middleware.NewAuth(services.authSvc)
+
 	app.Use(
 		recover.New(),
 		cors.New(),
 		requestid.New(),
 	)
 
-	handler.MakePopsicleRoutes(app.Group("/popsicles"), services.popsicleSvc)
-	handler.MakeSalesRoutes(app.Group("/sales"), services.salesSvc)
-	handler.MakeUserRoutes(app.Group("/users"), services.userSvc)
+	handler.MakePopsicleRoutes(app.Group("/popsicles", authMiddleware), services.popsicleSvc)
+	handler.MakeSalesRoutes(app.Group("/sales", authMiddleware), services.salesSvc)
+	handler.MakeUserRoutes(app.Group("/users", authMiddleware), services.userSvc)
 	handler.MakeAuhtRoutes(app.Group("/auth"), services.authSvc)
 	handler.MakeHealthCheckRoutes(app)
 	handler.MakeSwaggerRoutes(app)
