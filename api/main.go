@@ -6,7 +6,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,13 +20,12 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/config"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 )
 
 const TIMEOUT = time.Second * 30
-
-type Options func(app *fiber.App) error
 
 func gracefullShutdown(app *fiber.App) error {
 	shutdownCh := make(chan error, 1)
@@ -44,16 +43,16 @@ func gracefullShutdown(app *fiber.App) error {
 	}
 }
 
-func NewFiber(services *Services, logger *logrus.Logger, options ...Options) (*fiber.App, error) {
+func NewFiber(appName, appVersion string, services *Services, logger *logrus.Logger) *fiber.App {
 	app := fiber.New(fiber.Config{
-		AppName:               "sorveteria-tres-estrelas",
+		AppName:               appName,
 		DisableStartupMessage: true,
 		ReadTimeout:           TIMEOUT,
 		WriteTimeout:          TIMEOUT,
 	})
 
 	authMiddleware := middleware.NewAuth(services.authSvc)
-	logrusMiddleware := middleware.NewLogrus(logger, "sorveteria-tres-estrelas", "0.0.0")
+	logrusMiddleware := middleware.NewLogrus(logger, appName, appVersion)
 
 	app.Use(
 		recover.New(),
@@ -69,42 +68,38 @@ func NewFiber(services *Services, logger *logrus.Logger, options ...Options) (*f
 	handler.MakeHealthCheckRoutes(app)
 	handler.MakeSwaggerRoutes(app)
 
-	for _, op := range options {
-		if err := op(app); err != nil {
-			return nil, err
-		}
-	}
-
-	return app, nil
+	return app
 }
 
 func main() {
-	logger, err := logger.NewLogrus("debug")
+	cfg, err := config.NewFromEnv()
 	if err != nil {
 		panic(err)
 	}
 
-	dbPort := 5432
+	logger, err := logger.NewLogrus(cfg.LogLevel)
+	if err != nil {
+		panic(err)
+	}
 
+	// Dependencies
 	db, err := database.NewPostgresConnectionWithMigration(
-		"postgres", "secret", "sorveteria-tres-estrelas", "localhost", dbPort)
+		cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBHost, cfg.DBPort)
 	if err != nil {
-		panic(err)
+		logger.Fatalf("couldn't connect to database: %s", err)
 	}
 
-	cache, err := cache.NewRedis("localhost:6379", "")
+	cache, err := cache.NewRedis(cfg.CacheURI, cfg.CachePassword)
 	if err != nil {
-		panic(err)
+		logger.Fatalf("couldn't connect to redis: %s", err)
 	}
 
-	services := createServices(db, cache, "my-secret-key")
+	services := createServices(db, cache, cfg.SecretKey)
 
-	app, err := NewFiber(services, logger)
-	if err != nil {
-		panic(err)
-	}
+	// Http server
+	app := NewFiber(cfg.ServiceName, cfg.ServiceVersion, services, logger)
 
-	go log.Fatal(app.Listen(":8080"))
+	go logger.Fatal(app.Listen(fmt.Sprintf(":%d", cfg.HTTPPort)))
 
 	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
@@ -113,6 +108,6 @@ func main() {
 	<-quit
 
 	if err := gracefullShutdown(app); err != nil {
-		panic(err)
+		logger.Fatalf("forcing app shutdown: %s", err)
 	}
 }
