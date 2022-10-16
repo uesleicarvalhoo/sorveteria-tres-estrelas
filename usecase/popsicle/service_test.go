@@ -97,13 +97,13 @@ func TestServiceGet(t *testing.T) {
 		describe   string
 		err        error
 		popsicleID uuid.UUID
-		popscile   entity.Popsicle
+		popsicle   entity.Popsicle
 	}{
 		{
 			describe:   "when popsicle is found",
 			err:        nil,
 			popsicleID: uuid.Nil,
-			popscile: entity.Popsicle{
+			popsicle: entity.Popsicle{
 				ID:     uuid.Nil,
 				Flavor: "coco",
 				Price:  1.0,
@@ -113,7 +113,7 @@ func TestServiceGet(t *testing.T) {
 			describe:   "when popsicle isn't found",
 			err:        fmt.Errorf("err popsicle not found"),
 			popsicleID: uuid.Nil,
-			popscile:   entity.Popsicle{},
+			popsicle:   entity.Popsicle{},
 		},
 	}
 
@@ -125,7 +125,7 @@ func TestServiceGet(t *testing.T) {
 
 			// Arrange
 			repo := mocks.NewRepository(t)
-			repo.On("Get", mock.Anything, tc.popsicleID).Return(tc.popscile, tc.err).Once()
+			repo.On("Get", mock.Anything, tc.popsicleID).Return(tc.popsicle, tc.err).Once()
 
 			sut := popsicle.NewService(repo)
 
@@ -134,7 +134,7 @@ func TestServiceGet(t *testing.T) {
 
 			// Assert
 			assert.Equal(t, tc.err, err)
-			assert.Equal(t, tc.popscile, found)
+			assert.Equal(t, tc.popsicle, found)
 		})
 	}
 }

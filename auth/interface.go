@@ -9,5 +9,5 @@ import (
 type UseCase interface {
 	Login(ctx context.Context, email, password string) (JwtToken, error)
 	RefreshToken(ctx context.Context, token string) (JwtToken, error)
-	Authorize(ctx context.Context, token string) (uuid.UUID, error)
+	Authorize(ctx context.Context, token, domain, action string) (uuid.UUID, error)
 }

@@ -25,6 +25,10 @@ definitions:
         type: string
       password:
         type: string
+      permissions:
+        items:
+          type: string
+        type: array
     type: object
   dto.LoginPayload:
     properties:
@@ -254,7 +258,7 @@ paths:
       - Popsicle
   /popsicles/{id}:
     delete:
-      description: Delete popscile
+      description: Delete popsicle
       parameters:
       - description: the id of popsicle
         in: path

@@ -17,13 +17,13 @@ type UseCase struct {
 	mock.Mock
 }
 
-// Authorize provides a mock function with given fields: ctx, token
-func (_m *UseCase) Authorize(ctx context.Context, token string) (uuid.UUID, error) {
-	ret := _m.Called(ctx, token)
+// Authorize provides a mock function with given fields: ctx, token, domain, action
+func (_m *UseCase) Authorize(ctx context.Context, token string, domain string, action string) (uuid.UUID, error) {
+	ret := _m.Called(ctx, token, domain, action)
 
 	var r0 uuid.UUID
-	if rf, ok := ret.Get(0).(func(context.Context, string) uuid.UUID); ok {
-		r0 = rf(ctx, token)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) uuid.UUID); ok {
+		r0 = rf(ctx, token, domain, action)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(uuid.UUID)
@@ -31,8 +31,8 @@ func (_m *UseCase) Authorize(ctx context.Context, token string) (uuid.UUID, erro
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, token)
+	if rf, ok := ret.Get(1).(func(context.Context, string, string, string) error); ok {
+		r1 = rf(ctx, token, domain, action)
 	} else {
 		r1 = ret.Error(1)
 	}

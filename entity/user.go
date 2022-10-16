@@ -1,19 +1,11 @@
 package entity
 
 import (
+	"strings"
+
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 	"golang.org/x/crypto/bcrypt"
-)
-
-type Permission string
-
-const (
-	ReadWriteSalesRole = "sales:read,write"
-	ReadSalesRole      = "sales:read"
-
-	ReadWritePopsicle = "popsicle:read,write"
-	ReadPopsicle      = "popsicle:read"
 )
 
 const minPasswordLength = 5
@@ -30,6 +22,10 @@ func NewUser(name, email, password string, permissions ...Permission) (User, err
 	pwd, err := generatePassword(password)
 	if err != nil {
 		return User{}, err
+	}
+
+	if len(permissions) == 0 {
+		permissions = DefaultPermissions()
 	}
 
 	u := User{
@@ -65,4 +61,30 @@ func (u User) CheckPassword(password string) bool {
 
 func (u User) Validate() error {
 	return validator.Validate(u)
+}
+
+func (u User) AuthorizeDomainAction(domain, action string) bool {
+	for _, p := range u.Permissions {
+		d, permission := p.getDomainActions()
+
+		if d == domain {
+			for _, perm := range permission {
+				if perm == action {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
+
+func (u User) HasPermission(p Permission) bool {
+	for _, up := range u.Permissions {
+		if p.Domain() == up.Domain() && strings.Contains(up.StrActions(), p.StrActions()) {
+			return true
+		}
+	}
+
+	return false
 }

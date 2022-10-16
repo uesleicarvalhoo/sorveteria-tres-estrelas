@@ -220,73 +220,98 @@ func TestAuthorize(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		userID := uuid.New()
+		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWritePopsicles, entity.ReadWriteSales)
 
-		token, err := auth.GenerateJwtToken(secretKey, userID, time.Now().Add(time.Hour))
+		token, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
 
-		accessTokenKey := fmt.Sprintf("access-token-%s", userID.String())
+		accessTokenKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
 
 		mockCache := cacheMocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, accessTokenKey).Return(token, nil).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
+		mockUserSvc := userMocks.NewUseCase(t)
+		mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, nil)
+
+		sut := auth.NewService(secretKey, mockUserSvc, mockCache)
 
 		// Action
-		sub, err := sut.Authorize(context.Background(), token)
+		sub, err := sut.Authorize(context.Background(), token, "popsicles", "write")
 
 		// Assert
 		assert.NoError(t, err)
-		assert.Equal(t, userID, sub)
+		assert.Equal(t, storedUser.ID, sub)
 	})
 
-	t.Run("when token is valid but not match with cached token", func(t *testing.T) {
+	t.Run("check errors", func(t *testing.T) {
 		t.Parallel()
 
-		// Arrange
-		userID := uuid.New()
+		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWritePopsicles, entity.ReadSales)
 
-		token, err := auth.GenerateJwtToken(secretKey, userID, time.Now().Add(time.Hour))
+		validToken, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
 
-		accessTokenKey := fmt.Sprintf("access-token-%s", userID.String())
+		tests := []struct {
+			about           string
+			mockUserError   error
+			mockCacheError  error
+			mockCacheReturn string
+			expectedError   string
+			userPermissions []entity.Permission
+			domain          string
+			action          string
+		}{
+			{
+				about:           "when token is valid but not match with cached token",
+				mockCacheReturn: "wrong-token",
+				expectedError:   auth.ErrTokenNotFound.Error(),
+			},
+			{
+				about:           "when token is valid but not match with cached token",
+				mockCacheReturn: "",
+				mockCacheError:  errors.New("cache error"),
+				expectedError:   "cache error",
+			},
+			{
+				about:           "when token is valid but not match with cached token",
+				mockCacheReturn: "",
+				mockCacheError:  errors.New("cache error"),
+				expectedError:   "cache error",
+			},
+			{
+				about:           "when user don't have permission",
+				mockCacheReturn: validToken,
+				mockCacheError:  nil,
+				domain:          "sales",
+				action:          "write",
+				expectedError:   auth.ErrNotPermited.Error(),
+			},
+		}
 
-		mockCache := cacheMocks.NewCache(t)
-		mockCache.On("Get", mock.Anything, accessTokenKey).Return("wrong-token", nil).Once()
+		for _, tc := range tests {
+			tc := tc
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
+			t.Run(tc.about, func(t *testing.T) {
+				t.Parallel()
 
-		// Action
-		sub, err := sut.Authorize(context.Background(), token)
+				// Arrange
+				accessTokenKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
 
-		// Assert
-		assert.EqualError(t, err, auth.ErrTokenNotFound.Error())
-		assert.Equal(t, uuid.Nil, sub)
-	})
+				mockCache := cacheMocks.NewCache(t)
+				mockCache.On("Get", mock.Anything, accessTokenKey).Return(tc.mockCacheReturn, tc.mockCacheError).Once()
 
-	t.Run("when cache return an error", func(t *testing.T) {
-		t.Parallel()
+				mockUserSvc := userMocks.NewUseCase(t)
+				mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, err).Maybe()
 
-		// Arrange
+				sut := auth.NewService(secretKey, mockUserSvc, mockCache)
 
-		userID := uuid.New()
+				// Action
+				sub, err := sut.Authorize(context.Background(), validToken, tc.domain, tc.action)
 
-		token, err := auth.GenerateJwtToken(secretKey, userID, time.Now().Add(time.Hour))
-		assert.NoError(t, err)
-
-		accessTokenKey := fmt.Sprintf("access-token-%s", userID.String())
-		mockError := errors.New("cache error")
-
-		mockCache := cacheMocks.NewCache(t)
-		mockCache.On("Get", mock.Anything, accessTokenKey).Return("", mockError).Once()
-
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
-
-		// Action
-		sub, err := sut.Authorize(context.Background(), token)
-
-		// Assert
-		assert.EqualError(t, err, mockError.Error())
-		assert.Equal(t, uuid.Nil, sub)
+				// Assert
+				assert.Equal(t, uuid.Nil, sub)
+				assert.EqualError(t, err, tc.expectedError)
+			})
+		}
 	})
 }

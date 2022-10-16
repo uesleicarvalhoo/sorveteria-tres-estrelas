@@ -251,7 +251,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete popscile",
+                "description": "Delete popsicle",
                 "produces": [
                     "application/json"
                 ],
@@ -476,6 +476,12 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

@@ -8,7 +8,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 )
 
-func NewAuth(authSvc auth.UseCase) fiber.Handler {
+func NewAuth(authSvc auth.UseCase, domain string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
 
@@ -18,7 +18,12 @@ func NewAuth(authSvc auth.UseCase) fiber.Handler {
 
 		token := authHeader[len("Bearer")+1:]
 
-		userID, err := authSvc.Authorize(c.Context(), token)
+		perm := "read"
+		if c.Method() != "GET" {
+			perm = "write"
+		}
+
+		userID, err := authSvc.Authorize(c.Context(), token, domain, perm)
 		if err != nil {
 			return c.Status(http.StatusUnauthorized).JSON(dto.MessageJSON{Message: err.Error()})
 		}

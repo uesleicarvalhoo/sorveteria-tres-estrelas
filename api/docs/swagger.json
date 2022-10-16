@@ -242,7 +242,7 @@
                 }
             },
             "delete": {
-                "description": "Delete popscile",
+                "description": "Delete popsicle",
                 "produces": [
                     "application/json"
                 ],
@@ -467,6 +467,12 @@
                 },
                 "password": {
                     "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

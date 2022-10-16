@@ -21,7 +21,7 @@ format:  ## Format code
 ## @ Application
 .PHONY: swagger run
 api/docs/*: $(wildcard api/main.go) $(wildcard api/handler/*.go)
-	@swag init --generalInfo api/main.go --output ./api/docs
+	@swag init --generalInfo ./api/main.go --output ./api/docs
 
 swagger: api/docs/*  ## Generate Swagger content
 
