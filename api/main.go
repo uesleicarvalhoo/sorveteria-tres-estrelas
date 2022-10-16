@@ -16,10 +16,12 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/sirupsen/logrus"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 )
 
 const TIMEOUT = time.Second * 30
@@ -42,18 +44,22 @@ func gracefullShutdown(app *fiber.App) error {
 	}
 }
 
-func NewFiber(services *Services, options ...Options) (*fiber.App, error) {
+func NewFiber(services *Services, logger *logrus.Logger, options ...Options) (*fiber.App, error) {
 	app := fiber.New(fiber.Config{
-		ReadTimeout:  TIMEOUT,
-		WriteTimeout: TIMEOUT,
+		AppName:               "sorveteria-tres-estrelas",
+		DisableStartupMessage: true,
+		ReadTimeout:           TIMEOUT,
+		WriteTimeout:          TIMEOUT,
 	})
 
 	authMiddleware := middleware.NewAuth(services.authSvc)
+	logrusMiddleware := middleware.NewLogrus(logger, "sorveteria-tres-estrelas", "0.0.0")
 
 	app.Use(
 		recover.New(),
 		cors.New(),
 		requestid.New(),
+		logrusMiddleware,
 	)
 
 	handler.MakePopsicleRoutes(app.Group("/popsicles", authMiddleware), services.popsicleSvc)
@@ -73,6 +79,11 @@ func NewFiber(services *Services, options ...Options) (*fiber.App, error) {
 }
 
 func main() {
+	logger, err := logger.NewLogrus("debug")
+	if err != nil {
+		panic(err)
+	}
+
 	dbPort := 5432
 
 	db, err := database.NewPostgresConnectionWithMigration(
@@ -88,7 +99,7 @@ func main() {
 
 	services := createServices(db, cache, "my-secret-key")
 
-	app, err := NewFiber(services)
+	app, err := NewFiber(services, logger)
 	if err != nil {
 		panic(err)
 	}
