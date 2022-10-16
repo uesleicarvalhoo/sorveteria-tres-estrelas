@@ -23,24 +23,36 @@ import (
 func TestCreateUser(t *testing.T) {
 	t.Parallel()
 
-	t.Run("test success", func(t *testing.T) {
+	t.Run("should create with same user roles", func(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
+		currentUser, err := entity.NewUser(
+			"current user", "current.user@email.com", "passwd",
+			entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers)
+		assert.NoError(t, err)
+
 		payload := dto.CreateUserPayload{
 			Name:     "User Lastname",
 			Email:    "user@email.com",
 			Password: "secret123",
+			Permissions: []entity.Permission{
+				entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers,
+			},
 		}
 
 		storedUser, err := entity.NewUser(payload.Name, payload.Email, payload.Password)
 		assert.NoError(t, err)
 
 		svc := mocks.NewUseCase(t)
-		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password).
+		svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
+		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password,
+			entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers).
 			Return(storedUser, nil).Once()
 
 		app := fiber.New()
+		app.Use(mockAuthMiddleware(currentUser.ID))
+
 		handler.MakeUserRoutes(app, svc)
 
 		reqBody, err := json.Marshal(payload)
@@ -50,7 +62,7 @@ func TestCreateUser(t *testing.T) {
 		req.Header.Add("Content-Type", "application/json")
 
 		// Action
-		res, err := app.Test(req)
+		res, err := app.Test(req, 30)
 		assert.NoError(t, err)
 		defer res.Body.Close()
 
@@ -98,11 +110,18 @@ func TestCreateUser(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
+				currentUser, err := entity.NewUser(
+					"current user", "current.user@email.com", "passwd",
+					entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers)
+				assert.NoError(t, err)
+
 				svc := mocks.NewUseCase(t)
+				svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
 				svc.On("Create", mock.Anything, tc.payload.Name, tc.payload.Email, tc.payload.Password).
 					Return(tc.mockReturn, tc.mockError).Once()
 
 				app := fiber.New()
+				app.Use(mockAuthMiddleware(currentUser.ID))
 				handler.MakeUserRoutes(app, svc)
 
 				reqBody, err := json.Marshal(tc.payload)

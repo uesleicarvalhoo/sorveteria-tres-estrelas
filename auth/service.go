@@ -26,7 +26,7 @@ func getCacheTokenKey(prefix string, id uuid.UUID) string {
 }
 
 func GetDefaultUserPermissions() []entity.Permission {
-	return []entity.Permission{entity.ReadWritePopsicle, entity.ReadWriteSalesRole}
+	return []entity.Permission{entity.ReadWritePopsicles, entity.ReadWriteSales}
 }
 
 type Service struct {
@@ -128,6 +128,20 @@ func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, err
 	return s.createAccessToken(ctx, id)
 }
 
-func (s *Service) Authorize(ctx context.Context, token string) (uuid.UUID, error) {
-	return s.validateToken(ctx, accessToken, token)
+func (s *Service) Authorize(ctx context.Context, token, domain, action string) (uuid.UUID, error) {
+	id, err := s.validateToken(ctx, accessToken, token)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	u, err := s.userUc.Get(ctx, id)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	if !u.AuthorizeDomainAction(domain, action) {
+		return uuid.Nil, ErrNotPermited
+	}
+
+	return id, nil
 }

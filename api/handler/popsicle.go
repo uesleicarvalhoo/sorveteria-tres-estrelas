@@ -87,7 +87,7 @@ func createPopsicle(svc popsicle.UseCase) fiber.Handler {
 }
 
 // @Summary		Delete Popsicle by ID
-// @Description	Delete popscile
+// @Description	Delete popsicle
 // @Tags		Popsicle
 // @Produce		json
 // @Param		id			path		string				true	"the id of popsicle"

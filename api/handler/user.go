@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
 )
 
@@ -57,7 +58,27 @@ func createUser(svc user.UseCase) fiber.Handler {
 			return c.Status(http.StatusUnprocessableEntity).JSON(fiber.Map{"message": err.Error()})
 		}
 
-		user, err := svc.Create(c.Context(), payload.Name, payload.Email, payload.Password)
+		id, ok := c.Locals("userID").(uuid.UUID)
+		if !ok {
+			return c.Status(http.StatusInternalServerError).JSON(dto.MessageJSON{Message: "user data not found"})
+		}
+
+		currentUser, err := svc.Get(c.Context(), id)
+		if err != nil {
+			return c.Status(http.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
+		}
+
+		permissions := []entity.Permission{}
+
+		for _, payloadPerm := range payload.Permissions {
+			for i := range currentUser.Permissions {
+				if currentUser.Permissions[i] == payloadPerm {
+					permissions = append(permissions, payloadPerm)
+				}
+			}
+		}
+
+		user, err := svc.Create(c.Context(), payload.Name, payload.Email, payload.Password, permissions...)
 		if err != nil {
 			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
 		}

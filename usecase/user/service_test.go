@@ -30,7 +30,7 @@ func TestCreate(t *testing.T) {
 		name := "Ueslei Carvalho"
 		email := "ueslei.carvalho@email.com"
 		password := "secret123"
-		permissions := []entity.Permission{entity.ReadWritePopsicle, entity.ReadWriteSalesRole}
+		permissions := []entity.Permission{entity.ReadWritePopsicles, entity.ReadWriteSales}
 
 		// Action
 		u, err := sut.Create(context.Background(), name, email, password, permissions...)

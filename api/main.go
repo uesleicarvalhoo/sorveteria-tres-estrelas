@@ -51,7 +51,6 @@ func NewFiber(appName, appVersion string, services *Services, logger *logrus.Log
 		WriteTimeout:          TIMEOUT,
 	})
 
-	authMiddleware := middleware.NewAuth(services.authSvc)
 	logrusMiddleware := middleware.NewLogrus(logger, appName, appVersion)
 
 	app.Use(
@@ -64,9 +63,10 @@ func NewFiber(appName, appVersion string, services *Services, logger *logrus.Log
 	handler.MakeHealthCheckRoutes(app)
 	handler.MakeSwaggerRoutes(app.Group("/docs"))
 	handler.MakeAuhtRoutes(app.Group("/auth"), services.authSvc)
-	handler.MakeUserRoutes(app.Group("/users", authMiddleware), services.userSvc)
-	handler.MakePopsicleRoutes(app.Group("/popsicles", authMiddleware), services.popsicleSvc)
-	handler.MakeSalesRoutes(app.Group("/sales", authMiddleware), services.salesSvc)
+	handler.MakeUserRoutes(app.Group("/users", middleware.NewAuth(services.authSvc, "users")), services.userSvc)
+	handler.MakeSalesRoutes(app.Group("/sales", middleware.NewAuth(services.authSvc, "sales")), services.salesSvc)
+	handler.MakePopsicleRoutes(
+		app.Group("/popsicles", middleware.NewAuth(services.authSvc, "popsicles")), services.popsicleSvc)
 
 	return app
 }
