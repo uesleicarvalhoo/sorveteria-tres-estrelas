@@ -23,10 +23,13 @@ format:  ## Format code
 api/docs/*: $(wildcard api/main.go) $(wildcard api/handler/*.go)
 	@swag init --generalInfo ./api/main.go --output ./api/docs
 
-swagger: api/docs/*  ## Generate Swagger content
+swagger: api/docs/*  ## Generate swagger docs
 
 run: swagger  ## Run app
 	@go run api/*.go
+
+compose:  ## Init containers with dev dependencies
+	@docker compose build && docker compose up -d
 
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
