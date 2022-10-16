@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
+	"github.com/google/uuid"
 )
 
 type JwtToken struct {
@@ -15,7 +15,7 @@ type JwtToken struct {
 	ExpiresAt    int64  `json:"expiration"`
 }
 
-func GenerateJwtToken(secret string, userID entity.ID, exp time.Time) (string, error) {
+func GenerateJwtToken(secret string, userID uuid.UUID, exp time.Time) (string, error) {
 	claims := jwt.NewWithClaims(
 		jwt.SigningMethodHS256, jwt.StandardClaims{
 			Subject:   userID.String(),
@@ -25,7 +25,7 @@ func GenerateJwtToken(secret string, userID entity.ID, exp time.Time) (string, e
 	return claims.SignedString([]byte(secret))
 }
 
-func ValidateJwtToken(token, secret string) (entity.ID, error) {
+func ValidateJwtToken(token, secret string) (uuid.UUID, error) {
 	tokenObj, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %s", token.Header["alg"])
@@ -34,15 +34,15 @@ func ValidateJwtToken(token, secret string) (entity.ID, error) {
 		return []byte(secret), nil
 	})
 	if err != nil {
-		return entity.ID{}, err
+		return uuid.Nil, err
 	}
 
 	claims, ok := tokenObj.Claims.(jwt.MapClaims)
 	if ok && tokenObj.Valid {
 		sub, _ := claims["sub"].(string)
 
-		return entity.StringToID(sub)
+		return uuid.Parse(sub)
 	}
 
-	return entity.ID{}, ErrInvalidToken
+	return uuid.Nil, ErrInvalidToken
 }

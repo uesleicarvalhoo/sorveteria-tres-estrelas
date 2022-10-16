@@ -1,9 +1,12 @@
-package auth
+package cache
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 type Cache interface {
-	Set(ctx context.Context, key string, value any) error
+	Set(ctx context.Context, key string, value string, exp time.Duration) error
 	Get(ctx context.Context, key string) (string, error)
 	Del(ctx context.Context, key string) error
 }

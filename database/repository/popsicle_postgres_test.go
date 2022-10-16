@@ -6,6 +6,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
@@ -35,7 +36,7 @@ func (suite *PopsiclePostgresTestSuite) SetupTest() {
 	suite.container, err = SetupPostgres(suite.ctx)
 	assert.NoError(suite.T(), err)
 
-	suite.db, err = database.NewPostgreConnection(
+	suite.db, err = database.NewPostgresConnection(
 		suite.container.Username,
 		suite.container.Password,
 		suite.container.Database,
@@ -55,7 +56,7 @@ func (suite *PopsiclePostgresTestSuite) TestCRUD() {
 	repo := repository.NewPopsiclePostgres(suite.db)
 
 	pop := entity.Popsicle{
-		ID:     entity.NewID(),
+		ID:     uuid.New(),
 		Flavor: "morango",
 		Price:  1.20,
 	}

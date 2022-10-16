@@ -1,7 +1,9 @@
 package entity
 
+import "github.com/google/uuid"
+
 type Popsicle struct {
-	ID     ID      `json:"id"`
-	Flavor string  `json:"flavor" validate:"required,min=4"`
-	Price  float64 `json:"price" validate:"required"`
+	ID     uuid.UUID `json:"id"`
+	Flavor string    `json:"flavor" validate:"required,min=4"`
+	Price  float64   `json:"price" validate:"required"`
 }

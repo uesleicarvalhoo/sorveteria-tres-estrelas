@@ -35,7 +35,7 @@ func (suite *PopsicleTestSuite) SetupTest() {
 	suite.container, err = SetupPostgres(suite.ctx)
 	assert.NoError(suite.T(), err)
 
-	suite.db, err = database.NewPostgreConnection(
+	suite.db, err = database.NewPostgresConnection(
 		suite.container.Username,
 		suite.container.Password,
 		suite.container.Database,

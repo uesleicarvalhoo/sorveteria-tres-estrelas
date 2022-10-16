@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
@@ -23,7 +24,7 @@ func TestServiceCreate(t *testing.T) {
 
 		// Arrange
 		flavor := "coco com chocolate"
-		price := float64(1.23)
+		price := 1.23
 
 		repo := mocks.NewRepository(t)
 		repo.On("Create", mock.Anything, mock.Anything).Return(nil).Once()
@@ -35,7 +36,7 @@ func TestServiceCreate(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		assert.NotEqual(t, entity.ID{}, pop)
+		assert.NotEqual(t, uuid.Nil, pop)
 		assert.Equal(t, flavor, pop.Flavor)
 		assert.Equal(t, price, pop.Price)
 	})
@@ -95,15 +96,15 @@ func TestServiceGet(t *testing.T) {
 	tests := []struct {
 		describe   string
 		err        error
-		popsicleID entity.ID
+		popsicleID uuid.UUID
 		popscile   entity.Popsicle
 	}{
 		{
 			describe:   "when popsicle is found",
 			err:        nil,
-			popsicleID: entity.ID{},
+			popsicleID: uuid.Nil,
 			popscile: entity.Popsicle{
-				ID:     entity.ID{},
+				ID:     uuid.Nil,
 				Flavor: "coco",
 				Price:  1.0,
 			},
@@ -111,7 +112,7 @@ func TestServiceGet(t *testing.T) {
 		{
 			describe:   "when popsicle isn't found",
 			err:        fmt.Errorf("err popsicle not found"),
-			popsicleID: entity.ID{},
+			popsicleID: uuid.Nil,
 			popscile:   entity.Popsicle{},
 		},
 	}
@@ -152,8 +153,8 @@ func TestServiceGetAll(t *testing.T) {
 		{
 			describe: "when repository has popsicles",
 			popsicles: []entity.Popsicle{
-				{ID: entity.NewID(), Flavor: "goiaba", Price: 2.0},
-				{ID: entity.NewID(), Flavor: "manga", Price: 1.3},
+				{ID: uuid.New(), Flavor: "goiaba", Price: 2.0},
+				{ID: uuid.New(), Flavor: "manga", Price: 1.3},
 			},
 		},
 	}
@@ -187,7 +188,7 @@ func TestServiceUpdate(t *testing.T) {
 
 		// Arrange
 		p := entity.Popsicle{
-			ID:     entity.NewID(),
+			ID:     uuid.New(),
 			Flavor: "coco com chocolate",
 			Price:  1.0,
 		}
@@ -211,7 +212,7 @@ func TestServiceUpdate(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		p := entity.Popsicle{ID: entity.NewID(), Flavor: "amendoin", Price: 1.25}
+		p := entity.Popsicle{ID: uuid.New(), Flavor: "amendoin", Price: 1.25}
 
 		mockError := errors.New("failed to update popsicle")
 		expectedErr := "failed to update popsicle"
@@ -233,7 +234,7 @@ func TestServiceUpdate(t *testing.T) {
 
 		// Arrange
 		p := entity.Popsicle{
-			ID:     entity.NewID(),
+			ID:     uuid.New(),
 			Flavor: "coco com chocolate",
 			Price:  1.0,
 		}
@@ -261,7 +262,7 @@ func TestServiceDelete(t *testing.T) {
 
 		// Arrange
 		p := entity.Popsicle{
-			ID:     entity.NewID(),
+			ID:     uuid.New(),
 			Flavor: "mangaba",
 			Price:  0.5,
 		}

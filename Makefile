@@ -1,5 +1,6 @@
 COVERAGE_OUTPUT=coverage.output
 COVERAGE_HTML=coverage.html
+GO_ENTRYPOINT=api/main.go api/services.go
 
 # Load environment variables from .env file
 -include .env
@@ -18,6 +19,16 @@ lint:  ## Run golangci-lint
 format:  ## Format code
 	@gofumpt -e -l -w .
 
+## @ Application
+.PHONY: swagger run
+docs/*: $(wildcard api/main.go) $(wildcard api/handler/*.go)
+	@swag init -generalInfo $(GO_ENTRYPOINT) -output ./docs
+
+swagger: docs/*  ## Generate Swagger content
+
+run: swagger  ## Run app
+	@go run $(GO_ENTRYPOINT)
+
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
 generate-mocks: clean-mocks  ## Generate mock files
@@ -25,12 +36,14 @@ generate-mocks: clean-mocks  ## Generate mock files
 	@mockery --dir usecase/sales --output usecase/sales/mocks --all
 	@mockery --dir usecase/user --output usecase/user/mocks --all
 	@mockery --dir auth --output auth/mocks --all
+	@mockery --dir cache --output cache/mocks --all
 
 clean-mocks:  ## Clean mock files
-	@rm usecase/popsicle/mocks/*
-	@rm usecase/sales/mocks/*
-	@rm usecase/user/mocks/*
-	@rm auth/mocks/*
+	@rm -rf usecase/popsicle/mocks/*
+	@rm -rf usecase/sales/mocks/*
+	@rm -rf usecase/user/mocks/*
+	@rm -rf auth/mocks/*
+	@rm -rf cache/mocks/*
 
 test:  ## Run tests all tests
 	@go test ./... -race -v -count=1 -tags="all" -coverprofile=$(COVERAGE_OUTPUT)

@@ -3,8 +3,8 @@ package user
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 )
 
 type Service struct {
@@ -18,17 +18,10 @@ func NewService(r Repository) *Service {
 }
 
 func (s *Service) Create(
-	ctx context.Context, name, email, passwdHash string, roles ...entity.Permission,
+	ctx context.Context, name, email, password string, roles ...entity.Permission,
 ) (entity.User, error) {
-	u := entity.User{
-		ID:           entity.NewID(),
-		Name:         name,
-		Email:        email,
-		PasswordHash: passwdHash,
-		Permissions:  roles,
-	}
-
-	if err := validator.Validate(u); err != nil {
+	u, err := entity.NewUser(name, email, password, roles...)
+	if err != nil {
 		return entity.User{}, err
 	}
 
@@ -39,7 +32,7 @@ func (s *Service) Create(
 	return u, nil
 }
 
-func (s *Service) Get(ctx context.Context, id entity.ID) (entity.User, error) {
+func (s *Service) Get(ctx context.Context, id uuid.UUID) (entity.User, error) {
 	u, err := s.r.Get(ctx, id)
 	if err != nil {
 		return entity.User{}, err

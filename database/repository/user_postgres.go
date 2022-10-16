@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"gorm.io/gorm"
 )
@@ -17,7 +18,7 @@ func NewUserPostgres(db *gorm.DB) *UserPostgres {
 	}
 }
 
-func (r UserPostgres) Get(ctx context.Context, id entity.ID) (entity.User, error) {
+func (r UserPostgres) Get(ctx context.Context, id uuid.UUID) (entity.User, error) {
 	var m UserModel
 
 	if tx := r.db.WithContext(ctx).First(&m, "id = ?", id); tx.Error != nil {
@@ -64,6 +65,6 @@ func (r UserPostgres) Update(ctx context.Context, u entity.User) error {
 	return r.db.WithContext(ctx).Save(&m).Error
 }
 
-func (r UserPostgres) Delete(ctx context.Context, id entity.ID) error {
+func (r UserPostgres) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).Delete(&UserModel{}, "id = ?", id).Error
 }

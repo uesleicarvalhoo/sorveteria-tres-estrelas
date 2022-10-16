@@ -4,6 +4,7 @@ package mocks
 
 import (
 	context "context"
+	time "time"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -48,13 +49,13 @@ func (_m *Cache) Get(ctx context.Context, key string) (string, error) {
 	return r0, r1
 }
 
-// Set provides a mock function with given fields: ctx, key, value
-func (_m *Cache) Set(ctx context.Context, key string, value interface{}) error {
-	ret := _m.Called(ctx, key, value)
+// Set provides a mock function with given fields: ctx, key, value, exp
+func (_m *Cache) Set(ctx context.Context, key string, value string, exp time.Duration) error {
+	ret := _m.Called(ctx, key, value, exp)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, interface{}) error); ok {
-		r0 = rf(ctx, key, value)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, time.Duration) error); ok {
+		r0 = rf(ctx, key, value, exp)
 	} else {
 		r0 = ret.Error(0)
 	}

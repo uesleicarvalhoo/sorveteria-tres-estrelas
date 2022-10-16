@@ -1,7 +1,7 @@
 -- popsicle
 CREATE TABLE popsicles (
 	"id" uuid NOT NULL,
-	"flavor" varchar NULL,
+	"flavor" varchar UNIQUE NULL,
 	"price" numeric NULL,
 	CONSTRAINT popsicles_pkey PRIMARY KEY (id)
 );
@@ -21,10 +21,10 @@ CREATE TABLE sales (
 
 CREATE TABLE sale_items (
 	"id" uuid NOT NULL,
-	"sale_id" uuid NULL,
-	"name" varchar NULL,
-	"price" numeric NULL,
-	"amount" int8 NULL,
+	"sale_id" uuid NOT NULL,
+	"name" varchar NOT NULL,
+	"price" numeric NOT NULL,
+	"amount" int8 NOT NULL,
 	CONSTRAINT sale_items_pkey PRIMARY KEY (id)
 );
 
@@ -34,9 +34,9 @@ ALTER TABLE "sale_items" ADD CONSTRAINT fk_sales_items FOREIGN KEY (sale_id) REF
 
 CREATE TABLE users (
 	"id" uuid NOT NULL,
-	"name" varchar NULL,
-	"email" varchar NULL,
-	"password_hash" varchar NULL,
+	"name" varchar UNIQUE NOT NULL,
+	"email" varchar UNIQUE NOT NULL,
+	"password_hash" varchar NOT NULL,
 	"permissions" varchar NULL,
 	CONSTRAINT users_pkey PRIMARY KEY (id)
 );

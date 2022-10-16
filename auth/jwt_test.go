@@ -6,15 +6,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 )
 
 func TestJWT(t *testing.T) {
 	t.Parallel()
 
-	userID := entity.NewID()
+	userID := uuid.New()
 	secret := "my-secret-key"
 
 	t.Run("when token is valid", func(t *testing.T) {
@@ -47,6 +47,6 @@ func TestJWT(t *testing.T) {
 
 		// Assert
 		assert.EqualError(t, err, "Token is expired")
-		assert.Equal(t, entity.ID{}, sub)
+		assert.Equal(t, uuid.Nil, sub)
 	})
 }
