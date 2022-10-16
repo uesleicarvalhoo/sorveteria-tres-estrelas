@@ -99,7 +99,9 @@ func main() {
 	// Http server
 	app := NewFiber(cfg.ServiceName, cfg.ServiceVersion, services, logger)
 
-	go logger.Fatal(app.Listen(fmt.Sprintf(":%d", cfg.HTTPPort)))
+	go func() { logger.Fatal(app.Listen(fmt.Sprintf(":%d", cfg.HTTPPort))) }()
+
+	logger.Infof("app started, listening on port %d", cfg.HTTPPort)
 
 	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
