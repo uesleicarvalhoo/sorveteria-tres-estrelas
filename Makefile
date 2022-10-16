@@ -1,6 +1,5 @@
 COVERAGE_OUTPUT=coverage.output
 COVERAGE_HTML=coverage.html
-GO_ENTRYPOINT=api/main.go api/services.go
 
 # Load environment variables from .env file
 -include .env
@@ -21,13 +20,13 @@ format:  ## Format code
 
 ## @ Application
 .PHONY: swagger run
-docs/*: $(wildcard api/main.go) $(wildcard api/handler/*.go)
-	@swag init -generalInfo $(GO_ENTRYPOINT) -output ./docs
+api/docs/*: $(wildcard api/main.go) $(wildcard api/handler/*.go)
+	@swag init --generalInfo api/main.go --output ./api/docs
 
-swagger: docs/*  ## Generate Swagger content
+swagger: api/docs/*  ## Generate Swagger content
 
 run: swagger  ## Run app
-	@go run $(GO_ENTRYPOINT)
+	@go run api/*.go
 
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks

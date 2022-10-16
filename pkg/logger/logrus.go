@@ -9,7 +9,11 @@ func NewLogrus(level string) (*logrus.Logger, error) {
 	}
 
 	logger := logrus.StandardLogger()
-	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetFormatter(&logrus.JSONFormatter{
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyMsg: "message",
+		},
+	})
 
 	logger.SetLevel(lvl)
 
