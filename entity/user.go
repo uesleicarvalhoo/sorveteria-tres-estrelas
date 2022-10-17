@@ -1,19 +1,23 @@
 package entity
 
 import (
+	"fmt"
+	"net/mail"
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity/validator"
 	"golang.org/x/crypto/bcrypt"
 )
 
 const minPasswordLength = 5
 
+var ErrTooShortPassword = fmt.Errorf("a senha precisa conter ao menos %d caracters", minPasswordLength)
+
 type User struct {
 	ID           uuid.UUID    `json:"id"`
-	Name         string       `json:"name" validate:"required"`
-	Email        string       `json:"email" validate:"email"`
+	Name         string       `json:"name"`
+	Email        string       `json:"email"`
 	PasswordHash string       `json:"-"`
 	Permissions  []Permission `json:"permissions"`
 }
@@ -30,7 +34,7 @@ func NewUser(name, email, password string, permissions ...Permission) (User, err
 
 	u := User{
 		ID:           uuid.New(),
-		Name:         name,
+		Name:         strings.TrimSpace(name),
 		Email:        email,
 		PasswordHash: pwd,
 		Permissions:  permissions,
@@ -60,7 +64,16 @@ func (u User) CheckPassword(password string) bool {
 }
 
 func (u User) Validate() error {
-	return validator.Validate(u)
+	v := validator.New()
+	if u.Name == "" {
+		v.AddError("nome", "campo obrigatório")
+	}
+
+	if _, err := mail.ParseAddress(u.Email); err != nil {
+		v.AddError("email", "campo invalido")
+	}
+
+	return v.Validate()
 }
 
 func (u User) AuthorizeDomainAction(domain, action string) bool {

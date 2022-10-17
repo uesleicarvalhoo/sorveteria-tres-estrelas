@@ -70,21 +70,21 @@ func TestNewUser(t *testing.T) {
 				name:        "",
 				email:       "ueslei.carvalho@email.com",
 				passwd:      "mySecretPassword!",
-				expectedErr: "Name é obrigatorio",
+				expectedErr: "nome: campo obrigatório",
 			},
 			{
 				about:       "when email is empty",
 				name:        "Ueslei Carvalho",
 				email:       "",
 				passwd:      "mySecretPassword!",
-				expectedErr: "'' não é um email valido",
+				expectedErr: "email: campo invalido",
 			},
 			{
 				about:       "when email is invalid",
 				name:        "Ueslei Carvalho",
 				email:       "wrongemail",
 				passwd:      "mySecretPassword!",
-				expectedErr: "'wrongemail' não é um email valido",
+				expectedErr: "email: campo invalido",
 			},
 
 			{
@@ -153,6 +153,79 @@ func TestUserCheckPermissions(t *testing.T) {
 
 			// Assert
 			assert.Equal(t, tc.expectedResult, ok)
+		})
+	}
+}
+
+func TestUserValidate(t *testing.T) {
+	t.Parallel()
+
+	t.Run("check a valid user", func(t *testing.T) {
+		t.Parallel()
+
+		// Arrange
+		u := entity.User{
+			ID:           uuid.New(),
+			Name:         "Ueslei Carvalho",
+			Email:        "uesleicdoliveira@gmail.com",
+			PasswordHash: "mySecretPassword!",
+			Permissions:  entity.DefaultPermissions(),
+		}
+
+		// Action
+		err := u.Validate()
+
+		// Assert
+		assert.NoError(t, err)
+	})
+
+	tests := []struct {
+		about         string
+		user          entity.User
+		expectedError string
+	}{
+		{
+			about: "when name is empty",
+			user: entity.User{
+				ID:           uuid.New(),
+				Email:        "uesleicdoliveira@gmail.com",
+				PasswordHash: "mySecretPassword!",
+				Permissions:  entity.DefaultPermissions(),
+			},
+			expectedError: "nome: campo obrigatório",
+		},
+		{
+			about: "when email is empty",
+			user: entity.User{
+				ID:           uuid.New(),
+				Name:         "Ueslei Carvalho",
+				PasswordHash: "mySecretPassword!",
+				Permissions:  entity.DefaultPermissions(),
+			},
+			expectedError: "email: campo invalido",
+		},
+		{
+			about: "when email is invalid",
+			user: entity.User{
+				ID:           uuid.New(),
+				Name:         "Ueslei Carvalho",
+				Email:        "wrong!",
+				PasswordHash: "mySecretPassword!",
+				Permissions:  entity.DefaultPermissions(),
+			},
+			expectedError: "email: campo invalido",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+
+		t.Run(tc.about, func(t *testing.T) {
+			t.Parallel()
+
+			err := tc.user.Validate()
+
+			assert.EqualError(t, err, tc.expectedError)
 		})
 	}
 }

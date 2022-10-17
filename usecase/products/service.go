@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 )
 
 type Service struct {
@@ -19,17 +18,10 @@ func NewService(r Repository) *Service {
 }
 
 func (s Service) Store(
-	ctx context.Context, name string, varejoPrice, atacadoPrice float64, atacadoMinAmount int,
+	ctx context.Context, name string, priceVarejo, priceAtacado float64, atacadoAmount int,
 ) (entity.Product, error) {
-	p := entity.Product{
-		ID:            uuid.New(),
-		Name:          name,
-		PriceVarejo:   varejoPrice,
-		PriceAtacado:  atacadoPrice,
-		AtacadoAmount: atacadoMinAmount,
-	}
-
-	if err := validator.Validate(p); err != nil {
+	p, err := entity.NewProduct(name, priceVarejo, priceAtacado, atacadoAmount)
+	if err != nil {
 		return entity.Product{}, err
 	}
 
@@ -49,7 +41,7 @@ func (s Service) Index(ctx context.Context) ([]entity.Product, error) {
 }
 
 func (s Service) Update(ctx context.Context, p *entity.Product) error {
-	if err := validator.Validate(p); err != nil {
+	if err := p.Validate(); err != nil {
 		return err
 	}
 

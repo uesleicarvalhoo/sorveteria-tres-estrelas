@@ -69,7 +69,7 @@ func TestStore(t *testing.T) {
 			priceVarejo:   1.0,
 			priceAtacado:  0.75,
 			atacadoAmount: 10,
-			expectedErr:   "Name é obrigatorio",
+			expectedErr:   "nome: campo obrigatório",
 		},
 		{
 			about:         "when PriceVarejo is invalid",
@@ -77,7 +77,7 @@ func TestStore(t *testing.T) {
 			priceVarejo:   0,
 			priceAtacado:  0.75,
 			atacadoAmount: 10,
-			expectedErr:   "PriceVarejo é obrigatorio",
+			expectedErr:   "preço varejo: precisa ser maior do que 0",
 		},
 		{
 			about:         "when PriceAtacado is invalid",
@@ -85,7 +85,7 @@ func TestStore(t *testing.T) {
 			priceVarejo:   1.0,
 			priceAtacado:  0,
 			atacadoAmount: 10,
-			expectedErr:   "PriceAtacado é obrigatorio",
+			expectedErr:   "preço atacado: precisa ser maior do que 0",
 		},
 		{
 			about:         "when atacadoAmount is invalid",
@@ -93,7 +93,7 @@ func TestStore(t *testing.T) {
 			priceVarejo:   1.0,
 			priceAtacado:  0.75,
 			atacadoAmount: 0,
-			expectedErr:   "A quantidade mínima de AtacadoAmount é 1",
+			expectedErr:   "quantidade atacado: precisa ser maior do que 0",
 		},
 	}
 
@@ -286,7 +286,7 @@ func TestServiceUpdate(t *testing.T) {
 		err := sut.Update(context.Background(), &p)
 
 		// Assert
-		assert.EqualError(t, err, "Name é obrigatorio")
+		assert.EqualError(t, err, "nome: campo obrigatório")
 	})
 }
 
