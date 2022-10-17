@@ -14,20 +14,20 @@ import (
 	"gorm.io/gorm"
 )
 
-type PopsicleTestSuite struct {
+type UsersTestSuite struct {
 	suite.Suite
 	ctx       context.Context //nolint:containedctx
 	container *PostgresContainer
 	db        *gorm.DB
 }
 
-func TestPopsicleTestSuit(t *testing.T) {
+func TestUsersTestSuit(t *testing.T) {
 	t.Parallel()
 
-	suite.Run(t, new(PopsicleTestSuite))
+	suite.Run(t, new(UsersTestSuite))
 }
 
-func (suite *PopsicleTestSuite) SetupTest() {
+func (suite *UsersTestSuite) SetupTest() {
 	var err error
 
 	suite.ctx = context.Background()
@@ -47,14 +47,14 @@ func (suite *PopsicleTestSuite) SetupTest() {
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *PopsicleTestSuite) TeardownTest() {
+func (suite *UsersTestSuite) TeardownTest() {
 	_ = suite.container.Terminate(suite.ctx)
 }
 
-func (suite *PopsicleTestSuite) TestCRUD() {
+func (suite *UsersTestSuite) TestCRUD() {
 	repo := repository.NewUserPostgres(suite.db)
 
-	storedUser, _ := entity.NewUser("Fake LastName", "fakeuser@email.com", "fakehash:123", entity.ReadWritePopsicles, entity.ReadWriteSales)
+	storedUser, _ := entity.NewUser("Fake LastName", "fakeuser@email.com", "fakehash:123", entity.ReadWriteProducts, entity.ReadWriteSales)
 
 	suite.T().Run("test create a new user", func(t *testing.T) {
 		err := repo.Create(suite.ctx, storedUser)

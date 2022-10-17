@@ -29,7 +29,7 @@ func TestCreateUser(t *testing.T) {
 		// Arrange
 		currentUser, err := entity.NewUser(
 			"current user", "current.user@email.com", "passwd",
-			entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers)
+			entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers)
 		assert.NoError(t, err)
 
 		payload := dto.CreateUserPayload{
@@ -37,7 +37,7 @@ func TestCreateUser(t *testing.T) {
 			Email:    "user@email.com",
 			Password: "secret123",
 			Permissions: []entity.Permission{
-				entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers,
+				entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers,
 			},
 		}
 
@@ -47,7 +47,7 @@ func TestCreateUser(t *testing.T) {
 		svc := mocks.NewUseCase(t)
 		svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
 		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password,
-			entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers).
+			entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers).
 			Return(storedUser, nil).Once()
 
 		app := fiber.New()
@@ -112,7 +112,7 @@ func TestCreateUser(t *testing.T) {
 				// Arrange
 				currentUser, err := entity.NewUser(
 					"current user", "current.user@email.com", "passwd",
-					entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers)
+					entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers)
 				assert.NoError(t, err)
 
 				svc := mocks.NewUseCase(t)

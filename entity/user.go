@@ -15,7 +15,7 @@ type User struct {
 	Name         string       `json:"name" validate:"required"`
 	Email        string       `json:"email" validate:"email"`
 	PasswordHash string       `json:"-"`
-	Permissions  []Permission `json:"roles"`
+	Permissions  []Permission `json:"permissions"`
 }
 
 func NewUser(name, email, password string, permissions ...Permission) (User, error) {

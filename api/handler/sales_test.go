@@ -30,7 +30,7 @@ func TestRegisterSale(t *testing.T) {
 		payload := dto.RegisterSalePayload{
 			Description: "sale description",
 			PaymentType: entity.CashPayment,
-			Items:       []entity.CartItem{{PopsicleID: uuid.New(), Amount: 30}},
+			Items:       []entity.CartItem{{ItemID: uuid.New(), Amount: 30}},
 		}
 
 		createdSale := entity.Sale{

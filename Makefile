@@ -42,14 +42,14 @@ compose:  ## Init containers with dev dependencies
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
 generate-mocks: clean-mocks  ## Generate mock files
-	@mockery --dir usecase/popsicle --output usecase/popsicle/mocks --all
+	@mockery --dir usecase/products --output usecase/products/mocks --all
 	@mockery --dir usecase/sales --output usecase/sales/mocks --all
 	@mockery --dir usecase/user --output usecase/user/mocks --all
 	@mockery --dir auth --output auth/mocks --all
 	@mockery --dir cache --output cache/mocks --all
 
 clean-mocks:  ## Clean mock files
-	@rm -rf usecase/popsicle/mocks/*
+	@rm -rf usecase/products/mocks/*
 	@rm -rf usecase/sales/mocks/*
 	@rm -rf usecase/user/mocks/*
 	@rm -rf auth/mocks/*

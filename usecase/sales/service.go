@@ -2,24 +2,23 @@ package sales
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/popsicle"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/products"
 )
 
 type Service struct {
-	popsicles popsicle.Reader
-	repo      Repository
+	products products.Reader
+	repo     Repository
 }
 
-func NewService(popsicleR popsicle.Reader, r Repository) *Service {
+func NewService(productsR products.Reader, r Repository) *Service {
 	return &Service{
-		popsicles: popsicleR,
-		repo:      r,
+		products: productsR,
+		repo:     r,
 	}
 }
 
@@ -31,15 +30,16 @@ func (s *Service) RegisterSale(
 	items := make([]entity.SaleItem, len(cart.Items))
 
 	for i, item := range cart.Items {
-		p, err := s.popsicles.Get(ctx, item.PopsicleID)
+		p, err := s.products.Get(ctx, item.ItemID)
 		if err != nil {
 			return entity.Sale{}, err
 		}
 
-		total += (p.Price * float64(item.Amount))
+		unitPrice := p.GetUnitPrice(item.Amount)
+		total += (unitPrice * float64(item.Amount))
 		items[i] = entity.SaleItem{
-			Name:      fmt.Sprintf("Picole de %s", p.Flavor),
-			UnitPrice: p.Price,
+			Name:      p.Name,
+			UnitPrice: unitPrice,
 			Amount:    item.Amount,
 		}
 	}

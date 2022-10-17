@@ -8,8 +8,8 @@ const (
 	ReadWriteSales Permission = "sales:read,write"
 	ReadSales      Permission = "sales:read"
 
-	ReadWritePopsicles Permission = "popsicles:read,write"
-	ReadPopsicles      Permission = "popsicles:read"
+	ReadWriteProducts Permission = "products:read,write"
+	ReadProducts      Permission = "products:read"
 
 	ReadUsers       Permission = "users:read"
 	ReadWriteUsers  Permission = "users:read,write"
@@ -44,7 +44,7 @@ func (p Permission) getDomainActions() (string, []string) {
 
 func DefaultPermissions() []Permission {
 	return []Permission{
-		ReadPopsicles,
+		ReadProducts,
 		ReadSales,
 		ReadUsers,
 	}

@@ -42,6 +42,7 @@ test        Run tests all tests
 test/unit   Run unit tests
 test/integration  Run integration tests
 coverage    Run tests, make coverage report and display it into browser
+clean       Remove Cache files
 ```
 
 ## Rodando a aplicação 🎲
@@ -111,9 +112,3 @@ TODO
 ## Deploy
 
 TODO
-
-## TODO's
-
-- [ ] Implementar o lançamento de despesas
-- [ ] Adicionar o banco de dados e cache ao endpoint de health check
-- [ ] Implementar o serviço de monitoramento
