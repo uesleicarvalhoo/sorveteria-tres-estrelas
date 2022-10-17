@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity/validator"
 )
 
 type SaleItem struct {
@@ -15,8 +16,35 @@ type SaleItem struct {
 type Sale struct {
 	ID          uuid.UUID   `json:"id"`
 	PaymentType PaymentType `json:"payment_type"`
-	Items       []SaleItem  `json:"items" validate:"required,min=1"`
+	Items       []SaleItem  `json:"items"`
 	Total       float64     `json:"total"`
 	Description string      `json:"description"`
 	Date        time.Time   `json:"date"`
+}
+
+func NewSale(payment PaymentType, description string, total float64, items []SaleItem) (Sale, error) {
+	s := Sale{
+		ID:          uuid.New(),
+		PaymentType: payment,
+		Total:       total,
+		Description: description,
+		Date:        time.Now(),
+		Items:       items,
+	}
+
+	if err := s.Validate(); err != nil {
+		return Sale{}, err
+	}
+
+	return s, nil
+}
+
+func (s Sale) Validate() error {
+	v := validator.New()
+
+	if len(s.Items) == 0 {
+		v.AddError("items", "a quantidade mínima de items é 1")
+	}
+
+	return v.Validate()
 }

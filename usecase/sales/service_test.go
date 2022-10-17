@@ -78,7 +78,7 @@ func TestNewSale(t *testing.T) {
 			cart:        entity.Cart{Items: []entity.CartItem{}},
 			payment:     entity.AnotherPayments,
 			description: "i'm a sale description",
-			expectedErr: "A quantidade mínima de Items é 1",
+			expectedErr: "items: a quantidade mínima de items é 1",
 		},
 		{
 			about:       "when product don't exist",

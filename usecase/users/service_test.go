@@ -67,21 +67,21 @@ func TestCreate(t *testing.T) {
 			name:          "",
 			email:         "ueslei.carvalho@email.com",
 			password:      "mySecretPassword!",
-			expectedError: "Name é obrigatorio",
+			expectedError: "nome: campo obrigatório",
 		},
 		{
 			about:         "when email is empty",
 			name:          "Ueslei Carvalho",
 			email:         "",
 			password:      "mySecretPassword!",
-			expectedError: "'' não é um email valido",
+			expectedError: "email: campo invalido",
 		},
 		{
 			about:         "when email is invalid",
 			name:          "Ueslei Carvalho",
 			email:         "wrongemail",
 			password:      "mySecretPassword!",
-			expectedError: "'wrongemail' não é um email valido",
+			expectedError: "email: campo invalido",
 		},
 	}
 

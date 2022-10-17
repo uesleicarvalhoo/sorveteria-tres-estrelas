@@ -4,9 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/products"
 )
 
@@ -44,15 +42,8 @@ func (s *Service) RegisterSale(
 		}
 	}
 
-	sale := entity.Sale{
-		ID:          uuid.New(),
-		Total:       total,
-		Items:       items,
-		Description: desc,
-		Date:        time.Now(),
-	}
-
-	if err := validator.Validate(sale); err != nil {
+	sale, err := entity.NewSale(payment, desc, total, items)
+	if err != nil {
 		return entity.Sale{}, err
 	}
 
