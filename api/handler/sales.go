@@ -14,16 +14,17 @@ func MakeSalesRoutes(r fiber.Router, svc sales.UseCase) {
 	r.Post("/", registerSale(svc))
 }
 
-// @Summary		List Sales
-// @Description	Get all sales
-// @Tags		Sales
-// @Produce		json
-// @Param		start	query	time.Time	false	"the start date of period to search sales"
-// @Param		end		query	time.Time	false	"the end date of period to search sales"
+// @Summary      List sales
+// @Description  get sales
+// @Tags         Sales
+// @Accept       json
+// @Produce      json
+// @Param        startAt    query   string  false  "name search by q"  Format(dateTime)
+// @Param        endAt    query     string  false  "name search by q"  Format(dateTime)
 // @Success		200	{object} []entity.Sale
 // @Failure		422	{object} dto.MessageJSON "when start or end param is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
-// @Router		/sales [get].
+// @Router		/sales [get]
 func salesIndex(svc sales.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var payload dto.GetSalesByPeriodQuery
@@ -58,7 +59,7 @@ func salesIndex(svc sales.UseCase) fiber.Handler {
 // @Success		200	{object} []entity.Sale
 // @Failure		422	{object} dto.MessageJSON "when payload is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
-// @Router		/sales [post].
+// @Router		/sales [post]
 func registerSale(svc sales.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var payload dto.RegisterSalePayload
