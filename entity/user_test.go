@@ -39,7 +39,7 @@ func TestNewUser(t *testing.T) {
 		name := "Ueslei Carvalho"
 		email := "uesleicdoliveira@gmail.com"
 		passwd := "secret123"
-		permissions := []entity.Permission{entity.ReadWritePopsicles, entity.ReadWriteSales, entity.ReadWriteUsers}
+		permissions := []entity.Permission{entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers}
 
 		// Action
 		user, err := entity.NewUser(name, email, passwd, permissions...)
@@ -124,15 +124,15 @@ func TestUserCheckPermissions(t *testing.T) {
 	}{
 		{
 			about:          "when user has permissions to make action on domain",
-			permissions:    []entity.Permission{entity.ReadWritePopsicles},
-			domain:         "popsicles",
+			permissions:    []entity.Permission{entity.ReadWriteProducts},
+			domain:         "products",
 			action:         "write",
 			expectedResult: true,
 		},
 		{
 			about:          "when user not have permission to make action on domain",
-			permissions:    []entity.Permission{entity.ReadPopsicles},
-			domain:         "popsicles",
+			permissions:    []entity.Permission{entity.ReadProducts},
+			domain:         "products",
 			action:         "write",
 			expectedResult: false,
 		},

@@ -31,15 +31,15 @@ func TestPermission(t *testing.T) {
 			actions:    []string{"read"},
 		},
 		{
-			about:      "popsicles read write",
-			permission: entity.ReadWritePopsicles,
-			domain:     "popsicles",
+			about:      "products read write",
+			permission: entity.ReadWriteProducts,
+			domain:     "products",
 			actions:    []string{"read", "write"},
 		},
 		{
-			about:      "popsicles read",
-			permission: entity.ReadPopsicles,
-			domain:     "popsicles",
+			about:      "products read",
+			permission: entity.ReadProducts,
+			domain:     "products",
 			actions:    []string{"read"},
 		},
 		{

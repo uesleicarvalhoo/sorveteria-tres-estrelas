@@ -10,11 +10,15 @@ definitions:
       refresh_token:
         type: string
     type: object
-  dto.CreatePopsiclePayload:
+  dto.CreateProductPayload:
     properties:
-      flavor:
+      atacado_amount:
+        type: integer
+      name:
         type: string
-      price:
+      price_atacado:
+        type: number
+      price_varejo:
         type: number
     type: object
   dto.CreateUserPayload:
@@ -65,18 +69,23 @@ definitions:
       id:
         type: string
     type: object
-  entity.Popsicle:
+  entity.Product:
     properties:
-      flavor:
-        minLength: 4
-        type: string
+      atacado_min_amount:
+        minimum: 1
+        type: integer
       id:
         type: string
-      price:
+      name:
+        type: string
+      price_atacado:
+        type: number
+      price_varejo:
         type: number
     required:
-    - flavor
-    - price
+    - name
+    - price_atacado
+    - price_varejo
     type: object
   entity.Sale:
     properties:
@@ -115,7 +124,7 @@ definitions:
         type: string
       name:
         type: string
-      roles:
+      permissions:
         items:
           type: string
         type: array
@@ -208,9 +217,9 @@ paths:
       summary: Health Cehck
       tags:
       - Health check
-  /popsicles/:
+  /products/:
     get:
-      description: Get all popsicles data
+      description: Get all products data
       produces:
       - application/json
       responses:
@@ -218,33 +227,33 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Popsicle'
+              $ref: '#/definitions/entity.Product'
             type: array
         "500":
           description: when an error occurs
           schema:
             $ref: '#/definitions/dto.MessageJSON'
-      summary: Get all popsicles
+      summary: Get all products
       tags:
-      - Popsicle
+      - Product
     post:
       consumes:
       - application/json
-      description: create a new popsicle and return data
+      description: create a new product and return data
       parameters:
-      - description: the popsicle data
+      - description: the product data
         in: body
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/dto.CreatePopsiclePayload'
+          $ref: '#/definitions/dto.CreateProductPayload'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Popsicle'
+            $ref: '#/definitions/entity.Product'
         "422":
           description: when data is invalid
           schema:
@@ -253,14 +262,14 @@ paths:
           description: when an error occurs
           schema:
             $ref: '#/definitions/dto.MessageJSON'
-      summary: Create a New Popsicle
+      summary: Create a New Product
       tags:
-      - Popsicle
-  /popsicles/{id}:
+      - Product
+  /products/{id}:
     delete:
-      description: Delete popsicle
+      description: Delete product
       parameters:
-      - description: the id of popsicle
+      - description: the id of product
         in: path
         name: id
         required: true
@@ -274,13 +283,13 @@ paths:
           description: when an error occurs
           schema:
             $ref: '#/definitions/dto.MessageJSON'
-      summary: Delete Popsicle by ID
+      summary: Delete Product by ID
       tags:
-      - Popsicle
+      - Product
     get:
-      description: Get popsicle Data
+      description: Get product Data
       parameters:
-      - description: the id of popsicle
+      - description: the id of product
         in: path
         name: id
         required: true
@@ -291,7 +300,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Popsicle'
+            $ref: '#/definitions/entity.Product'
         "422":
           description: when id is invalid
           schema:
@@ -300,9 +309,9 @@ paths:
           description: when an error occurs
           schema:
             $ref: '#/definitions/dto.MessageJSON'
-      summary: Get Popsicle by ID
+      summary: Get Product by ID
       tags:
-      - Popsicle
+      - Product
   /sales:
     get:
       description: Get all sales

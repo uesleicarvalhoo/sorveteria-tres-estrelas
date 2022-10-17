@@ -220,7 +220,7 @@ func TestAuthorize(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWritePopsicles, entity.ReadWriteSales)
+		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWriteProducts, entity.ReadWriteSales)
 
 		token, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
@@ -236,7 +236,7 @@ func TestAuthorize(t *testing.T) {
 		sut := auth.NewService(secretKey, mockUserSvc, mockCache)
 
 		// Action
-		sub, err := sut.Authorize(context.Background(), token, "popsicles", "write")
+		sub, err := sut.Authorize(context.Background(), token, "products", "write")
 
 		// Assert
 		assert.NoError(t, err)
@@ -246,7 +246,7 @@ func TestAuthorize(t *testing.T) {
 	t.Run("check errors", func(t *testing.T) {
 		t.Parallel()
 
-		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWritePopsicles, entity.ReadSales)
+		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWriteProducts, entity.ReadSales)
 
 		validToken, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)

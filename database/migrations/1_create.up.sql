@@ -1,9 +1,11 @@
--- popsicle
-CREATE TABLE popsicles (
+-- products
+CREATE TABLE products (
 	"id" uuid NOT NULL,
-	"flavor" varchar UNIQUE NULL,
-	"price" numeric NULL,
-	CONSTRAINT popsicles_pkey PRIMARY KEY (id)
+	"name" varchar NULL,
+	"price_varejo" numeric NULL,
+	"price_atacado" numeric NULL,
+	"atacado_amount" int8 NULL,
+	CONSTRAINT products_pkey PRIMARY KEY (id)
 );
 
 -- sales

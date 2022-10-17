@@ -137,23 +137,23 @@ const docTemplate = `{
                 }
             }
         },
-        "/popsicles/": {
+        "/products/": {
             "get": {
-                "description": "Get all popsicles data",
+                "description": "Get all products data",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Popsicle"
+                    "Product"
                 ],
-                "summary": "Get all popsicles",
+                "summary": "Get all products",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entity.Popsicle"
+                                "$ref": "#/definitions/entity.Product"
                             }
                         }
                     },
@@ -166,7 +166,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "create a new popsicle and return data",
+                "description": "create a new product and return data",
                 "consumes": [
                     "application/json"
                 ],
@@ -174,17 +174,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Popsicle"
+                    "Product"
                 ],
-                "summary": "Create a New Popsicle",
+                "summary": "Create a New Product",
                 "parameters": [
                     {
-                        "description": "the popsicle data",
+                        "description": "the product data",
                         "name": "payload",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreatePopsiclePayload"
+                            "$ref": "#/definitions/dto.CreateProductPayload"
                         }
                     }
                 ],
@@ -192,7 +192,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Popsicle"
+                            "$ref": "#/definitions/entity.Product"
                         }
                     },
                     "422": {
@@ -210,20 +210,20 @@ const docTemplate = `{
                 }
             }
         },
-        "/popsicles/{id}": {
+        "/products/{id}": {
             "get": {
-                "description": "Get popsicle Data",
+                "description": "Get product Data",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Popsicle"
+                    "Product"
                 ],
-                "summary": "Get Popsicle by ID",
+                "summary": "Get Product by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "the id of popsicle",
+                        "description": "the id of product",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -233,7 +233,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Popsicle"
+                            "$ref": "#/definitions/entity.Product"
                         }
                     },
                     "422": {
@@ -251,18 +251,18 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete popsicle",
+                "description": "Delete product",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Popsicle"
+                    "Product"
                 ],
-                "summary": "Delete Popsicle by ID",
+                "summary": "Delete Product by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "the id of popsicle",
+                        "description": "the id of product",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -454,13 +454,19 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreatePopsiclePayload": {
+        "dto.CreateProductPayload": {
             "type": "object",
             "properties": {
-                "flavor": {
+                "atacado_amount": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
                 },
-                "price": {
+                "price_atacado": {
+                    "type": "number"
+                },
+                "price_varejo": {
                     "type": "number"
                 }
             }
@@ -540,21 +546,28 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.Popsicle": {
+        "entity.Product": {
             "type": "object",
             "required": [
-                "flavor",
-                "price"
+                "name",
+                "price_atacado",
+                "price_varejo"
             ],
             "properties": {
-                "flavor": {
-                    "type": "string",
-                    "minLength": 4
+                "atacado_min_amount": {
+                    "type": "integer",
+                    "minimum": 1
                 },
                 "id": {
                     "type": "string"
                 },
-                "price": {
+                "name": {
+                    "type": "string"
+                },
+                "price_atacado": {
+                    "type": "number"
+                },
+                "price_varejo": {
                     "type": "number"
                 }
             }
@@ -618,7 +631,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "roles": {
+                "permissions": {
                     "type": "array",
                     "items": {
                         "type": "string"

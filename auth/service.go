@@ -26,7 +26,7 @@ func getCacheTokenKey(prefix string, id uuid.UUID) string {
 }
 
 func GetDefaultUserPermissions() []entity.Permission {
-	return []entity.Permission{entity.ReadWritePopsicles, entity.ReadWriteSales}
+	return []entity.Permission{entity.ReadWriteProducts, entity.ReadWriteSales}
 }
 
 type Service struct {
