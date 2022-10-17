@@ -7,10 +7,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
 )
 
-func MakeUserRoutes(r fiber.Router, userSvc user.UseCase) {
+func MakeUserRoutes(r fiber.Router, userSvc users.UseCase) {
 	r.Get("/me", getMe(userSvc))
 	r.Post("/", createUser(userSvc))
 }
@@ -18,11 +18,12 @@ func MakeUserRoutes(r fiber.Router, userSvc user.UseCase) {
 // @Summary		Get Me
 // @Description	Get current user data
 // @Tags		User
-// @Produce		json
+// @Accept      json
+// @Produce     json
 // @Success		200	{object} entity.User
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
-// @Router		/users/me [get].
-func getMe(svc user.UseCase) fiber.Handler {
+// @Router		/users/me [get]
+func getMe(svc users.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctxID := c.Locals("userID")
 
@@ -49,8 +50,8 @@ func getMe(svc user.UseCase) fiber.Handler {
 // @Success		201	{object} entity.User
 // @Failure		422	{object} dto.MessageJSON "when payload is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
-// @Router		/users [post].
-func createUser(svc user.UseCase) fiber.Handler {
+// @Router		/users [post]
+func createUser(svc users.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var payload dto.CreateUserPayload
 

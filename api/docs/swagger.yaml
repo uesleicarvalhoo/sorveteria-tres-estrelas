@@ -138,6 +138,46 @@ info:
   title: Sorveteria três estrelas - API
   version: "1.0"
 paths:
+  /accounts:
+    get:
+      consumes:
+      - application/json
+      description: get accounts
+      parameters:
+      - description: name search by q
+        format: email
+        in: query
+        name: startAt
+        type: string
+      - description: name search by q
+        format: email
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List accounts
+      tags:
+      - accounts
   /auth/login:
     post:
       consumes:
@@ -314,7 +354,20 @@ paths:
       - Product
   /sales:
     get:
-      description: Get all sales
+      consumes:
+      - application/json
+      description: get sales
+      parameters:
+      - description: name search by q
+        format: date
+        in: query
+        name: startAt
+        type: string
+      - description: name search by q
+        format: date
+        in: query
+        name: endAt
+        type: string
       produces:
       - application/json
       responses:
@@ -332,7 +385,7 @@ paths:
           description: when an error occurs
           schema:
             $ref: '#/definitions/dto.MessageJSON'
-      summary: List Sales
+      summary: List sales
       tags:
       - Sales
     post:

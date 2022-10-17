@@ -17,7 +17,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users/mocks"
 )
 
 func TestCreateUser(t *testing.T) {

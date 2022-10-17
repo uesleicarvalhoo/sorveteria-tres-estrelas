@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
 )
 
 const (
@@ -32,10 +32,10 @@ func GetDefaultUserPermissions() []entity.Permission {
 type Service struct {
 	secret string
 	cache  cache.Cache
-	userUc user.UseCase
+	userUc users.UseCase
 }
 
-func NewService(secret string, userUc user.UseCase, cache cache.Cache) *Service {
+func NewService(secret string, userUc users.UseCase, cache cache.Cache) *Service {
 	return &Service{
 		secret: secret,
 		userUc: userUc,

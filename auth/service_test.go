@@ -15,8 +15,8 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	cacheMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache/mocks"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
-	userMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
+	usersMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users/mocks"
 )
 
 const secretKey = "my-super-secret-key"
@@ -31,7 +31,7 @@ func TestLogin(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		repo := userMocks.NewRepository(t)
+		repo := usersMock.NewRepository(t)
 		repo.On("GetByEmail", mock.Anything, storedUser.Email).Return(storedUser, nil).Once()
 
 		accessKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
@@ -43,7 +43,7 @@ func TestLogin(t *testing.T) {
 
 		startAt := time.Now()
 
-		userUc := user.NewService(repo)
+		userUc := users.NewService(repo)
 
 		sut := auth.NewService(secretKey, userUc, mockCache)
 
@@ -103,7 +103,7 @@ func TestLogin(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
-				repo := userMocks.NewRepository(t)
+				repo := usersMock.NewRepository(t)
 				repo.On("GetByEmail", mock.Anything, tc.email).Return(tc.repositoryUser, tc.repositoryError).Once()
 
 				accessKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
@@ -115,7 +115,7 @@ func TestLogin(t *testing.T) {
 				mockCache.On("Set", mock.Anything, refreshKey, mock.Anything, auth.RefreshTokenDuration).
 					Return(tc.cacheError).Maybe()
 
-				sut := auth.NewService(secretKey, user.NewService(repo), mockCache)
+				sut := auth.NewService(secretKey, users.NewService(repo), mockCache)
 
 				// Action
 				token, err := sut.Login(context.Background(), tc.email, tc.password)
@@ -148,7 +148,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache.On("Set", mock.Anything, refreshKey, mock.Anything, auth.RefreshTokenDuration).Return(nil).Once()
 		mockCache.On("Get", mock.Anything, refreshKey).Return(token, nil).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
+		sut := auth.NewService(secretKey, users.NewService(usersMock.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -175,7 +175,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache := cacheMocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("wrong-token", nil).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
+		sut := auth.NewService(secretKey, users.NewService(usersMock.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -201,7 +201,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache := cacheMocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("", mockError).Once()
 
-		sut := auth.NewService(secretKey, user.NewService(userMocks.NewRepository(t)), mockCache)
+		sut := auth.NewService(secretKey, users.NewService(usersMock.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -230,7 +230,7 @@ func TestAuthorize(t *testing.T) {
 		mockCache := cacheMocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, accessTokenKey).Return(token, nil).Once()
 
-		mockUserSvc := userMocks.NewUseCase(t)
+		mockUserSvc := usersMock.NewUseCase(t)
 		mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, nil)
 
 		sut := auth.NewService(secretKey, mockUserSvc, mockCache)
@@ -300,7 +300,7 @@ func TestAuthorize(t *testing.T) {
 				mockCache := cacheMocks.NewCache(t)
 				mockCache.On("Get", mock.Anything, accessTokenKey).Return(tc.mockCacheReturn, tc.mockCacheError).Once()
 
-				mockUserSvc := userMocks.NewUseCase(t)
+				mockUserSvc := usersMock.NewUseCase(t)
 				mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, err).Maybe()
 
 				sut := auth.NewService(secretKey, mockUserSvc, mockCache)

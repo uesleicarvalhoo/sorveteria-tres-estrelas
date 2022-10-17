@@ -6,13 +6,13 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database/repository"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/products"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/sales"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
 	"gorm.io/gorm"
 )
 
 type Services struct {
 	auth     auth.UseCase
-	users    user.UseCase
+	users    users.UseCase
 	sales    sales.UseCase
 	products products.UseCase
 }
@@ -22,7 +22,7 @@ func createServices(db *gorm.DB, cache cache.Cache, secretKey string) *Services 
 	salesRepo := repository.NewSalesPostgres(db)
 	userRepo := repository.NewUserPostgres(db)
 
-	userSvc := user.NewService(userRepo)
+	userSvc := users.NewService(userRepo)
 
 	return &Services{
 		users:    userSvc,

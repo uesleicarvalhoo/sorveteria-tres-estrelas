@@ -19,7 +19,8 @@ func MakeProductsRoutes(r fiber.Router, svc products.UseCase) {
 // @Summary		Get Product by ID
 // @Description	Get product Data
 // @Tags		Product
-// @Produce		json
+// @Accept      json
+// @Produce     json
 // @Param		id	path	string	true	"the id of product"
 // @Success		200	{object} entity.Product
 // @Failure		422	{object} dto.MessageJSON "when id is invalid"
@@ -44,7 +45,8 @@ func getProductByID(svc products.UseCase) fiber.Handler {
 // @Summary		Get all products
 // @Description	Get all products data
 // @Tags		Product
-// @Produce		json
+// @Accept      json
+// @Produce     json
 // @Success		200	{object} []entity.Product
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/products/ [get].
@@ -89,7 +91,8 @@ func createProduct(svc products.UseCase) fiber.Handler {
 // @Summary		Delete Product by ID
 // @Description	Delete product
 // @Tags		Product
-// @Produce		json
+// @Accept      json
+// @Produce     json
 // @Param		id			path		string				true	"the id of product"
 // @Success		202
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"

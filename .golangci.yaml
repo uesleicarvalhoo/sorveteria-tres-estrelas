@@ -28,6 +28,7 @@ linters:
     - varnamelen
     - goerr113
     - contextcheck
+    - godot
 
 linters-settings:
   tagliatelle:

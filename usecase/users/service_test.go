@@ -1,6 +1,6 @@
 //go:build unit || all
 
-package user_test
+package users_test
 
 import (
 	"context"
@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/user/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users/mocks"
 )
 
 func TestCreate(t *testing.T) {
@@ -25,7 +25,7 @@ func TestCreate(t *testing.T) {
 		repo := mocks.NewRepository(t)
 		repo.On("Create", mock.Anything, mock.Anything).Return(nil).Once()
 
-		sut := user.NewService(repo)
+		sut := users.NewService(repo)
 
 		name := "Ueslei Carvalho"
 		email := "ueslei.carvalho@email.com"
@@ -95,7 +95,7 @@ func TestCreate(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("Create", mock.Anything, mock.Anything).Return(tc.repoError).Maybe()
 
-			sut := user.NewService(repo)
+			sut := users.NewService(repo)
 			// Action
 			u, err := sut.Create(context.Background(), tc.name, tc.email, tc.password, tc.permissions...)
 
@@ -141,7 +141,7 @@ func TestGet(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("Get", mock.Anything, storedUser.ID).Return(storedUser, tc.mockError).Once()
 
-			sut := user.NewService(repo)
+			sut := users.NewService(repo)
 
 			// Action
 			found, err := sut.Get(context.Background(), tc.id)
@@ -189,7 +189,7 @@ func TestGetByEmail(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("GetByEmail", mock.Anything, storedUser.Email).Return(storedUser, tc.mockError).Once()
 
-			sut := user.NewService(repo)
+			sut := users.NewService(repo)
 
 			// Action
 			found, err := sut.GetByEmail(context.Background(), tc.email)
