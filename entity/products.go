@@ -12,7 +12,7 @@ type Product struct {
 	Name          string    `json:"name" validate:"required"`
 	PriceVarejo   float64   `json:"price_varejo" validate:"required"`
 	PriceAtacado  float64   `json:"price_atacado" validate:"required"`
-	AtacadoAmount int       `json:"atacado_min_amount" validate:"min=1"`
+	AtacadoAmount int       `json:"atacado_amount" validate:"min=1"`
 }
 
 func NewProduct(name string, priceVarejo, priceAtacado float64, atacadoAmount int) (Product, error) {
