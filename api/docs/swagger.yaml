@@ -57,21 +57,14 @@ definitions:
         type: string
       items:
         items:
-          $ref: '#/definitions/entity.CartItem'
+          $ref: '#/definitions/sales.CartItem'
         type: array
       payment_type:
         type: string
     type: object
-  entity.CartItem:
+  products.Product:
     properties:
-      amount:
-        type: integer
-      id:
-        type: string
-    type: object
-  entity.Product:
-    properties:
-      atacado_min_amount:
+      atacado_amount:
         minimum: 1
         type: integer
       id:
@@ -87,7 +80,23 @@ definitions:
     - price_atacado
     - price_varejo
     type: object
-  entity.Sale:
+  sales.CartItem:
+    properties:
+      amount:
+        type: integer
+      item_id:
+        type: string
+    type: object
+  sales.Item:
+    properties:
+      amount:
+        type: integer
+      name:
+        type: string
+      unit_price:
+        type: number
+    type: object
+  sales.Sale:
     properties:
       date:
         type: string
@@ -97,26 +106,14 @@ definitions:
         type: string
       items:
         items:
-          $ref: '#/definitions/entity.SaleItem'
-        minItems: 1
+          $ref: '#/definitions/sales.Item'
         type: array
       payment_type:
         type: string
       total:
         type: number
-    required:
-    - items
     type: object
-  entity.SaleItem:
-    properties:
-      amount:
-        type: integer
-      name:
-        type: string
-      unit_price:
-        type: number
-    type: object
-  entity.User:
+  users.User:
     properties:
       email:
         type: string
@@ -128,8 +125,6 @@ definitions:
         items:
           type: string
         type: array
-    required:
-    - name
     type: object
 info:
   contact: {}
@@ -138,46 +133,6 @@ info:
   title: Sorveteria três estrelas - API
   version: "1.0"
 paths:
-  /accounts:
-    get:
-      consumes:
-      - application/json
-      description: get accounts
-      parameters:
-      - description: name search by q
-        format: email
-        in: query
-        name: startAt
-        type: string
-      - description: name search by q
-        format: email
-        in: query
-        name: q
-        type: string
-      produces:
-      - application/json
-      responses:
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: List accounts
-      tags:
-      - accounts
   /auth/login:
     post:
       consumes:
@@ -259,6 +214,8 @@ paths:
       - Health check
   /products/:
     get:
+      consumes:
+      - application/json
       description: Get all products data
       produces:
       - application/json
@@ -267,7 +224,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Product'
+              $ref: '#/definitions/products.Product'
             type: array
         "500":
           description: when an error occurs
@@ -293,7 +250,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Product'
+            $ref: '#/definitions/products.Product'
         "422":
           description: when data is invalid
           schema:
@@ -307,6 +264,8 @@ paths:
       - Product
   /products/{id}:
     delete:
+      consumes:
+      - application/json
       description: Delete product
       parameters:
       - description: the id of product
@@ -327,6 +286,8 @@ paths:
       tags:
       - Product
     get:
+      consumes:
+      - application/json
       description: Get product Data
       parameters:
       - description: the id of product
@@ -340,7 +301,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Product'
+            $ref: '#/definitions/products.Product'
         "422":
           description: when id is invalid
           schema:
@@ -359,12 +320,12 @@ paths:
       description: get sales
       parameters:
       - description: name search by q
-        format: date
+        format: dateTime
         in: query
         name: startAt
         type: string
       - description: name search by q
-        format: date
+        format: dateTime
         in: query
         name: endAt
         type: string
@@ -375,7 +336,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Sale'
+              $ref: '#/definitions/sales.Sale'
             type: array
         "422":
           description: when start or end param is invalid
@@ -406,7 +367,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Sale'
+              $ref: '#/definitions/sales.Sale'
             type: array
         "422":
           description: when payload is invalid
@@ -437,7 +398,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.User'
+            $ref: '#/definitions/users.User'
         "422":
           description: when payload is invalid
           schema:
@@ -451,6 +412,8 @@ paths:
       - User
   /users/me:
     get:
+      consumes:
+      - application/json
       description: Get current user data
       produces:
       - application/json
@@ -458,7 +421,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.User'
+            $ref: '#/definitions/users.User'
         "500":
           description: when an error occurs
           schema:

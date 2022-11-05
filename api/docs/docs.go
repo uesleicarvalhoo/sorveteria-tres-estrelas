@@ -16,66 +16,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/accounts": {
-            "get": {
-                "description": "get accounts",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "accounts"
-                ],
-                "summary": "List accounts",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "email",
-                        "description": "name search by q",
-                        "name": "startAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "format": "email",
-                        "description": "name search by q",
-                        "name": "q",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/auth/login": {
             "post": {
                 "description": "Make login and get access-token",
@@ -200,6 +140,9 @@ const docTemplate = `{
         "/products/": {
             "get": {
                 "description": "Get all products data",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -213,7 +156,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entity.Product"
+                                "$ref": "#/definitions/products.Product"
                             }
                         }
                     },
@@ -252,7 +195,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Product"
+                            "$ref": "#/definitions/products.Product"
                         }
                     },
                     "422": {
@@ -273,6 +216,9 @@ const docTemplate = `{
         "/products/{id}": {
             "get": {
                 "description": "Get product Data",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -293,7 +239,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Product"
+                            "$ref": "#/definitions/products.Product"
                         }
                     },
                     "422": {
@@ -312,6 +258,9 @@ const docTemplate = `{
             },
             "delete": {
                 "description": "Delete product",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -357,14 +306,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "format": "date",
+                        "format": "dateTime",
                         "description": "name search by q",
                         "name": "startAt",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "format": "date",
+                        "format": "dateTime",
                         "description": "name search by q",
                         "name": "endAt",
                         "in": "query"
@@ -376,7 +325,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entity.Sale"
+                                "$ref": "#/definitions/sales.Sale"
                             }
                         }
                     },
@@ -423,7 +372,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entity.Sale"
+                                "$ref": "#/definitions/sales.Sale"
                             }
                         }
                     },
@@ -470,7 +419,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "$ref": "#/definitions/users.User"
                         }
                     },
                     "422": {
@@ -491,6 +440,9 @@ const docTemplate = `{
         "/users/me": {
             "get": {
                 "description": "Get current user data",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -502,7 +454,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "$ref": "#/definitions/users.User"
                         }
                     },
                     "500": {
@@ -606,7 +558,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.CartItem"
+                        "$ref": "#/definitions/sales.CartItem"
                     }
                 },
                 "payment_type": {
@@ -614,18 +566,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.CartItem": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.Product": {
+        "products.Product": {
             "type": "object",
             "required": [
                 "name",
@@ -633,7 +574,7 @@ const docTemplate = `{
                 "price_varejo"
             ],
             "properties": {
-                "atacado_min_amount": {
+                "atacado_amount": {
                     "type": "integer",
                     "minimum": 1
                 },
@@ -651,37 +592,18 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.Sale": {
+        "sales.CartItem": {
             "type": "object",
-            "required": [
-                "items"
-            ],
             "properties": {
-                "date": {
+                "amount": {
+                    "type": "integer"
+                },
+                "item_id": {
                     "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "$ref": "#/definitions/entity.SaleItem"
-                    }
-                },
-                "payment_type": {
-                    "type": "string"
-                },
-                "total": {
-                    "type": "number"
                 }
             }
         },
-        "entity.SaleItem": {
+        "sales.Item": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -695,11 +617,34 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.User": {
+        "sales.Sale": {
             "type": "object",
-            "required": [
-                "name"
-            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sales.Item"
+                    }
+                },
+                "payment_type": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "number"
+                }
+            }
+        },
+        "users.User": {
+            "type": "object",
             "properties": {
                 "email": {
                     "type": "string"

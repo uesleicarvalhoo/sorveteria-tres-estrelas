@@ -16,8 +16,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/mocks"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -27,27 +27,27 @@ func TestCreateUser(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		currentUser, err := entity.NewUser(
+		currentUser, err := users.NewUser(
 			"current user", "current.user@email.com", "passwd",
-			entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers)
+			users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers)
 		assert.NoError(t, err)
 
 		payload := dto.CreateUserPayload{
 			Name:     "User Lastname",
 			Email:    "user@email.com",
 			Password: "secret123",
-			Permissions: []entity.Permission{
-				entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers,
+			Permissions: []users.Permission{
+				users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers,
 			},
 		}
 
-		storedUser, err := entity.NewUser(payload.Name, payload.Email, payload.Password)
+		storedUser, err := users.NewUser(payload.Name, payload.Email, payload.Password)
 		assert.NoError(t, err)
 
 		svc := mocks.NewUseCase(t)
 		svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
 		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password,
-			entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers).
+			users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers).
 			Return(storedUser, nil).Once()
 
 		app := fiber.New()
@@ -66,7 +66,7 @@ func TestCreateUser(t *testing.T) {
 		assert.NoError(t, err)
 		defer res.Body.Close()
 
-		var body entity.User
+		var body users.User
 		err = json.NewDecoder(res.Body).Decode(&body)
 		assert.NoError(t, err)
 
@@ -85,7 +85,7 @@ func TestCreateUser(t *testing.T) {
 			about              string
 			id                 string
 			payload            dto.CreateUserPayload
-			mockReturn         entity.User
+			mockReturn         users.User
 			mockError          error
 			expectedStatusCode int
 			expectedBody       map[string]any
@@ -110,9 +110,9 @@ func TestCreateUser(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
-				currentUser, err := entity.NewUser(
+				currentUser, err := users.NewUser(
 					"current user", "current.user@email.com", "passwd",
-					entity.ReadWriteProducts, entity.ReadWriteSales, entity.ReadWriteUsers)
+					users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers)
 				assert.NoError(t, err)
 
 				svc := mocks.NewUseCase(t)

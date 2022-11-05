@@ -5,8 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/sales"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 )
 
 func MakeSalesRoutes(r fiber.Router, svc sales.UseCase) {
@@ -21,7 +20,7 @@ func MakeSalesRoutes(r fiber.Router, svc sales.UseCase) {
 // @Produce      json
 // @Param        startAt    query   string  false  "name search by q"  Format(dateTime)
 // @Param        endAt    query     string  false  "name search by q"  Format(dateTime)
-// @Success		200	{object} []entity.Sale
+// @Success		200	{object} []sales.Sale
 // @Failure		422	{object} dto.MessageJSON "when start or end param is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/sales [get]
@@ -56,7 +55,7 @@ func salesIndex(svc sales.UseCase) fiber.Handler {
 // @Accept		json
 // @Produce		json
 // @Param		payload		body	dto.RegisterSalePayload true "the payload data"
-// @Success		200	{object} []entity.Sale
+// @Success		200	{object} []sales.Sale
 // @Failure		422	{object} dto.MessageJSON "when payload is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/sales [post]
@@ -69,7 +68,7 @@ func registerSale(svc sales.UseCase) fiber.Handler {
 		}
 
 		sale, err := svc.RegisterSale(
-			c.Context(), payload.Description, payload.PaymentType, entity.Cart{Items: payload.Items})
+			c.Context(), payload.Description, payload.PaymentType, sales.Cart{Items: payload.Items})
 		if err != nil {
 			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
 		}
