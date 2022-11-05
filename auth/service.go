@@ -7,8 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
 )
 
 const (
@@ -25,8 +24,8 @@ func getCacheTokenKey(prefix string, id uuid.UUID) string {
 	return fmt.Sprintf("%s-%s", prefix, id.String())
 }
 
-func GetDefaultUserPermissions() []entity.Permission {
-	return []entity.Permission{entity.ReadWriteProducts, entity.ReadWriteSales}
+func GetDefaultUserPermissions() []users.Permission {
+	return []users.Permission{users.ReadWriteProducts, users.ReadWriteSales}
 }
 
 type Service struct {

@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database/repository"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/products"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/sales"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
+	productsPostgres "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products/postgres"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
+	salesPostgres "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/postgres"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	usersPostgres "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/postgres"
 	"gorm.io/gorm"
 )
 
@@ -18,9 +20,9 @@ type Services struct {
 }
 
 func createServices(db *gorm.DB, cache cache.Cache, secretKey string) *Services {
-	productsRepo := repository.NewProductsPostgres(db)
-	salesRepo := repository.NewSalesPostgres(db)
-	userRepo := repository.NewUserPostgres(db)
+	productsRepo := productsPostgres.NewRepository(db)
+	salesRepo := salesPostgres.NewRepository(db)
+	userRepo := usersPostgres.NewRepository(db)
 
 	userSvc := users.NewService(userRepo)
 

@@ -14,9 +14,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	cacheMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache/mocks"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
-	usersMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	usersMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/mocks"
 )
 
 const secretKey = "my-super-secret-key"
@@ -25,7 +24,7 @@ func TestLogin(t *testing.T) {
 	t.Parallel()
 
 	password := "my-secret-password"
-	storedUser, _ := entity.NewUser("User LastName", "user.lastname@email.com", password)
+	storedUser, _ := users.NewUser("User LastName", "user.lastname@email.com", password)
 
 	t.Run("test valid", func(t *testing.T) {
 		t.Parallel()
@@ -68,7 +67,7 @@ func TestLogin(t *testing.T) {
 			about           string
 			email           string
 			password        string
-			repositoryUser  entity.User
+			repositoryUser  users.User
 			repositoryError error
 			cacheError      error
 			expectedError   string
@@ -220,7 +219,7 @@ func TestAuthorize(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWriteProducts, entity.ReadWriteSales)
+		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123", users.ReadWriteProducts, users.ReadWriteSales)
 
 		token, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
@@ -246,7 +245,7 @@ func TestAuthorize(t *testing.T) {
 	t.Run("check errors", func(t *testing.T) {
 		t.Parallel()
 
-		storedUser, err := entity.NewUser("User Name", "user@email.com.br", "secret123", entity.ReadWriteProducts, entity.ReadSales)
+		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123", users.ReadWriteProducts, users.ReadSales)
 
 		validToken, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
@@ -257,7 +256,7 @@ func TestAuthorize(t *testing.T) {
 			mockCacheError  error
 			mockCacheReturn string
 			expectedError   string
-			userPermissions []entity.Permission
+			userPermissions []users.Permission
 			domain          string
 			action          string
 		}{

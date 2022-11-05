@@ -156,7 +156,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entity.Product"
+                                "$ref": "#/definitions/products.Product"
                             }
                         }
                     },
@@ -195,7 +195,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Product"
+                            "$ref": "#/definitions/products.Product"
                         }
                     },
                     "422": {
@@ -239,7 +239,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Product"
+                            "$ref": "#/definitions/products.Product"
                         }
                     },
                     "422": {
@@ -325,7 +325,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entity.Sale"
+                                "$ref": "#/definitions/sales.Sale"
                             }
                         }
                     },
@@ -372,7 +372,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entity.Sale"
+                                "$ref": "#/definitions/sales.Sale"
                             }
                         }
                     },
@@ -419,7 +419,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "$ref": "#/definitions/users.User"
                         }
                     },
                     "422": {
@@ -454,7 +454,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "$ref": "#/definitions/users.User"
                         }
                     },
                     "500": {
@@ -558,7 +558,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.CartItem"
+                        "$ref": "#/definitions/sales.CartItem"
                     }
                 },
                 "payment_type": {
@@ -566,18 +566,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.CartItem": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "item_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.Product": {
+        "products.Product": {
             "type": "object",
             "required": [
                 "name",
@@ -603,7 +592,32 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.Sale": {
+        "sales.CartItem": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "item_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "sales.Item": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "unit_price": {
+                    "type": "number"
+                }
+            }
+        },
+        "sales.Sale": {
             "type": "object",
             "properties": {
                 "date": {
@@ -618,7 +632,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.SaleItem"
+                        "$ref": "#/definitions/sales.Item"
                     }
                 },
                 "payment_type": {
@@ -629,21 +643,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.SaleItem": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "unit_price": {
-                    "type": "number"
-                }
-            }
-        },
-        "entity.User": {
+        "users.User": {
             "type": "object",
             "properties": {
                 "email": {

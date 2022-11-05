@@ -57,19 +57,12 @@ definitions:
         type: string
       items:
         items:
-          $ref: '#/definitions/entity.CartItem'
+          $ref: '#/definitions/sales.CartItem'
         type: array
       payment_type:
         type: string
     type: object
-  entity.CartItem:
-    properties:
-      amount:
-        type: integer
-      item_id:
-        type: string
-    type: object
-  entity.Product:
+  products.Product:
     properties:
       atacado_amount:
         minimum: 1
@@ -87,7 +80,23 @@ definitions:
     - price_atacado
     - price_varejo
     type: object
-  entity.Sale:
+  sales.CartItem:
+    properties:
+      amount:
+        type: integer
+      item_id:
+        type: string
+    type: object
+  sales.Item:
+    properties:
+      amount:
+        type: integer
+      name:
+        type: string
+      unit_price:
+        type: number
+    type: object
+  sales.Sale:
     properties:
       date:
         type: string
@@ -97,23 +106,14 @@ definitions:
         type: string
       items:
         items:
-          $ref: '#/definitions/entity.SaleItem'
+          $ref: '#/definitions/sales.Item'
         type: array
       payment_type:
         type: string
       total:
         type: number
     type: object
-  entity.SaleItem:
-    properties:
-      amount:
-        type: integer
-      name:
-        type: string
-      unit_price:
-        type: number
-    type: object
-  entity.User:
+  users.User:
     properties:
       email:
         type: string
@@ -224,7 +224,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Product'
+              $ref: '#/definitions/products.Product'
             type: array
         "500":
           description: when an error occurs
@@ -250,7 +250,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Product'
+            $ref: '#/definitions/products.Product'
         "422":
           description: when data is invalid
           schema:
@@ -301,7 +301,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Product'
+            $ref: '#/definitions/products.Product'
         "422":
           description: when id is invalid
           schema:
@@ -336,7 +336,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Sale'
+              $ref: '#/definitions/sales.Sale'
             type: array
         "422":
           description: when start or end param is invalid
@@ -367,7 +367,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Sale'
+              $ref: '#/definitions/sales.Sale'
             type: array
         "422":
           description: when payload is invalid
@@ -398,7 +398,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.User'
+            $ref: '#/definitions/users.User'
         "422":
           description: when payload is invalid
           schema:
@@ -421,7 +421,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.User'
+            $ref: '#/definitions/users.User'
         "500":
           description: when an error occurs
           schema:

@@ -17,8 +17,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/sales/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/mocks"
 )
 
 func TestRegisterSale(t *testing.T) {
@@ -29,14 +29,14 @@ func TestRegisterSale(t *testing.T) {
 
 		payload := dto.RegisterSalePayload{
 			Description: "sale description",
-			PaymentType: entity.CashPayment,
-			Items:       []entity.CartItem{{ItemID: uuid.New(), Amount: 30}},
+			PaymentType: sales.CashPayment,
+			Items:       []sales.CartItem{{ItemID: uuid.New(), Amount: 30}},
 		}
 
-		createdSale := entity.Sale{
+		createdSale := sales.Sale{
 			ID:          uuid.New(),
-			PaymentType: entity.CashPayment,
-			Items:       []entity.SaleItem{{Name: "picole de coco", UnitPrice: 1.0, Amount: payload.Items[0].Amount}},
+			PaymentType: sales.CashPayment,
+			Items:       []sales.Item{{Name: "picole de coco", UnitPrice: 1.0, Amount: payload.Items[0].Amount}},
 			Date:        time.Now(),
 			Total:       float64(payload.Items[0].Amount),
 			Description: payload.Description,
@@ -45,7 +45,7 @@ func TestRegisterSale(t *testing.T) {
 		// Arrange
 		svc := mocks.NewUseCase(t)
 		svc.On("RegisterSale", mock.Anything,
-			payload.Description, payload.PaymentType, entity.Cart{Items: payload.Items}).
+			payload.Description, payload.PaymentType, sales.Cart{Items: payload.Items}).
 			Return(createdSale, nil).Once()
 
 		app := fiber.New()
@@ -63,7 +63,7 @@ func TestRegisterSale(t *testing.T) {
 		assert.NoError(t, err)
 		defer res.Body.Close()
 
-		var body entity.Sale
+		var body sales.Sale
 		err = json.NewDecoder(res.Body).Decode(&body)
 		assert.NoError(t, err)
 
@@ -78,7 +78,7 @@ func TestRegisterSale(t *testing.T) {
 		tests := []struct {
 			about              string
 			payload            dto.RegisterSalePayload
-			mockReturn         entity.Sale
+			mockReturn         sales.Sale
 			mockError          error
 			expectedStatusCode int
 			expectedBody       map[string]any
@@ -86,7 +86,7 @@ func TestRegisterSale(t *testing.T) {
 			{
 				about:              "when service return an error",
 				payload:            dto.RegisterSalePayload{},
-				mockReturn:         entity.Sale{},
+				mockReturn:         sales.Sale{},
 				mockError:          errors.New("service error"),
 				expectedStatusCode: http.StatusInternalServerError,
 				expectedBody:       map[string]any{"message": "service error"},
@@ -101,7 +101,7 @@ func TestRegisterSale(t *testing.T) {
 				// Arrange
 				svc := mocks.NewUseCase(t)
 				svc.On("RegisterSale", mock.Anything,
-					tc.payload.Description, tc.payload.PaymentType, entity.Cart{Items: tc.payload.Items}).
+					tc.payload.Description, tc.payload.PaymentType, sales.Cart{Items: tc.payload.Items}).
 					Return(tc.mockReturn, tc.mockError).Once()
 
 				app := fiber.New()

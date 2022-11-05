@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/products"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
 )
 
 func MakeProductsRoutes(r fiber.Router, svc products.UseCase) {
@@ -22,7 +22,7 @@ func MakeProductsRoutes(r fiber.Router, svc products.UseCase) {
 // @Accept      json
 // @Produce     json
 // @Param		id	path	string	true	"the id of product"
-// @Success		200	{object} entity.Product
+// @Success		200	{object} products.Product
 // @Failure		422	{object} dto.MessageJSON "when id is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/products/{id} [get].
@@ -47,7 +47,7 @@ func getProductByID(svc products.UseCase) fiber.Handler {
 // @Tags		Product
 // @Accept      json
 // @Produce     json
-// @Success		200	{object} []entity.Product
+// @Success		200	{object} []products.Product
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/products/ [get].
 func getAllProducts(svc products.UseCase) fiber.Handler {
@@ -67,7 +67,7 @@ func getAllProducts(svc products.UseCase) fiber.Handler {
 // @Accept		json
 // @Produce		json
 // @Param		payload			body		dto.CreateProductPayload				true	"the product data"
-// @Success		200	{object} entity.Product
+// @Success		200	{object} products.Product
 // @Failure		422	{object} dto.MessageJSON "when data is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/products/ [post].

@@ -6,8 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/usecase/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
 )
 
 func MakeUserRoutes(r fiber.Router, userSvc users.UseCase) {
@@ -20,7 +19,7 @@ func MakeUserRoutes(r fiber.Router, userSvc users.UseCase) {
 // @Tags		User
 // @Accept      json
 // @Produce     json
-// @Success		200	{object} entity.User
+// @Success		200	{object} users.User
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/users/me [get]
 func getMe(svc users.UseCase) fiber.Handler {
@@ -47,7 +46,7 @@ func getMe(svc users.UseCase) fiber.Handler {
 // @Accept		json
 // @Produce		json
 // @Param		payload		body	dto.CreateUserPayload true "the user data"
-// @Success		201	{object} entity.User
+// @Success		201	{object} users.User
 // @Failure		422	{object} dto.MessageJSON "when payload is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/users [post]
@@ -69,7 +68,7 @@ func createUser(svc users.UseCase) fiber.Handler {
 			return c.Status(http.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		permissions := []entity.Permission{}
+		permissions := []users.Permission{}
 
 		for _, payloadPerm := range payload.Permissions {
 			for i := range currentUser.Permissions {

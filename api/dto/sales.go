@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 )
 
 type GetSalesByPeriodQuery struct {
@@ -12,7 +12,7 @@ type GetSalesByPeriodQuery struct {
 }
 
 type RegisterSalePayload struct {
-	Description string             `json:"description"`
-	PaymentType entity.PaymentType `json:"payment_type"`
-	Items       []entity.CartItem  `json:"items"`
+	Description string            `json:"description"`
+	PaymentType sales.PaymentType `json:"payment_type"`
+	Items       []sales.CartItem  `json:"items"`
 }
