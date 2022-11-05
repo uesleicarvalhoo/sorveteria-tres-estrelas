@@ -21,7 +21,7 @@ func NewProductsPostgres(db *gorm.DB) *ProductsPostgres {
 func (r ProductsPostgres) Get(ctx context.Context, id uuid.UUID) (entity.Product, error) {
 	var p entity.Product
 
-	if tx := r.db.WithContext(ctx).First(&p); tx.Error != nil {
+	if tx := r.db.WithContext(ctx).First(&p, "id = ?", id); tx.Error != nil {
 		return entity.Product{}, tx.Error
 	}
 
