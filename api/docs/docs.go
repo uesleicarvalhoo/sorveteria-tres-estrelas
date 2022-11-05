@@ -16,66 +16,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/accounts": {
-            "get": {
-                "description": "get accounts",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "accounts"
-                ],
-                "summary": "List accounts",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "email",
-                        "description": "name search by q",
-                        "name": "startAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "format": "email",
-                        "description": "name search by q",
-                        "name": "q",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/auth/login": {
             "post": {
                 "description": "Make login and get access-token",
@@ -200,6 +140,9 @@ const docTemplate = `{
         "/products/": {
             "get": {
                 "description": "Get all products data",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -273,6 +216,9 @@ const docTemplate = `{
         "/products/{id}": {
             "get": {
                 "description": "Get product Data",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -312,6 +258,9 @@ const docTemplate = `{
             },
             "delete": {
                 "description": "Delete product",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -357,14 +306,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "format": "date",
+                        "format": "dateTime",
                         "description": "name search by q",
                         "name": "startAt",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "format": "date",
+                        "format": "dateTime",
                         "description": "name search by q",
                         "name": "endAt",
                         "in": "query"
@@ -491,6 +440,9 @@ const docTemplate = `{
         "/users/me": {
             "get": {
                 "description": "Get current user data",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -620,7 +572,7 @@ const docTemplate = `{
                 "amount": {
                     "type": "integer"
                 },
-                "id": {
+                "item_id": {
                     "type": "string"
                 }
             }
@@ -633,7 +585,7 @@ const docTemplate = `{
                 "price_varejo"
             ],
             "properties": {
-                "atacado_min_amount": {
+                "atacado_amount": {
                     "type": "integer",
                     "minimum": 1
                 },
@@ -653,9 +605,6 @@ const docTemplate = `{
         },
         "entity.Sale": {
             "type": "object",
-            "required": [
-                "items"
-            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -668,7 +617,6 @@ const docTemplate = `{
                 },
                 "items": {
                     "type": "array",
-                    "minItems": 1,
                     "items": {
                         "$ref": "#/definitions/entity.SaleItem"
                     }
@@ -697,9 +645,6 @@ const docTemplate = `{
         },
         "entity.User": {
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
                 "email": {
                     "type": "string"
