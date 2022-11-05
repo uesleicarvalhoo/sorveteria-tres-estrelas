@@ -3,7 +3,7 @@ package entity
 import "github.com/google/uuid"
 
 type CartItem struct {
-	ItemID uuid.UUID `json:"id"`
+	ItemID uuid.UUID `json:"item_id"`
 	Amount int       `json:"amount"`
 }
 
