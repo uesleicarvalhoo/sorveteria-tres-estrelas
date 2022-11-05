@@ -31,6 +31,22 @@ func NewProduct(name string, priceVarejo, priceAtacado float64, atacadoAmount in
 	return p, nil
 }
 
+func NewProduct(name string, priceVarejo, priceAtacado float64, atacadoAmount int) (Product, error) {
+	p := Product{
+		ID:            uuid.New(),
+		Name:          strings.TrimSpace(name),
+		PriceVarejo:   priceVarejo,
+		PriceAtacado:  priceAtacado,
+		AtacadoAmount: atacadoAmount,
+	}
+
+	if err := p.Validate(); err != nil {
+		return Product{}, err
+	}
+
+	return p, nil
+}
+
 func (p Product) GetUnitPrice(amount int) float64 {
 	if amount >= p.AtacadoAmount {
 		return p.PriceAtacado
