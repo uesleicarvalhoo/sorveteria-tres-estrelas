@@ -17,6 +17,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
+	balanceMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances/mocks"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/mocks"
 )
@@ -48,9 +50,12 @@ func TestRegisterSale(t *testing.T) {
 			payload.Description, payload.PaymentType, sales.Cart{Items: payload.Items}).
 			Return(createdSale, nil).Once()
 
+		balanceSvc := balanceMock.NewUseCase(t)
+		balanceSvc.On("RegisterFromSale", mock.Anything, createdSale).Return(balances.Balance{}, nil).Once()
+
 		app := fiber.New()
 
-		handler.MakeSalesRoutes(app, svc)
+		handler.MakeSalesRoutes(app, svc, balanceSvc)
 
 		resBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
@@ -104,9 +109,11 @@ func TestRegisterSale(t *testing.T) {
 					tc.payload.Description, tc.payload.PaymentType, sales.Cart{Items: tc.payload.Items}).
 					Return(tc.mockReturn, tc.mockError).Once()
 
+				balanceSvc := balanceMock.NewUseCase(t)
+
 				app := fiber.New()
 
-				handler.MakeSalesRoutes(app, svc)
+				handler.MakeSalesRoutes(app, svc, balanceSvc)
 
 				resBody, err := json.Marshal(tc.payload)
 				assert.NoError(t, err)

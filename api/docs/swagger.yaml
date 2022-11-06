@@ -10,6 +10,19 @@ definitions:
       refresh_token:
         type: string
     type: object
+  balances.Balance:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      operation:
+        type: string
+      value:
+        type: number
+    type: object
   dto.CreateProductPayload:
     properties:
       atacado_amount:
@@ -50,6 +63,15 @@ definitions:
     properties:
       refresh_token:
         type: string
+    type: object
+  dto.RegisterBalancePayload:
+    properties:
+      description:
+        type: string
+      operation:
+        type: string
+      value:
+        type: number
     type: object
   dto.RegisterSalePayload:
     properties:
@@ -197,6 +219,56 @@ paths:
       summary: Refresh access-token
       tags:
       - Auth
+  /balances:
+    get:
+      consumes:
+      - application/json
+      description: get balances
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/balances.Balance'
+            type: array
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: List balances
+      tags:
+      - Balances
+    post:
+      consumes:
+      - application/json
+      description: Register a balance and return balance data
+      parameters:
+      - description: the payload data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterBalancePayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/balances.Balance'
+        "422":
+          description: when payload is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Register a new balance
+      tags:
+      - Balances
   /health:
     get:
       description: Check app and dependencies status

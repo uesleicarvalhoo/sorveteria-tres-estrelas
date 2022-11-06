@@ -11,8 +11,12 @@ const (
 	ReadWriteProducts Permission = "products:read,write"
 	ReadProducts      Permission = "products:read"
 
-	ReadUsers       Permission = "users:read"
-	ReadWriteUsers  Permission = "users:read,write"
+	ReadUsers      Permission = "users:read"
+	ReadWriteUsers Permission = "users:read,write"
+
+	ReadWriteBalances Permission = "balances:read,write"
+	ReadBalances      Permission = "balances:read"
+
 	AdminPermission Permission = "admin:read,write"
 )
 

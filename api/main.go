@@ -64,8 +64,10 @@ func NewFiber(appName, appVersion string, services *Services, logger *logrus.Log
 	handler.MakeSwaggerRoutes(app.Group("/docs"))
 	handler.MakeAuhtRoutes(app.Group("/auth"), services.auth)
 	handler.MakeUserRoutes(app.Group("/users", middleware.NewAuth(services.auth, "users")), services.users)
-	handler.MakeSalesRoutes(app.Group("/sales", middleware.NewAuth(services.auth, "sales")), services.sales)
+	handler.MakeSalesRoutes(
+		app.Group("/sales", middleware.NewAuth(services.auth, "sales")), services.sales, services.balances)
 	handler.MakeProductsRoutes(app.Group("/products", middleware.NewAuth(services.auth, "products")), services.products)
+	handler.MakeBalanceRouter(app.Group("/balances", middleware.NewAuth(services.auth, "balances")), services.balances)
 
 	return app
 }

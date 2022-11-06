@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/entity/validator"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/validator"
 )
 
 type Product struct {
