@@ -42,3 +42,14 @@ CREATE TABLE users (
 	"permissions" varchar NULL,
 	CONSTRAINT users_pkey PRIMARY KEY (id)
 );
+
+
+-- balances
+CREATE TABLE balances (
+	"id" uuid NOT NULL,
+	"value" numeric NULL,
+	"description" text NULL,
+	"operation" text NULL,
+	"created_at" timestamptz NULL,
+	CONSTRAINT balances_pkey PRIMARY KEY (id)
+);

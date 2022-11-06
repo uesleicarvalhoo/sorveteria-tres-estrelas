@@ -105,6 +105,82 @@
                 }
             }
         },
+        "/balances": {
+            "get": {
+                "description": "get balances",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balances"
+                ],
+                "summary": "List balances",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/balances.Balance"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Register a balance and return balance data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balances"
+                ],
+                "summary": "Register a new balance",
+                "parameters": [
+                    {
+                        "description": "the payload data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterBalancePayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/balances.Balance"
+                        }
+                    },
+                    "422": {
+                        "description": "when payload is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check app and dependencies status",
@@ -476,6 +552,26 @@
                 }
             }
         },
+        "balances.Balance": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
         "dto.CreateProductPayload": {
             "type": "object",
             "properties": {
@@ -537,6 +633,20 @@
             "properties": {
                 "refresh_token": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.RegisterBalancePayload": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         },
