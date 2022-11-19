@@ -219,7 +219,7 @@ func TestAuthorize(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123", users.ReadWriteProducts, users.ReadWriteSales)
+		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123")
 
 		token, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
@@ -235,17 +235,17 @@ func TestAuthorize(t *testing.T) {
 		sut := auth.NewService(secretKey, mockUserSvc, mockCache)
 
 		// Action
-		sub, err := sut.Authorize(context.Background(), token, "products", "write")
+		user, err := sut.Authorize(context.Background(), token)
 
 		// Assert
 		assert.NoError(t, err)
-		assert.Equal(t, storedUser.ID, sub)
+		assert.Equal(t, storedUser, user)
 	})
 
 	t.Run("check errors", func(t *testing.T) {
 		t.Parallel()
 
-		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123", users.ReadWriteProducts, users.ReadSales)
+		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123")
 
 		validToken, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
@@ -256,9 +256,6 @@ func TestAuthorize(t *testing.T) {
 			mockCacheError  error
 			mockCacheReturn string
 			expectedError   string
-			userPermissions []users.Permission
-			domain          string
-			action          string
 		}{
 			{
 				about:           "when token is valid but not match with cached token",
@@ -276,14 +273,6 @@ func TestAuthorize(t *testing.T) {
 				mockCacheReturn: "",
 				mockCacheError:  errors.New("cache error"),
 				expectedError:   "cache error",
-			},
-			{
-				about:           "when user don't have permission",
-				mockCacheReturn: validToken,
-				mockCacheError:  nil,
-				domain:          "sales",
-				action:          "write",
-				expectedError:   auth.ErrNotPermited.Error(),
 			},
 		}
 
@@ -305,10 +294,10 @@ func TestAuthorize(t *testing.T) {
 				sut := auth.NewService(secretKey, mockUserSvc, mockCache)
 
 				// Action
-				sub, err := sut.Authorize(context.Background(), validToken, tc.domain, tc.action)
+				user, err := sut.Authorize(context.Background(), validToken)
 
 				// Assert
-				assert.Equal(t, uuid.Nil, sub)
+				assert.Equal(t, users.User{}, user)
 				assert.EqualError(t, err, tc.expectedError)
 			})
 		}

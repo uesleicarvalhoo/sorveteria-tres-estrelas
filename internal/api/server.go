@@ -9,19 +9,28 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
+	"github.com/urfave/negroni"
 )
 
-type ServerOptions func(s *http.Server)
+type Options func(s *http.Server)
 
 const TIMEOUT = 30 * time.Second
 
-func Start(port int, handler http.Handler, logger logger.Logger, option ...ServerOptions) error {
+func Start(
+	port int, svc, version string, h http.Handler, logger logger.Logger, option ...Options,
+) error {
+	n := negroni.New()
+
+	n.Use(negroni.HandlerFunc(middleware.NewLogger(logger, svc, version)))
+	n.UseHandler(h)
+
 	srv := &http.Server{
 		ReadTimeout:  TIMEOUT,
 		WriteTimeout: TIMEOUT,
 		Addr:         fmt.Sprintf(":%d", port),
-		Handler:      handler,
+		Handler:      n,
 	}
 
 	for _, opt := range option {

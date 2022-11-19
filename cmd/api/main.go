@@ -44,9 +44,9 @@ func main() {
 	balanceSvc := ioc.NewBalanceService(db)
 
 	h := fiber.Handlers(
-		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, balanceSvc, logger)
+		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, balanceSvc)
 
-	if err := api.Start(cfg.HTTPPort, h, logger); err != nil {
+	if err := api.Start(cfg.HTTPPort, cfg.ServiceName, cfg.ServiceVersion, h, logger); err != nil {
 		panic(err)
 	}
 }

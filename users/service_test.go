@@ -29,10 +29,9 @@ func TestCreate(t *testing.T) {
 		name := "Ueslei Carvalho"
 		email := "ueslei.carvalho@email.com"
 		password := "secret123"
-		permissions := []users.Permission{users.ReadWriteProducts, users.ReadWriteSales}
 
 		// Action
-		u, err := sut.Create(context.Background(), name, email, password, permissions...)
+		u, err := sut.Create(context.Background(), name, email, password)
 
 		// Assert
 		assert.NoError(t, err)
@@ -41,7 +40,6 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, email, u.Email)
 		assert.NotEqual(t, password, u.PasswordHash)
 		assert.True(t, u.CheckPassword(password))
-		assert.Equal(t, permissions, u.Permissions)
 	})
 
 	tests := []struct {
@@ -49,7 +47,6 @@ func TestCreate(t *testing.T) {
 		name          string
 		email         string
 		password      string
-		permissions   []users.Permission
 		repoError     error
 		expectedError string
 	}{
@@ -96,7 +93,7 @@ func TestCreate(t *testing.T) {
 
 			sut := users.NewService(repo)
 			// Action
-			u, err := sut.Create(context.Background(), tc.name, tc.email, tc.password, tc.permissions...)
+			u, err := sut.Create(context.Background(), tc.name, tc.email, tc.password)
 
 			// Assert
 			assert.Equal(t, users.User{}, u)

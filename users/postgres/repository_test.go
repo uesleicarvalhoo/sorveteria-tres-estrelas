@@ -54,7 +54,7 @@ func (suite *UsersTestSuite) TeardownTest() {
 func (suite *UsersTestSuite) TestCRUD() {
 	repo := postgres.NewRepository(suite.db)
 
-	storedUser, _ := users.NewUser("Fake LastName", "fakeuser@email.com", "fakehash:123", users.ReadWriteProducts, users.ReadWriteSales)
+	storedUser, _ := users.NewUser("Fake LastName", "fakeuser@email.com", "fakehash:123")
 
 	suite.T().Run("test create a new user", func(t *testing.T) {
 		err := repo.Create(suite.ctx, storedUser)

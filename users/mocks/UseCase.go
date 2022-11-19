@@ -16,27 +16,20 @@ type UseCase struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, name, email, password, permissions
-func (_m *UseCase) Create(ctx context.Context, name string, email string, password string, permissions ...users.Permission) (users.User, error) {
-	_va := make([]interface{}, len(permissions))
-	for _i := range permissions {
-		_va[_i] = permissions[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, name, email, password)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
+// Create provides a mock function with given fields: ctx, name, email, password
+func (_m *UseCase) Create(ctx context.Context, name string, email string, password string) (users.User, error) {
+	ret := _m.Called(ctx, name, email, password)
 
 	var r0 users.User
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, string, ...users.Permission) users.User); ok {
-		r0 = rf(ctx, name, email, password, permissions...)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) users.User); ok {
+		r0 = rf(ctx, name, email, password)
 	} else {
 		r0 = ret.Get(0).(users.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string, string, string, ...users.Permission) error); ok {
-		r1 = rf(ctx, name, email, password, permissions...)
+	if rf, ok := ret.Get(1).(func(context.Context, string, string, string) error); ok {
+		r1 = rf(ctx, name, email, password)
 	} else {
 		r1 = ret.Error(1)
 	}
