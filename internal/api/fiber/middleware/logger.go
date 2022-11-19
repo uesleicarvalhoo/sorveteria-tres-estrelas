@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 )
 
-func NewLogrus(logger *logrus.Logger, serviceName, serviceVersion string) fiber.Handler {
+func NewLogrus(logger logger.Logger, serviceName, serviceVersion string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		if strings.Contains(c.Path(), "/health") {
 			return c.Next()
@@ -22,7 +22,7 @@ func NewLogrus(logger *logrus.Logger, serviceName, serviceVersion string) fiber.
 		statusCode := c.Response().StatusCode()
 		reqHeaders := c.GetReqHeaders()
 		respHeaders := c.GetRespHeaders()
-		entry := logger.WithFields(logrus.Fields{
+		entry := map[string]interface{}{
 			"log_version": "1.0.0",
 			"date_time":   time.Now(),
 			"product": map[string]interface{}{
@@ -48,15 +48,15 @@ func NewLogrus(logger *logrus.Logger, serviceName, serviceVersion string) fiber.
 				"status_code": statusCode,
 				"request_id":  respHeaders["X-Request-ID"],
 			},
-		})
+		}
 
 		switch {
 		case statusCode >= http.StatusInternalServerError:
-			entry.Error()
+			logger.ErrorJSON(entry)
 		case statusCode >= http.StatusBadRequest:
-			entry.Warning()
+			logger.WarningJSON(entry)
 		default:
-			entry.Info()
+			logger.InfoJSON(entry)
 		}
 
 		return nil

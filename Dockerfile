@@ -16,7 +16,7 @@ ADD go.mod go.sum $GOPATH/src/
 RUN GOOS=linux go mod download
 
 # Build api
-ARG ENTRYPOINT=api/*.go
+ARG ENTRYPOINT=cmd/api/*.go
 
 COPY . $GOPATH/src
 
@@ -30,10 +30,8 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
 COPY --from=builder /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 COPY --from=builder /etc/timezone /etc/timezone
 
-
 # Copy migrations and execulatable
-WORKDIR /app/internal/infra/repository/migrations
-COPY --from=builder /go/src/pkg/database/postgres/migrations/ /app/pkg/database/postgres/migrations/
+COPY --from=builder /go/src/internal/database/migrations/ /app/internal/database/migrations/
 
 WORKDIR /app
 COPY --from=builder /go/bin/api .

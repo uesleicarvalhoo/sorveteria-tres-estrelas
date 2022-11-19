@@ -28,13 +28,13 @@ format:  ## Format code
 
 ## @ Application
 .PHONY: swagger run compose
-api/docs/*: $(wildcard api/main.go) $(wildcard api/handler/*.go)
-	@swag init --generalInfo ./api/main.go --output ./api/docs
+internal/api/fiber/docs/*: $(wildcard internal/api/fiber/main.go) $(wildcard internal/api/fiber/handler/*.go)
+	@swag init --generalInfo ./cmd/api/main.go --output ./internal/api/fiber/docs
 
-swagger: api/docs/*  ## Generate swagger docs
+swagger: internal/api/fiber/docs/*  ## Generate swagger docs
 
 run: swagger  ## Run app
-	@go run api/*.go
+	@go run cmd/api/*.go
 
 compose:  ## Init containers with dev dependencies
 	@docker compose build && docker compose up -d

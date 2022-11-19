@@ -23,6 +23,19 @@ definitions:
       value:
         type: number
     type: object
+  balances.CashFlow:
+    properties:
+      balances:
+        items:
+          $ref: '#/definitions/balances.Balance'
+        type: array
+      payments:
+        type: number
+      sales:
+        type: number
+      total:
+        type: number
+    type: object
   dto.CreateProductPayload:
     properties:
       atacado_amount:
@@ -231,7 +244,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/balances.Balance'
+              $ref: '#/definitions/balances.CashFlow'
             type: array
         "500":
           description: when an error occurs

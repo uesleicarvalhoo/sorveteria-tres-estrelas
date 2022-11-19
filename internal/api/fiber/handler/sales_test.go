@@ -15,10 +15,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
 	balanceMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/mocks"
 )
@@ -65,8 +65,9 @@ func TestRegisterSale(t *testing.T) {
 
 		// Action
 		res, err := app.Test(req, 30)
-		assert.NoError(t, err)
-		defer res.Body.Close()
+		if assert.NoError(t, err) {
+			defer res.Body.Close()
+		}
 
 		var body sales.Sale
 		err = json.NewDecoder(res.Body).Decode(&body)
@@ -123,8 +124,9 @@ func TestRegisterSale(t *testing.T) {
 
 				// Action
 				res, err := app.Test(req, 30)
-				assert.NoError(t, err)
-				defer res.Body.Close()
+				if assert.NoError(t, err) {
+					defer res.Body.Close()
+				}
 
 				var body map[string]any
 				err = json.NewDecoder(res.Body).Decode(&body)

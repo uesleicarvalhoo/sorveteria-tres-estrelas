@@ -40,6 +40,27 @@ func (_m *UseCase) GetAll(ctx context.Context) ([]balances.Balance, error) {
 	return r0, r1
 }
 
+// GetCashFlow provides a mock function with given fields: ctx
+func (_m *UseCase) GetCashFlow(ctx context.Context) (balances.CashFlow, error) {
+	ret := _m.Called(ctx)
+
+	var r0 balances.CashFlow
+	if rf, ok := ret.Get(0).(func(context.Context) balances.CashFlow); ok {
+		r0 = rf(ctx)
+	} else {
+		r0 = ret.Get(0).(balances.CashFlow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RegisterFromSale provides a mock function with given fields: ctx, sale
 func (_m *UseCase) RegisterFromSale(ctx context.Context, sale sales.Sale) (balances.Balance, error) {
 	ret := _m.Called(ctx, sale)

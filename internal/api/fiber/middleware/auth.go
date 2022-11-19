@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
 )
 
 func NewAuth(authSvc auth.UseCase, domain string) fiber.Handler {

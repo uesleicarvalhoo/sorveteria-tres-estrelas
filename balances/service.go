@@ -41,3 +41,29 @@ func (s Service) RegisterFromSale(ctx context.Context, sale sales.Sale) (Balance
 
 	return s.RegisterOperation(ctx, float32(sale.Total), description, OperationSale)
 }
+
+func (s Service) GetCashFlow(ctx context.Context) (CashFlow, error) {
+	balances, err := s.r.GetAll(ctx)
+	if err != nil {
+		return CashFlow{}, err
+	}
+
+	var total, sales, payments float32
+
+	for _, b := range balances {
+		if b.Operation == OperationSale {
+			sales += b.Value
+			total += b.Value
+		} else {
+			payments += b.Value
+			total -= b.Value
+		}
+	}
+
+	return CashFlow{
+		Total:    total,
+		Payments: payments,
+		Sales:    sales,
+		Balances: balances,
+	}, nil
+}

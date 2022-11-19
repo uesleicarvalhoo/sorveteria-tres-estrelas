@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/postgres"
 	"gorm.io/gorm"

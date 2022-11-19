@@ -14,8 +14,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/mocks"
 )
@@ -63,8 +63,9 @@ func TestCreateUser(t *testing.T) {
 
 		// Action
 		res, err := app.Test(req, 30)
-		assert.NoError(t, err)
-		defer res.Body.Close()
+		if assert.NoError(t, err) {
+			defer res.Body.Close()
+		}
 
 		var body users.User
 		err = json.NewDecoder(res.Body).Decode(&body)
@@ -132,8 +133,9 @@ func TestCreateUser(t *testing.T) {
 
 				// Action
 				res, err := app.Test(req)
-				assert.NoError(t, err)
-				defer res.Body.Close()
+				if assert.NoError(t, err) {
+					defer res.Body.Close()
+				}
 
 				var body map[string]any
 				err = json.NewDecoder(res.Body).Decode(&body)

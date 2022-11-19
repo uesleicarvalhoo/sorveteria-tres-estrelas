@@ -43,13 +43,13 @@ func TestNewSale(t *testing.T) {
 			},
 		}
 
-		prodReader := productsMocks.NewReader(t)
-		prodReader.On("Get", mock.Anything, storedProduct.ID).Return(storedProduct, nil).Once()
+		productSvc := productsMocks.NewUseCase(t)
+		productSvc.On("Get", mock.Anything, storedProduct.ID).Return(storedProduct, nil).Once()
 
 		salesRepo := mocks.NewRepository(t)
 		salesRepo.On("Create", mock.Anything, mock.Anything).Return(nil).Once()
 
-		sut := sales.NewService(prodReader, salesRepo)
+		sut := sales.NewService(productSvc, salesRepo)
 		// Action
 		sale, err := sut.RegisterSale(context.Background(), description, paymentType, cart)
 
@@ -113,13 +113,13 @@ func TestNewSale(t *testing.T) {
 			t.Parallel()
 
 			// Arrange
-			productR := productsMocks.NewReader(t)
-			productR.On("Get", mock.Anything, mock.Anything).Return(tc.productRepoReturn, tc.productRepoErr).Maybe()
+			productSvc := productsMocks.NewUseCase(t)
+			productSvc.On("Get", mock.Anything, mock.Anything).Return(tc.productRepoReturn, tc.productRepoErr).Maybe()
 
 			salesRepo := mocks.NewRepository(t)
 			salesRepo.On("Create", mock.Anything, mock.Anything).Return(tc.saleRepoErr).Maybe()
 
-			sut := sales.NewService(productR, salesRepo)
+			sut := sales.NewService(productSvc, salesRepo)
 
 			// Action
 			sale, err := sut.RegisterSale(context.Background(), tc.description, tc.payment, tc.cart)
