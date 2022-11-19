@@ -7,7 +7,7 @@ type MessageJSON struct {
 }
 
 func (m MessageJSON) Marshal() []byte {
-	b, _ := json.Marshal(m) //nolint:errchkjson
+	b, _ := json.Marshal(m)
 
 	return b
 }
