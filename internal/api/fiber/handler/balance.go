@@ -2,8 +2,8 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
 )
 
 func MakeBalanceRouter(r fiber.Router, svc balances.UseCase) {
@@ -16,12 +16,12 @@ func MakeBalanceRouter(r fiber.Router, svc balances.UseCase) {
 // @Tags         Balances
 // @Accept       json
 // @Produce      json
-// @Success		200	{object} []balances.Balance
+// @Success		200	{object} []balances.CashFlow
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"
 // @Router		/balances [get]
 func balancesIndex(svc balances.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		balances, err := svc.GetAll(c.Context())
+		balances, err := svc.GetCashFlow(c.Context())
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}

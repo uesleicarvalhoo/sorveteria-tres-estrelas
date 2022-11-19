@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
 )
 

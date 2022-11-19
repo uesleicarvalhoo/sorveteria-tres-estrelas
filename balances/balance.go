@@ -6,6 +6,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type ConsolidatedBalance struct {
+	Total    float32
+	Balances []Balance
+	StartAt  time.Time
+	EndAt    time.Time
+}
+
 type Balance struct {
 	ID          uuid.UUID     `json:"id"`
 	Value       float32       `json:"value"`

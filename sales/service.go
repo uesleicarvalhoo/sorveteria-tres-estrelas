@@ -8,13 +8,13 @@ import (
 )
 
 type Service struct {
-	products products.Reader
+	products products.UseCase
 	repo     Repository
 }
 
-func NewService(productsR products.Reader, r Repository) *Service {
+func NewService(productSvc products.UseCase, r Repository) *Service {
 	return &Service{
-		products: productsR,
+		products: productSvc,
 		repo:     r,
 	}
 }

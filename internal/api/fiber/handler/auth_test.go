@@ -15,10 +15,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/api/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/fiber/handler"
 )
 
 func TestLogin(t *testing.T) {
