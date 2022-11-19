@@ -7,9 +7,9 @@ package main
 import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/config"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/fiber"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/ioc"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 )

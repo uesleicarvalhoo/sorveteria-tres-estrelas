@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances/postgres"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
 	"gorm.io/gorm"
 )
 
