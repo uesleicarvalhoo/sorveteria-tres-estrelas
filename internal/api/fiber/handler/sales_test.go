@@ -65,8 +65,9 @@ func TestRegisterSale(t *testing.T) {
 
 		// Action
 		res, err := app.Test(req, 30)
-		assert.NoError(t, err)
-		defer res.Body.Close()
+		if assert.NoError(t, err) {
+			defer res.Body.Close()
+		}
 
 		var body sales.Sale
 		err = json.NewDecoder(res.Body).Decode(&body)
@@ -123,8 +124,9 @@ func TestRegisterSale(t *testing.T) {
 
 				// Action
 				res, err := app.Test(req, 30)
-				assert.NoError(t, err)
-				defer res.Body.Close()
+				if assert.NoError(t, err) {
+					defer res.Body.Close()
+				}
 
 				var body map[string]any
 				err = json.NewDecoder(res.Body).Decode(&body)

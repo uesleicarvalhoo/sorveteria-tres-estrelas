@@ -48,8 +48,9 @@ func TestProductsGet(t *testing.T) {
 
 		// Action
 		res, err := app.Test(req)
-		assert.NoError(t, err)
-		defer res.Body.Close()
+		if assert.NoError(t, err) {
+			defer res.Body.Close()
+		}
 
 		body := products.Product{}
 		err = json.NewDecoder(res.Body).Decode(&body)
@@ -111,8 +112,9 @@ func TestProductsGet(t *testing.T) {
 
 				// Action
 				res, err := app.Test(req)
-				assert.NoError(t, err)
-				defer res.Body.Close()
+				if assert.NoError(t, err) {
+					defer res.Body.Close()
+				}
 
 				body := map[string]any{}
 				err = json.NewDecoder(res.Body).Decode(&body)
@@ -154,9 +156,9 @@ func TestProductsIndex(t *testing.T) {
 
 		// Action
 		res, err := app.Test(req)
-		defer res.Body.Close()
-
-		assert.NoError(t, err)
+		if assert.NoError(t, err) {
+			defer res.Body.Close()
+		}
 
 		var body []products.Product
 		json.NewDecoder(res.Body).Decode(&body)
@@ -208,9 +210,9 @@ func TestProductsIndex(t *testing.T) {
 
 				// Action
 				res, err := app.Test(req)
-				defer res.Body.Close()
-
-				assert.NoError(t, err)
+				if assert.NoError(t, err) {
+					defer res.Body.Close()
+				}
 
 				body, err := io.ReadAll(res.Body)
 				assert.NoError(t, err)
@@ -257,8 +259,9 @@ func TestProductsStore(t *testing.T) {
 
 		// Action
 		res, err := app.Test(req, 30)
-		assert.NoError(t, err)
-		defer res.Body.Close()
+		if assert.NoError(t, err) {
+			defer res.Body.Close()
+		}
 
 		var body products.Product
 		err = json.NewDecoder(res.Body).Decode(&body)
@@ -327,8 +330,9 @@ func TestProductsStore(t *testing.T) {
 
 				// Action
 				res, err := app.Test(req, 30)
-				assert.NoError(t, err)
-				defer res.Body.Close()
+				if assert.NoError(t, err) {
+					defer res.Body.Close()
+				}
 
 				body := map[string]any{}
 				err = json.NewDecoder(res.Body).Decode(&body)

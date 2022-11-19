@@ -54,8 +54,9 @@ func TestLogin(t *testing.T) {
 
 		// Action
 		res, err := app.Test(req)
-		assert.NoError(t, err)
-		defer res.Body.Close()
+		if assert.NoError(t, err) {
+			defer res.Body.Close()
+		}
 
 		var body auth.JwtToken
 		err = json.NewDecoder(res.Body).Decode(&body)
@@ -114,8 +115,9 @@ func TestLogin(t *testing.T) {
 
 				// Action
 				res, err := app.Test(req)
-				assert.NoError(t, err)
-				defer res.Body.Close()
+				if assert.NoError(t, err) {
+					defer res.Body.Close()
+				}
 
 				var body map[string]any
 				err = json.NewDecoder(res.Body).Decode(&body)
