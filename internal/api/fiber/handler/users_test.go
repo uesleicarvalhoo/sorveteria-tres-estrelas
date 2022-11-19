@@ -23,31 +23,25 @@ import (
 func TestCreateUser(t *testing.T) {
 	t.Parallel()
 
-	t.Run("should create with same user roles", func(t *testing.T) {
+	t.Run("should create user", func(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
 		currentUser, err := users.NewUser(
-			"current user", "current.user@email.com", "passwd",
-			users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers)
+			"current user", "current.user@email.com", "passwd")
 		assert.NoError(t, err)
 
 		payload := dto.CreateUserPayload{
 			Name:     "User Lastname",
 			Email:    "user@email.com",
 			Password: "secret123",
-			Permissions: []users.Permission{
-				users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers,
-			},
 		}
 
 		storedUser, err := users.NewUser(payload.Name, payload.Email, payload.Password)
 		assert.NoError(t, err)
 
 		svc := mocks.NewUseCase(t)
-		svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
-		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password,
-			users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers).
+		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password).
 			Return(storedUser, nil).Once()
 
 		app := fiber.New()
@@ -112,12 +106,10 @@ func TestCreateUser(t *testing.T) {
 
 				// Arrange
 				currentUser, err := users.NewUser(
-					"current user", "current.user@email.com", "passwd",
-					users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers)
+					"current user", "current.user@email.com", "passwd")
 				assert.NoError(t, err)
 
 				svc := mocks.NewUseCase(t)
-				svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
 				svc.On("Create", mock.Anything, tc.payload.Name, tc.payload.Email, tc.payload.Password).
 					Return(tc.mockReturn, tc.mockError).Once()
 

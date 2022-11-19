@@ -30,28 +30,6 @@ func TestNewUser(t *testing.T) {
 		assert.NotEqual(t, passwd, user.PasswordHash)
 		assert.True(t, user.CheckPassword(passwd))
 		assert.False(t, user.CheckPassword("wrong-password"))
-		assert.Equal(t, users.DefaultPermissions(), user.Permissions)
-	})
-
-	t.Run("when permissions has permissions", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		name := "Ueslei Carvalho"
-		email := "uesleicdoliveira@gmail.com"
-		passwd := "secret123"
-		permissions := []users.Permission{users.ReadWriteProducts, users.ReadWriteSales, users.ReadWriteUsers}
-
-		// Action
-		user, err := users.NewUser(name, email, passwd, permissions...)
-
-		// Assert
-		assert.NoError(t, err)
-		assert.NotEqual(t, uuid.Nil, user.ID)
-		assert.Equal(t, email, user.Email)
-		assert.NotEqual(t, passwd, user.PasswordHash)
-		assert.True(t, user.CheckPassword(passwd))
-		assert.False(t, user.CheckPassword("wrong-password"))
-		assert.Equal(t, permissions, user.Permissions)
 	})
 
 	t.Run("errors", func(t *testing.T) {
@@ -62,7 +40,6 @@ func TestNewUser(t *testing.T) {
 			name        string
 			email       string
 			passwd      string
-			permissions []users.Permission
 			expectedErr string
 		}{
 			{
@@ -102,7 +79,7 @@ func TestNewUser(t *testing.T) {
 				t.Parallel()
 
 				// Action
-				u, err := users.NewUser(tc.name, tc.email, tc.passwd, tc.permissions...)
+				u, err := users.NewUser(tc.name, tc.email, tc.passwd)
 
 				// Assert
 				assert.Equal(t, users.User{}, u)
@@ -110,51 +87,6 @@ func TestNewUser(t *testing.T) {
 			})
 		}
 	})
-}
-
-func TestUserCheckPermissions(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		about          string
-		permissions    []users.Permission
-		domain         string
-		action         string
-		expectedResult bool
-	}{
-		{
-			about:          "when user has permissions to make action on domain",
-			permissions:    []users.Permission{users.ReadWriteProducts},
-			domain:         "products",
-			action:         "write",
-			expectedResult: true,
-		},
-		{
-			about:          "when user not have permission to make action on domain",
-			permissions:    []users.Permission{users.ReadProducts},
-			domain:         "products",
-			action:         "write",
-			expectedResult: false,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-
-		t.Run(tc.about, func(t *testing.T) {
-			t.Parallel()
-
-			// Arrange
-			user, err := users.NewUser("user name", "user@email.com", "secret-123", tc.permissions...)
-			assert.NoError(t, err)
-
-			// Action
-			ok := user.AuthorizeDomainAction(tc.domain, tc.action)
-
-			// Assert
-			assert.Equal(t, tc.expectedResult, ok)
-		})
-	}
 }
 
 func TestUserValidate(t *testing.T) {
@@ -169,7 +101,6 @@ func TestUserValidate(t *testing.T) {
 			Name:         "Ueslei Carvalho",
 			Email:        "uesleicdoliveira@gmail.com",
 			PasswordHash: "mySecretPassword!",
-			Permissions:  users.DefaultPermissions(),
 		}
 
 		// Action
@@ -190,7 +121,6 @@ func TestUserValidate(t *testing.T) {
 				ID:           uuid.New(),
 				Email:        "uesleicdoliveira@gmail.com",
 				PasswordHash: "mySecretPassword!",
-				Permissions:  users.DefaultPermissions(),
 			},
 			expectedError: "nome: campo obrigatório",
 		},
@@ -200,7 +130,6 @@ func TestUserValidate(t *testing.T) {
 				ID:           uuid.New(),
 				Name:         "Ueslei Carvalho",
 				PasswordHash: "mySecretPassword!",
-				Permissions:  users.DefaultPermissions(),
 			},
 			expectedError: "email: campo invalido",
 		},
@@ -211,7 +140,6 @@ func TestUserValidate(t *testing.T) {
 				Name:         "Ueslei Carvalho",
 				Email:        "wrong!",
 				PasswordHash: "mySecretPassword!",
-				Permissions:  users.DefaultPermissions(),
 			},
 			expectedError: "email: campo invalido",
 		},

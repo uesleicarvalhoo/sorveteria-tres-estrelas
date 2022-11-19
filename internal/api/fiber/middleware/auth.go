@@ -8,7 +8,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
 )
 
-func NewAuth(authSvc auth.UseCase, domain string) fiber.Handler {
+func NewAuth(authSvc auth.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
 
@@ -18,18 +18,13 @@ func NewAuth(authSvc auth.UseCase, domain string) fiber.Handler {
 
 		token := authHeader[len("Bearer")+1:]
 
-		perm := "read"
-		if c.Method() != "GET" {
-			perm = "write"
-		}
-
-		userID, err := authSvc.Authorize(c.Context(), token, domain, perm)
+		user, err := authSvc.Authorize(c.Context(), token)
 		if err != nil {
 			return c.Status(http.StatusUnauthorized).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		c.Set("x-user-id", userID.String())
-		c.Locals("userID", userID)
+		c.Set("x-user-id", user.ID.String())
+		c.Locals("user", &user)
 
 		return c.Next()
 	}

@@ -16,10 +16,8 @@ func NewService(r Repository) *Service {
 	}
 }
 
-func (s *Service) Create(
-	ctx context.Context, name, email, password string, roles ...Permission,
-) (User, error) {
-	u, err := NewUser(name, email, password, roles...)
+func (s *Service) Create(ctx context.Context, name, email, password string) (User, error) {
+	u, err := NewUser(name, email, password)
 	if err != nil {
 		return User{}, err
 	}

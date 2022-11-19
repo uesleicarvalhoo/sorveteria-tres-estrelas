@@ -24,10 +24,6 @@ func getCacheTokenKey(prefix string, id uuid.UUID) string {
 	return fmt.Sprintf("%s-%s", prefix, id.String())
 }
 
-func GetDefaultUserPermissions() []users.Permission {
-	return []users.Permission{users.ReadWriteProducts, users.ReadWriteSales}
-}
-
 type Service struct {
 	secret string
 	cache  cache.Cache
@@ -127,20 +123,16 @@ func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, err
 	return s.createAccessToken(ctx, id)
 }
 
-func (s *Service) Authorize(ctx context.Context, token, domain, action string) (uuid.UUID, error) {
+func (s *Service) Authorize(ctx context.Context, token string) (users.User, error) {
 	id, err := s.validateToken(ctx, accessToken, token)
 	if err != nil {
-		return uuid.Nil, err
+		return users.User{}, err
 	}
 
 	u, err := s.userUc.Get(ctx, id)
 	if err != nil {
-		return uuid.Nil, err
+		return users.User{}, err
 	}
 
-	if !u.AuthorizeDomainAction(domain, action) {
-		return uuid.Nil, ErrNotPermited
-	}
-
-	return id, nil
+	return u, nil
 }

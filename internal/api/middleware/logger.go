@@ -5,23 +5,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 )
 
-func NewLogrus(logger logger.Logger, serviceName, serviceVersion string) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		if strings.Contains(c.Path(), "/health") {
-			return c.Next()
+func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middleware {
+	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		if strings.Contains(r.URL.Path, "/health") {
+			next(w, r)
+
+			return
 		}
 
-		if err := c.Next(); err != nil {
-			return err
-		}
+		next(w, r)
 
-		statusCode := c.Response().StatusCode()
-		reqHeaders := c.GetReqHeaders()
-		respHeaders := c.GetRespHeaders()
+		statusCode := r.Response.StatusCode
+
 		entry := map[string]interface{}{
 			"log_version": "1.0.0",
 			"date_time":   time.Now(),
@@ -30,23 +28,23 @@ func NewLogrus(logger logger.Logger, serviceName, serviceVersion string) fiber.H
 				"application": serviceName,
 				"version":     serviceVersion,
 				"http": map[string]string{
-					"method": c.Method(),
-					"path":   c.Path(),
+					"method": r.Method,
+					"path":   r.URL.Path,
 				},
 			},
 			"origin": map[string]interface{}{
 				"application": serviceName,
-				"ip":          c.IP(),
+				"ip":          r.RemoteAddr,
 				"headers": map[string]string{
-					"user_agent": string(c.Context().UserAgent()),
-					"origin":     reqHeaders["Origin"],
-					"refer":      string(c.Context().Referer()),
+					"user_agent": r.UserAgent(),
+					"origin":     r.Header.Get("Origin"),
+					"refer":      r.Referer(),
 				},
 			},
 			"context": map[string]interface{}{
 				"service":     serviceName,
 				"status_code": statusCode,
-				"request_id":  respHeaders["X-Request-ID"],
+				"request_id":  r.Response.Header.Get("X-Request-Id"),
 			},
 		}
 
@@ -58,7 +56,5 @@ func NewLogrus(logger logger.Logger, serviceName, serviceVersion string) fiber.H
 		default:
 			logger.InfoJSON(entry)
 		}
-
-		return nil
 	}
 }

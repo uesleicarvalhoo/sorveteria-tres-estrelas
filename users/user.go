@@ -15,21 +15,16 @@ const minPasswordLength = 5
 var ErrTooShortPassword = fmt.Errorf("a senha precisa conter ao menos %d caracters", minPasswordLength)
 
 type User struct {
-	ID           uuid.UUID    `json:"id"`
-	Name         string       `json:"name"`
-	Email        string       `json:"email"`
-	PasswordHash string       `json:"-"`
-	Permissions  []Permission `json:"permissions"`
+	ID           uuid.UUID `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"-"`
 }
 
-func NewUser(name, email, password string, permissions ...Permission) (User, error) {
+func NewUser(name, email, password string) (User, error) {
 	pwd, err := generatePassword(password)
 	if err != nil {
 		return User{}, err
-	}
-
-	if len(permissions) == 0 {
-		permissions = DefaultPermissions()
 	}
 
 	u := User{
@@ -37,7 +32,6 @@ func NewUser(name, email, password string, permissions ...Permission) (User, err
 		Name:         strings.TrimSpace(name),
 		Email:        email,
 		PasswordHash: pwd,
-		Permissions:  permissions,
 	}
 
 	if err := u.Validate(); err != nil {
@@ -74,30 +68,4 @@ func (u User) Validate() error {
 	}
 
 	return v.Validate()
-}
-
-func (u User) AuthorizeDomainAction(domain, action string) bool {
-	for _, p := range u.Permissions {
-		d, permission := p.getDomainActions()
-
-		if d == domain {
-			for _, perm := range permission {
-				if perm == action {
-					return true
-				}
-			}
-		}
-	}
-
-	return false
-}
-
-func (u User) HasPermission(p Permission) bool {
-	for _, up := range u.Permissions {
-		if p.Domain() == up.Domain() && strings.Contains(up.StrActions(), p.StrActions()) {
-			return true
-		}
-	}
-
-	return false
 }
