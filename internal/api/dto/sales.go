@@ -7,8 +7,8 @@ import (
 )
 
 type GetSalesByPeriodQuery struct {
-	StartAt time.Time `json:"start_at"`
-	EndAt   time.Time `json:"end_at"`
+	StartAt time.Time `query:"startAt"`
+	EndAt   time.Time `query:"endAt"`
 }
 
 type RegisterSalePayload struct {

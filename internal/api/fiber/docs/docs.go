@@ -127,6 +127,22 @@ const docTemplate = `{
                     "Balances"
                 ],
                 "summary": "List balances",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "dateTime",
+                        "description": "name search by q",
+                        "name": "start_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "dateTime",
+                        "description": "name search by q",
+                        "name": "end_at",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -384,14 +400,14 @@ const docTemplate = `{
                         "type": "string",
                         "format": "dateTime",
                         "description": "name search by q",
-                        "name": "startAt",
+                        "name": "start_at",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "format": "dateTime",
                         "description": "name search by q",
-                        "name": "endAt",
+                        "name": "end_at",
                         "in": "query"
                     }
                 ],
@@ -629,12 +645,6 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },
@@ -784,12 +794,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         }
