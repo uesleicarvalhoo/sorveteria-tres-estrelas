@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
+	"github.com/urfave/negroni"
 )
 
 func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middleware {
@@ -18,7 +19,12 @@ func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middlew
 
 		next(w, r)
 
-		statusCode := r.Response.StatusCode
+		var statusCode int
+
+		rw, ok := w.(negroni.ResponseWriter)
+		if ok {
+			statusCode = rw.Status()
+		}
 
 		entry := map[string]interface{}{
 			"log_version": "1.0.0",
@@ -44,7 +50,7 @@ func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middlew
 			"context": map[string]interface{}{
 				"service":     serviceName,
 				"status_code": statusCode,
-				"request_id":  r.Response.Header.Get("X-Request-Id"),
+				"request_id":  rw.Header().Get("X-Request-Id"),
 			},
 		}
 
