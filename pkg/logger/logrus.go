@@ -46,22 +46,22 @@ func (l Logrus) Fatalf(format string, args ...interface{}) {
 	l.logger.Fatalf(format, args...)
 }
 
-func (l Logrus) DebugJSON(e interface{}) {
-	l.logger.Debug(e)
+func (l Logrus) DebugJSON(e map[string]interface{}) {
+	l.logger.WithFields(e).Debug()
 }
 
-func (l Logrus) InfoJSON(e interface{}) {
-	l.logger.Info(e)
+func (l Logrus) InfoJSON(e map[string]interface{}) {
+	l.logger.WithFields(e).Info()
 }
 
-func (l Logrus) ErrorJSON(e interface{}) {
-	l.logger.Error(e)
+func (l Logrus) ErrorJSON(e map[string]interface{}) {
+	l.logger.WithFields(e).Error()
 }
 
-func (l Logrus) WarningJSON(e interface{}) {
-	l.logger.Warning(e)
+func (l Logrus) WarningJSON(e map[string]interface{}) {
+	l.logger.WithFields(e).Warning(e)
 }
 
-func (l Logrus) FatalJSON(e interface{}) {
-	l.logger.Fatal(e)
+func (l Logrus) FatalJSON(e map[string]interface{}) {
+	l.logger.WithFields(e).Fatal(e)
 }

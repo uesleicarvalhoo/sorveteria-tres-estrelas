@@ -6,10 +6,9 @@ type Logger interface {
 	Errorf(format string, args ...interface{})
 	Warningf(format string, args ...interface{})
 	Fatalf(format string, args ...interface{})
-
-	DebugJSON(e interface{})
-	InfoJSON(e interface{})
-	ErrorJSON(e interface{})
-	WarningJSON(e interface{})
-	FatalJSON(e interface{})
+	DebugJSON(e map[string]interface{})
+	InfoJSON(e map[string]interface{})
+	ErrorJSON(e map[string]interface{})
+	WarningJSON(e map[string]interface{})
+	FatalJSON(e map[string]interface{})
 }
