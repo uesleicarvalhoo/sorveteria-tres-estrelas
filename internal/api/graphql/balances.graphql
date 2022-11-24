@@ -1,0 +1,29 @@
+type Balance{
+    Id: ID!
+    Operation: String!
+    Description: String!
+    CreatedAt: String!
+    Value: Float!
+}
+
+type CashFlow {
+    Balances: [Balance!]!
+    Payments: Float!
+    Sales: Float!
+    Total: Float!
+}
+
+input NewBalance {
+    Description: String!
+    Operation: String!
+    Value: Float!
+}
+
+
+extend type Query{
+    cashFlow: CashFlow!
+}
+
+extend type Mutation{
+    newBalance(input: NewBalance!): Balance!
+}

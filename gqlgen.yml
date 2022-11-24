@@ -1,0 +1,23 @@
+schema:
+  - internal/api/graphql/*.graphql
+
+exec:
+  filename: internal/api/graphql/generated/generated.go
+  package: generated
+
+model:
+  filename: internal/api/graphql/model/models_gen.go
+  package: model
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32

@@ -1,0 +1,24 @@
+input NewProduct {
+    Name: String!
+    PriceVarejo: Float!
+    PriceAtacado: Float!
+    AtacadoAmount: Int!
+}
+
+type Product {
+    ID: ID!
+    Name: String!
+    PriceVarejo: Float!
+    PriceAtacado: Float!
+    AtacadoAmount: Int!
+}
+
+extend type Query {
+    products: [Product!]!
+    getProductById(id: ID!): Product!
+}
+
+extend type Mutation {
+    createProduct(input: NewProduct!): Product!
+    deleteProduct(id: ID!): Boolean!
+}

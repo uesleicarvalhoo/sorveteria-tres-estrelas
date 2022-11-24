@@ -1,0 +1,39 @@
+type SaleItem {
+  Name: String!
+  UnitPrice: Float!
+  Amount: Int!
+}
+
+type Sale {
+  id: ID!
+  PaymentType: String!
+  Items: [SaleItem]!
+  Total: Float!
+  Description: String!
+  Date: String!
+}
+
+input SalesByPeriodQuery {
+    StartAt: String!
+    EndAt: String!
+}
+
+input CartItem {
+  ItemID: ID!
+  Amount: Int!
+}
+
+input NewSale{
+    Description: String!
+    PaymentType: String!
+    Items: [CartItem!]!
+}
+
+extend type Mutation {
+    registerSale(input: NewSale!): Sale!
+}
+
+
+type Query {
+  saleByPeriod(input: SalesByPeriodQuery!): [Sale]!
+}
