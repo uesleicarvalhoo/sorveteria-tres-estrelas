@@ -25,3 +25,5 @@ type UseCase interface {
 	GetByEmail(ctx context.Context, email string) (User, error)
 	Create(ctx context.Context, name, email, password string) (User, error)
 }
+
+type CtxKey struct{}
