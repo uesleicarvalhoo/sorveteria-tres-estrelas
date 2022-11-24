@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
@@ -32,6 +33,15 @@ func (r BalancesPostgres) GetAll(ctx context.Context) ([]balances.Balance, error
 	var records []balances.Balance
 
 	if tx := r.db.WithContext(ctx).Find(&records); tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return records, nil
+}
+
+func (r BalancesPostgres) GetBetween(ctx context.Context, startAt, endAt time.Time) ([]balances.Balance, error) {
+	var records []balances.Balance
+	if tx := r.db.WithContext(ctx).Find(&records, "created_at BETWEEN ? AND ?", startAt, endAt); tx.Error != nil {
 		return nil, tx.Error
 	}
 

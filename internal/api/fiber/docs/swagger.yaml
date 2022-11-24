@@ -55,10 +55,6 @@ definitions:
         type: string
       password:
         type: string
-      permissions:
-        items:
-          type: string
-        type: array
     type: object
   dto.LoginPayload:
     properties:
@@ -156,10 +152,6 @@ definitions:
         type: string
       name:
         type: string
-      permissions:
-        items:
-          type: string
-        type: array
     type: object
 info:
   contact: {}
@@ -237,6 +229,17 @@ paths:
       consumes:
       - application/json
       description: get balances
+      parameters:
+      - description: name search by q
+        format: dateTime
+        in: query
+        name: start_at
+        type: string
+      - description: name search by q
+        format: dateTime
+        in: query
+        name: end_at
+        type: string
       produces:
       - application/json
       responses:
@@ -407,12 +410,12 @@ paths:
       - description: name search by q
         format: dateTime
         in: query
-        name: startAt
+        name: start_at
         type: string
       - description: name search by q
         format: dateTime
         in: query
-        name: endAt
+        name: end_at
         type: string
       produces:
       - application/json

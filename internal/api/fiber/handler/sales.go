@@ -19,8 +19,8 @@ func MakeSalesRoutes(r fiber.Router, svc sales.UseCase, balanceSvc balances.UseC
 // @Tags         Sales
 // @Accept       json
 // @Produce      json
-// @Param        startAt    query   string  false  "name search by q"  Format(dateTime)
-// @Param        endAt      query   string  false  "name search by q"  Format(dateTime)
+// @Param        start_at    query   string  false  "name search by q"  Format(dateTime)
+// @Param        end_at      query   string  false  "name search by q"  Format(dateTime)
 // @Success		200	{object} []sales.Sale
 // @Failure		422	{object} dto.MessageJSON "when start or end param is invalid"
 // @Failure		500	{object} dto.MessageJSON "when an error occurs"

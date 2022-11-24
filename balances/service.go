@@ -3,6 +3,7 @@ package balances
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 )
@@ -48,6 +49,10 @@ func (s Service) GetCashFlow(ctx context.Context) (CashFlow, error) {
 		return CashFlow{}, err
 	}
 
+	return parseCashFlow(balances), nil
+}
+
+func parseCashFlow(balances []Balance) CashFlow {
 	var total, sales, payments float32
 
 	for _, b := range balances {
@@ -65,5 +70,14 @@ func (s Service) GetCashFlow(ctx context.Context) (CashFlow, error) {
 		Payments: payments,
 		Sales:    sales,
 		Balances: balances,
-	}, nil
+	}
+}
+
+func (s Service) GetCashFlowBetween(ctx context.Context, startAt, endAt time.Time) (CashFlow, error) {
+	balances, err := s.r.GetBetween(ctx, startAt, endAt)
+	if err != nil {
+		return CashFlow{}, err
+	}
+
+	return parseCashFlow(balances), nil
 }

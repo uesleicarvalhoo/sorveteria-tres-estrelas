@@ -134,7 +134,7 @@ func TestGetAll(t *testing.T) {
 
 			// Arrange
 			repo := mocks.NewRepository(t)
-			repo.On("GetAll", mock.Anything).Return(tc.expectedBalances, tc.mockError).Once()
+			repo.On("GetAll", mock.Anything).Return(tc.mockBalances, tc.mockError).Once()
 
 			sut := balances.NewService(repo)
 
@@ -144,6 +144,83 @@ func TestGetAll(t *testing.T) {
 			// Assert
 			assert.Equal(t, tc.expectedError, err)
 			assert.Equal(t, tc.expectedBalances, found)
+		})
+	}
+}
+
+func TestGetBetween(t *testing.T) {
+	t.Parallel()
+
+	repoErr := errors.New("repository error")
+	existingBalances := []balances.Balance{
+		{
+			ID:          uuid.New(),
+			Value:       1,
+			Description: "test balance 1",
+			Operation:   balances.OperationSale,
+			CreatedAt:   time.Now(),
+		},
+		{
+			ID:          uuid.New(),
+			Value:       2,
+			Description: "test balance 2",
+			Operation:   balances.OperationPayment,
+			CreatedAt:   time.Now(),
+		},
+	}
+
+	cashFlow := balances.CashFlow{
+		Total:    -1,
+		Sales:    1,
+		Payments: 2,
+		Balances: existingBalances,
+	}
+
+	tests := []struct {
+		about            string
+		startAt          time.Time
+		endAt            time.Time
+		mockBalances     []balances.Balance
+		mockError        error
+		expectedError    error
+		expectecCashFlow balances.CashFlow
+	}{
+		{
+			about:            "when repository returns an error",
+			mockBalances:     []balances.Balance{},
+			mockError:        repoErr,
+			expectedError:    repoErr,
+			expectecCashFlow: balances.CashFlow{},
+		},
+		{
+			about:            "when repository returns balances",
+			mockBalances:     existingBalances,
+			mockError:        nil,
+			expectedError:    nil,
+			expectecCashFlow: cashFlow,
+			startAt:          time.Now().Add(-1 * time.Hour),
+			endAt:            time.Now().Add(1 * time.Hour),
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+
+		t.Run(tc.about, func(t *testing.T) {
+			t.Parallel()
+
+			// Arrange
+			repo := mocks.NewRepository(t)
+			repo.On("GetBetween", mock.Anything, tc.startAt, tc.endAt).Return(tc.mockBalances, tc.mockError).Once()
+
+			sut := balances.NewService(repo)
+
+			// Action
+			found, err := sut.GetCashFlowBetween(context.Background(), tc.startAt, tc.endAt)
+
+			// Assert
+			assert.Equal(t, tc.expectedError, err)
+			assert.Equal(t, tc.expectecCashFlow, found)
 		})
 	}
 }

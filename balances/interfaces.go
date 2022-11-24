@@ -2,12 +2,14 @@ package balances
 
 import (
 	"context"
+	"time"
 
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 )
 
 type Reader interface {
 	GetAll(ctx context.Context) ([]Balance, error)
+	GetBetween(ctx context.Context, start, end time.Time) ([]Balance, error)
 }
 
 type Writer interface {
@@ -24,4 +26,5 @@ type UseCase interface {
 	RegisterFromSale(ctx context.Context, sale sales.Sale) (Balance, error)
 	GetAll(ctx context.Context) ([]Balance, error)
 	GetCashFlow(ctx context.Context) (CashFlow, error)
+	GetCashFlowBetween(ctx context.Context, startAt, endAt time.Time) (CashFlow, error)
 }

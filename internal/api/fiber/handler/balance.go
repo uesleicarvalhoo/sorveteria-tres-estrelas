@@ -16,11 +16,27 @@ func MakeBalanceRouter(r fiber.Router, svc balances.UseCase) {
 // @Tags         Balances
 // @Accept       json
 // @Produce      json
-// @Success		200	{object} []balances.CashFlow
-// @Failure		500	{object} dto.MessageJSON "when an error occurs"
-// @Router		/balances [get]
+// @Param        start_at    query   string  false  "name search by q"  Format(dateTime)
+// @Param        end_at      query   string  false  "name search by q"  Format(dateTime)
+// @Success      200         {object} []balances.CashFlow
+// @Failure      500         {object} dto.MessageJSON "when an error occurs"
+// @Router       /balances [get]
 func balancesIndex(svc balances.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		var query dto.GetCashFlowByPeriodQuery
+		if err := c.QueryParser(&query); err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
+		}
+
+		if !query.StartAt.IsZero() && !query.EndAt.IsZero() {
+			balances, err := svc.GetCashFlowBetween(c.Context(), query.StartAt, query.EndAt)
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
+			}
+
+			return c.JSON(balances)
+		}
+
 		balances, err := svc.GetCashFlow(c.Context())
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})

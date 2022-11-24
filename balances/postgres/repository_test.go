@@ -104,4 +104,75 @@ func (suite *BalancesPostgresTestSuite) TestCRUD() {
 
 		assert.NoError(t, err)
 	})
+
+	suite.T().Run("test GetBetween should return only balances between startAt and endAt", func(t *testing.T) {
+		// Arrange
+		expected := []balances.Balance{
+			{
+				ID:          uuid.New(),
+				Description: "balance 1",
+				Operation:   balances.OperationSale,
+				Value:       1.20,
+				CreatedAt:   time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
+			},
+			{
+				ID:          uuid.New(),
+				Description: "balance 1",
+				Operation:   balances.OperationSale,
+				Value:       1.25,
+				CreatedAt:   time.Date(2022, 1, 20, 0, 0, 0, 0, time.Local),
+			},
+			{
+				ID:          uuid.New(),
+				Description: "balance 1",
+				Operation:   balances.OperationPayment,
+				Value:       12.00,
+				CreatedAt:   time.Date(2022, 1, 31, 0, 0, 0, 0, time.Local),
+			},
+		}
+
+		ignored := []balances.Balance{
+			{
+				ID:          uuid.New(),
+				Description: "balance 1",
+				Operation:   balances.OperationSale,
+				Value:       1.20,
+				CreatedAt:   time.Date(2022, 2, 1, 0, 0, 0, 0, time.Local),
+			},
+			{
+				ID:          uuid.New(),
+				Description: "balance 1",
+				Operation:   balances.OperationSale,
+				Value:       1.25,
+				CreatedAt:   time.Date(2022, 2, 20, 0, 0, 0, 0, time.Local),
+			},
+			{
+				ID:          uuid.New(),
+				Description: "balance 1",
+				Operation:   balances.OperationPayment,
+				Value:       12.00,
+				CreatedAt:   time.Date(2022, 2, 31, 0, 0, 0, 0, time.Local),
+			},
+		}
+
+		startAt := time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local)
+		endAt := time.Date(2022, 1, 31, 0, 0, 0, 0, time.Local)
+
+		for _, b := range expected {
+			err := repo.Create(suite.ctx, b)
+			assert.NoError(t, err)
+		}
+
+		for _, b := range ignored {
+			err := repo.Create(suite.ctx, b)
+			assert.NoError(t, err)
+		}
+
+		// Action
+		found, err := repo.GetBetween(suite.ctx, startAt, endAt)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.Equal(t, expected, found)
+	})
 }
