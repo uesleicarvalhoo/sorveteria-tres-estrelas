@@ -39,6 +39,12 @@ run: swagger  ## Run app
 compose:  ## Init containers with dev dependencies
 	@docker compose build && docker compose up -d
 
+## @ GraphQL
+.PHONY: gqlgen
+generate-graphql:  ## Generate GraphQL server
+	@gqlgen generate
+
+
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
 generate-mocks: clean-mocks  ## Generate mock files
