@@ -15,10 +15,10 @@ const minPasswordLength = 5
 var ErrTooShortPassword = fmt.Errorf("a senha precisa conter ao menos %d caracters", minPasswordLength)
 
 type User struct {
-	ID           uuid.UUID    `json:"id"`
-	Name         string       `json:"name"`
-	Email        string       `json:"email"`
-	PasswordHash string       `json:"-"`
+	ID           uuid.UUID `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"-"`
 }
 
 func NewUser(name, email, password string) (User, error) {
@@ -69,4 +69,3 @@ func (u User) Validate() error {
 
 	return v.Validate()
 }
-

@@ -9,69 +9,64 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/fiber/handler"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber/handler"
 )
 
-func TestCreateUser(t *testing.T) {
+func TestLogin(t *testing.T) {
 	t.Parallel()
 
-	t.Run("should create user", func(t *testing.T) {
+	t.Run("test success", func(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		currentUser, err := users.NewUser(
-			"current user", "current.user@email.com", "passwd")
-		assert.NoError(t, err)
-
-		payload := dto.CreateUserPayload{
-			Name:     "User Lastname",
+		payload := dto.LoginPayload{
 			Email:    "user@email.com",
 			Password: "secret123",
 		}
 
-		storedUser, err := users.NewUser(payload.Name, payload.Email, payload.Password)
-		assert.NoError(t, err)
+		jwtToken := auth.JwtToken{
+			GrantType:    "beaerer",
+			AcessToken:   "my-access-token",
+			RefreshToken: "my-refresh-token",
+			ExpiresAt:    time.Now().Unix(),
+		}
 
 		svc := mocks.NewUseCase(t)
-		svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
-		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password).
-			Return(storedUser, nil).Once()
+		svc.On("Login", mock.Anything, payload.Email, payload.Password).Return(jwtToken, nil).Once()
 
 		app := fiber.New()
-		app.Use(mockAuthMiddleware(currentUser.ID))
-
-		handler.MakeUserRoutes(app, svc)
+		handler.MakeAuhtRoutes(app, svc)
 
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(reqBody))
 		req.Header.Add("Content-Type", "application/json")
 
 		// Action
-		res, err := app.Test(req, 30)
+		res, err := app.Test(req)
 		if assert.NoError(t, err) {
 			defer res.Body.Close()
 		}
 
-		var body users.User
+		var body auth.JwtToken
 		err = json.NewDecoder(res.Body).Decode(&body)
 		assert.NoError(t, err)
 
 		// Assert
 		assert.Equal(t, res.StatusCode, http.StatusCreated)
-		assert.Equal(t, storedUser.ID, body.ID)
-		assert.Equal(t, storedUser.Email, body.Email)
-		assert.Equal(t, storedUser.Name, body.Name)
-		assert.Equal(t, "", body.PasswordHash)
+		assert.Equal(t, jwtToken.GrantType, body.GrantType)
+		assert.Equal(t, jwtToken.AcessToken, body.AcessToken)
+		assert.Equal(t, jwtToken.RefreshToken, body.RefreshToken)
 	})
 
 	t.Run("test errors", func(t *testing.T) {
@@ -80,8 +75,8 @@ func TestCreateUser(t *testing.T) {
 		tests := []struct {
 			about              string
 			id                 string
-			payload            dto.CreateUserPayload
-			mockReturn         users.User
+			payload            dto.LoginPayload
+			mockReturn         auth.JwtToken
 			mockError          error
 			expectedStatusCode int
 			expectedBody       map[string]any
@@ -89,8 +84,7 @@ func TestCreateUser(t *testing.T) {
 			{
 				about:     "when service return an error",
 				mockError: errors.New("service error"),
-				payload: dto.CreateUserPayload{
-					Name:     "User Lastname",
+				payload: dto.LoginPayload{
 					Email:    "user@email.com",
 					Password: "secret123",
 				},
@@ -106,22 +100,17 @@ func TestCreateUser(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
-				currentUser, err := users.NewUser(
-					"current user", "current.user@email.com", "passwd")
-				assert.NoError(t, err)
-
 				svc := mocks.NewUseCase(t)
-				svc.On("Create", mock.Anything, tc.payload.Name, tc.payload.Email, tc.payload.Password).
+				svc.On("Login", mock.Anything, tc.payload.Email, tc.payload.Password).
 					Return(tc.mockReturn, tc.mockError).Once()
 
 				app := fiber.New()
-				app.Use(mockAuthMiddleware(currentUser.ID))
-				handler.MakeUserRoutes(app, svc)
+				handler.MakeAuhtRoutes(app, svc)
 
 				reqBody, err := json.Marshal(tc.payload)
 				assert.NoError(t, err)
 
-				req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+				req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(reqBody))
 				req.Header.Add("Content-Type", "application/json")
 
 				// Action
