@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
 )
 
 func MakeBalanceRouter(r fiber.Router, svc balances.UseCase) {
