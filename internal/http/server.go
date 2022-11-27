@@ -1,4 +1,4 @@
-package api
+package http
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/middleware"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 	"github.com/urfave/negroni"
 )

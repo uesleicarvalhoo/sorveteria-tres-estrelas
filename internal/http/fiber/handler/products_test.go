@@ -17,8 +17,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/fiber/handler"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products/mocks"
 )

@@ -7,9 +7,9 @@ package main
 import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/config"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/api/fiber"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/ioc"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 )
@@ -46,7 +46,7 @@ func main() {
 	h := fiber.Handlers(
 		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, balanceSvc)
 
-	if err := api.Start(cfg.HTTPPort, cfg.ServiceName, cfg.ServiceVersion, h, logger); err != nil {
+	if err := http.Start(cfg.HTTPPort, cfg.ServiceName, cfg.ServiceVersion, h, logger); err != nil {
 		panic(err)
 	}
 }
