@@ -41,7 +41,6 @@ func TestCreateUser(t *testing.T) {
 		assert.NoError(t, err)
 
 		svc := mocks.NewUseCase(t)
-		svc.On("Get", mock.Anything, currentUser.ID).Return(currentUser, nil)
 		svc.On("Create", mock.Anything, payload.Name, payload.Email, payload.Password).
 			Return(storedUser, nil).Once()
 
