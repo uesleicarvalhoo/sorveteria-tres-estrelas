@@ -8,9 +8,9 @@ func MakeHealthCheckRoutes(r fiber.Router) {
 	r.Get("/health", healthCheck())
 }
 
-// @Summary     Health Cehck
+// @Summary     Health Check
 // @Description Check app and dependencies status
-// @Tags        Health check
+// @Tags        Health Check
 // @Produce     json
 // @Success     200 {object} map[string]string
 // @Router      /health [get]

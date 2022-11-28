@@ -118,7 +118,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Balances"
+                    "Cashflow"
                 ],
                 "summary": "Get cash flow",
                 "parameters": [
@@ -166,9 +166,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Health check"
+                    "Health Check"
                 ],
-                "summary": "Health Cehck",
+                "summary": "Health Check",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -192,7 +192,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Payments"
+                    "Payment"
                 ],
                 "summary": "List payments",
                 "parameters": [
@@ -238,7 +238,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Payments"
+                    "Payment"
                 ],
                 "summary": "Register a new payment",
                 "parameters": [
@@ -472,7 +472,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "List sales",
                 "parameters": [
@@ -524,7 +524,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "Register a new sale",
                 "parameters": [
@@ -573,7 +573,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "Delete Sale by ID",
                 "parameters": [

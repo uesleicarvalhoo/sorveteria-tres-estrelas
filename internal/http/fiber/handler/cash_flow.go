@@ -12,7 +12,7 @@ func MakeCashFlowHandler(r fiber.Router, svc cashflow.UseCase) {
 
 // @Summary      Get cash flow
 // @Description  get cash flow
-// @Tags         Balances
+// @Tags         Cashflow
 // @Accept       json
 // @Produce      json
 // @Param        start_at    query   string  false  "name search by q"  Format(dateTime)

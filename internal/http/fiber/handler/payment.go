@@ -15,7 +15,7 @@ func MakePaymentsRoutes(router fiber.Router, service payments.UseCase) {
 
 // @Summary      List payments
 // @Description  get payments
-// @Tags         Payments
+// @Tags         Payment
 // @Accept       json
 // @Produce      json
 // @Param        start_at    query   string  false  "name search by q"  Format(dateTime)
@@ -51,7 +51,7 @@ func getPayments(svc payments.UseCase) fiber.Handler { //nolint:dupl
 
 // @Summary     Register a new payment
 // @Description Create a new payment and return payment data
-// @Tags        Payments
+// @Tags        Payment
 // @Accept      json
 // @Produce     json
 // @Param       payload body     dto.CreatePaymentPayload true "the payload data"

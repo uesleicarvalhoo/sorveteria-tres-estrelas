@@ -15,7 +15,7 @@ func MakeSalesRoutes(r fiber.Router, svc sales.UseCase) {
 
 // @Summary      List sales
 // @Description  get sales
-// @Tags         Sales
+// @Tags         Sale
 // @Accept       json
 // @Produce      json
 // @Param        start_at    query   string  false  "name search by q"  Format(dateTime)
@@ -51,7 +51,7 @@ func salesIndex(svc sales.UseCase) fiber.Handler { //nolint:dupl
 
 // @Summary     Register a new sale
 // @Description Register a sale and return sale data
-// @Tags        Sales
+// @Tags        Sale
 // @Accept      json
 // @Produce     json
 // @Param       payload body     dto.RegisterSalePayload true "the payload data"
@@ -79,7 +79,7 @@ func registerSale(svc sales.UseCase) fiber.Handler {
 
 // @Summary     Delete Sale by ID
 // @Description Delete sale
-// @Tags        Sales
+// @Tags        Sale
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "the id of sale"

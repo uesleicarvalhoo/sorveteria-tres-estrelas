@@ -1,6 +1,8 @@
 package sales
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -47,4 +49,14 @@ func (s Sale) Validate() error {
 	}
 
 	return v.Validate()
+}
+
+func (s Sale) ItemsDescription() string {
+	items := []string{}
+
+	for _, item := range s.Items {
+		items = append(items, fmt.Sprintf("%s (%d)", item.Name, item.Amount))
+	}
+
+	return strings.Join(items, ", ")
 }

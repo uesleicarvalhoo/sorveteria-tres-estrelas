@@ -253,7 +253,7 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: Get cash flow
       tags:
-      - Balances
+      - Cashflow
   /health:
     get:
       description: Check app and dependencies status
@@ -266,9 +266,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Health Cehck
+      summary: Health Check
       tags:
-      - Health check
+      - Health Check
   /payments:
     get:
       consumes:
@@ -300,7 +300,7 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: List payments
       tags:
-      - Payments
+      - Payment
     post:
       consumes:
       - application/json
@@ -329,7 +329,7 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: Register a new payment
       tags:
-      - Payments
+      - Payment
   /payments/{id}:
     delete:
       consumes:
@@ -489,7 +489,7 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: List sales
       tags:
-      - Sales
+      - Sale
     post:
       consumes:
       - application/json
@@ -520,7 +520,7 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: Register a new sale
       tags:
-      - Sales
+      - Sale
   /sales/{id}:
     delete:
       consumes:
@@ -543,7 +543,7 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: Delete Sale by ID
       tags:
-      - Sales
+      - Sale
   /users:
     post:
       consumes:

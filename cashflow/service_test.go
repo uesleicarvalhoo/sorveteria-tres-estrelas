@@ -19,6 +19,10 @@ import (
 func TestGetAll(t *testing.T) {
 	t.Parallel()
 
+	makeDate := func(year, month, day int) time.Time {
+		return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	}
+
 	svcError := errors.New("service error")
 
 	tests := []struct {
@@ -41,28 +45,26 @@ func TestGetAll(t *testing.T) {
 			expectedError: svcError,
 		},
 		{
-			about: "should return a cash flow with all sales and payments",
+			about: "should return a cash flow with all sales and payments ordered by date",
 			storedPayments: []payments.Payment{
-				{ID: uuid.Nil, Description: "payment 1", Value: 5},
-				{ID: uuid.Nil, Description: "payment 2", Value: 3},
-				{ID: uuid.Nil, Description: "payment 3", Value: 2},
+				{ID: uuid.Nil, Description: "payment 1", Value: 5, CreatedAt: makeDate(2020, 1, 1)},
+				{ID: uuid.Nil, Description: "payment 2", Value: 3, CreatedAt: makeDate(2020, 1, 5)},
+				{ID: uuid.Nil, Description: "payment 3", Value: 2, CreatedAt: makeDate(2020, 1, 7)},
 			},
 			storedSales: []sales.Sale{
-				{ID: uuid.Nil, Description: "sale 1", Total: 5},
-				{ID: uuid.Nil, Description: "sale 2", Total: 14},
+				{ID: uuid.Nil, Description: "sale 1", Total: 5, Date: makeDate(2020, 1, 2)},
+				{ID: uuid.Nil, Description: "sale 2", Total: 14, Date: makeDate(2020, 1, 8)},
 			},
 			expectedCashFlow: cashflow.CashFlow{
 				TotalPayments: 10,
 				TotalSales:    19,
 				Balance:       9,
-				Payments: []payments.Payment{
-					{ID: uuid.Nil, Description: "payment 1", Value: 5},
-					{ID: uuid.Nil, Description: "payment 2", Value: 3},
-					{ID: uuid.Nil, Description: "payment 3", Value: 2},
-				},
-				Sales: []sales.Sale{
-					{ID: uuid.Nil, Description: "sale 1", Total: 5},
-					{ID: uuid.Nil, Description: "sale 2", Total: 14},
+				Details: []cashflow.Detail{
+					{Description: "payment 1", Value: 5, Type: cashflow.BalancePayment, Date: makeDate(2020, 1, 1)},
+					{Description: "sale 1\n", Value: 5, Type: cashflow.SaleBalance, Date: makeDate(2020, 1, 2)},
+					{Description: "payment 2", Value: 3, Type: cashflow.BalancePayment, Date: makeDate(2020, 1, 5)},
+					{Description: "payment 3", Value: 2, Type: cashflow.BalancePayment, Date: makeDate(2020, 1, 7)},
+					{Description: "sale 2\n", Value: 14, Type: cashflow.SaleBalance, Date: makeDate(2020, 1, 8)},
 				},
 			},
 			expectedError: nil,
@@ -98,6 +100,10 @@ func TestGetAll(t *testing.T) {
 func TestGetByPeriod(t *testing.T) {
 	t.Parallel()
 
+	makeDate := func(year, month, day int) time.Time {
+		return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	}
+
 	svcError := errors.New("service error")
 
 	tests := []struct {
@@ -124,22 +130,20 @@ func TestGetByPeriod(t *testing.T) {
 		{
 			about: "should return a cash flow dates with all sales and payments",
 			storedPayments: []payments.Payment{
-				{ID: uuid.Nil, Description: "payment 1", Value: 15},
-				{ID: uuid.Nil, Description: "payment 2", Value: 2},
+				{ID: uuid.Nil, Description: "payment 1", Value: 15, CreatedAt: makeDate(2020, 1, 1)},
+				{ID: uuid.Nil, Description: "payment 2", Value: 2, CreatedAt: makeDate(2020, 1, 5)},
 			},
 			storedSales: []sales.Sale{
-				{ID: uuid.Nil, Description: "sale 1", Total: 14},
+				{ID: uuid.Nil, Description: "sale 1", Total: 14, Date: makeDate(2020, 1, 2)},
 			},
 			expectedCashFlow: cashflow.CashFlow{
 				TotalPayments: 17,
 				TotalSales:    14,
 				Balance:       -3,
-				Payments: []payments.Payment{
-					{ID: uuid.Nil, Description: "payment 1", Value: 15},
-					{ID: uuid.Nil, Description: "payment 2", Value: 2},
-				},
-				Sales: []sales.Sale{
-					{ID: uuid.Nil, Description: "sale 1", Total: 14},
+				Details: []cashflow.Detail{
+					{Description: "payment 1", Value: 15, Type: cashflow.BalancePayment, Date: makeDate(2020, 1, 1)},
+					{Description: "sale 1\n", Value: 14, Type: cashflow.SaleBalance, Date: makeDate(2020, 1, 2)},
+					{Description: "payment 2", Value: 2, Type: cashflow.BalancePayment, Date: makeDate(2020, 1, 5)},
 				},
 			},
 			expectedError: nil,

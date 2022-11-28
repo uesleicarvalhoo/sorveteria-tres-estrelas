@@ -42,8 +42,10 @@ func (s Service) GetByPeriod(ctx context.Context, startAt, endAt time.Time) ([]P
 
 func (s Service) RegisterPayment(ctx context.Context, value float32, desc string) (Payment, error) {
 	p := Payment{
+		ID:          uuid.New(),
 		Value:       value,
 		Description: desc,
+		CreatedAt:   time.Now(),
 	}
 
 	err := s.r.Create(ctx, p)

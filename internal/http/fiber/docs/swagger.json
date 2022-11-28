@@ -109,7 +109,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Balances"
+                    "Cashflow"
                 ],
                 "summary": "Get cash flow",
                 "parameters": [
@@ -157,9 +157,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Health check"
+                    "Health Check"
                 ],
-                "summary": "Health Cehck",
+                "summary": "Health Check",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -183,7 +183,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Payments"
+                    "Payment"
                 ],
                 "summary": "List payments",
                 "parameters": [
@@ -229,7 +229,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Payments"
+                    "Payment"
                 ],
                 "summary": "Register a new payment",
                 "parameters": [
@@ -463,7 +463,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "List sales",
                 "parameters": [
@@ -515,7 +515,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "Register a new sale",
                 "parameters": [
@@ -564,7 +564,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "Delete Sale by ID",
                 "parameters": [

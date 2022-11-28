@@ -2,6 +2,8 @@ package cashflow
 
 import (
 	"context"
+	"fmt"
+	"sort"
 	"time"
 
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
@@ -51,19 +53,38 @@ func (s Service) GetCashFlowBetween(ctx context.Context, startAt, endAt time.Tim
 func (s Service) parseCashFlow(payments []payments.Payment, sales []sales.Sale) CashFlow {
 	var totalSales, totalPayments float32
 
+	details := []Detail{}
+
 	for _, sale := range sales {
 		totalSales += float32(sale.Total)
+
+		details = append(details, Detail{
+			Type:        SaleBalance,
+			Description: fmt.Sprintf("%s\n%s", sale.Description, sale.ItemsDescription()),
+			Value:       float32(sale.Total),
+			Date:        sale.Date,
+		})
 	}
 
 	for _, payment := range payments {
 		totalPayments += payment.Value
+
+		details = append(details, Detail{
+			Description: payment.Description,
+			Value:       payment.Value,
+			Type:        BalancePayment,
+			Date:        payment.CreatedAt,
+		})
 	}
+
+	sort.Slice(details, func(i, j int) bool {
+		return details[i].Date.After(details[j].Date)
+	})
 
 	return CashFlow{
 		Balance:       totalSales - totalPayments,
 		TotalSales:    totalSales,
 		TotalPayments: totalPayments,
-		Sales:         sales,
-		Payments:      payments,
+		Details:       details,
 	}
 }
