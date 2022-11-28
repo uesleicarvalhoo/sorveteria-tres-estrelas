@@ -214,7 +214,7 @@ func TestDeleteByID(t *testing.T) {
 
 			// Arrange
 			repo := mocks.NewRepository(t)
-			repo.On("DeleteByID", mock.Anything, mock.Anything).Return(tc.repoError).Once()
+			repo.On("Delete", mock.Anything, mock.Anything).Return(tc.repoError).Once()
 			productsSvc := productsMocks.NewUseCase(t)
 
 			sut := sales.NewService(productsSvc, repo)

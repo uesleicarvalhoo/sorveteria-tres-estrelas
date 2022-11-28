@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
 )
 
 func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middleware {

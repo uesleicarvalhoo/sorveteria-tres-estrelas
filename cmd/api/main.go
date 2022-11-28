@@ -11,7 +11,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/ioc"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
 )
 
 func main() {

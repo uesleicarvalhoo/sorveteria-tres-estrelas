@@ -90,10 +90,10 @@ func TestGetAll(t *testing.T) {
 		expectedPayments []payments.Payment
 	}{
 		{
-			about:            "when repository returns an error",
-			mockPayments:     []payments.Payment{},
-			mockError:        repoErr,
-			expectedError:    repoErr,
+			about:         "when repository returns an error",
+			mockPayments:  []payments.Payment{},
+			mockError:     repoErr,
+			expectedError: repoErr,
 		},
 		{
 			about: "when repository returns payments, should order by date",
@@ -166,10 +166,10 @@ func TestGetBetween(t *testing.T) {
 		expectedPayments []payments.Payment
 	}{
 		{
-			about:            "when repository returns an error",
-			mockPayments:     []payments.Payment{},
-			mockError:        repoErr,
-			expectedError:    repoErr,
+			about:         "when repository returns an error",
+			mockPayments:  []payments.Payment{},
+			mockError:     repoErr,
+			expectedError: repoErr,
 		},
 		{
 			about: "when repository returns payments, should order by date",
