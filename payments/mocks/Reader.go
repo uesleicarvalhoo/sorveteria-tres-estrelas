@@ -5,9 +5,8 @@ package mocks
 import (
 	context "context"
 
-	balances "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
-
 	mock "github.com/stretchr/testify/mock"
+	payments "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
 
 	time "time"
 )
@@ -18,15 +17,15 @@ type Reader struct {
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *Reader) GetAll(ctx context.Context) ([]balances.Balance, error) {
+func (_m *Reader) GetAll(ctx context.Context) ([]payments.Payment, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []balances.Balance
-	if rf, ok := ret.Get(0).(func(context.Context) []balances.Balance); ok {
+	var r0 []payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context) []payments.Payment); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]balances.Balance)
+			r0 = ret.Get(0).([]payments.Payment)
 		}
 	}
 
@@ -40,22 +39,22 @@ func (_m *Reader) GetAll(ctx context.Context) ([]balances.Balance, error) {
 	return r0, r1
 }
 
-// GetBetween provides a mock function with given fields: ctx, start, end
-func (_m *Reader) GetBetween(ctx context.Context, start time.Time, end time.Time) ([]balances.Balance, error) {
-	ret := _m.Called(ctx, start, end)
+// GetBetween provides a mock function with given fields: ctx, startAt, endAt
+func (_m *Reader) GetBetween(ctx context.Context, startAt time.Time, endAt time.Time) ([]payments.Payment, error) {
+	ret := _m.Called(ctx, startAt, endAt)
 
-	var r0 []balances.Balance
-	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []balances.Balance); ok {
-		r0 = rf(ctx, start, end)
+	var r0 []payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []payments.Payment); ok {
+		r0 = rf(ctx, startAt, endAt)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]balances.Balance)
+			r0 = ret.Get(0).([]payments.Payment)
 		}
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, time.Time, time.Time) error); ok {
-		r1 = rf(ctx, start, end)
+		r1 = rf(ctx, startAt, endAt)
 	} else {
 		r1 = ret.Error(1)
 	}

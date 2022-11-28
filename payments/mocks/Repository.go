@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	sales "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
+	payments "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
 
 	time "time"
 
@@ -18,13 +18,13 @@ type Repository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, s
-func (_m *Repository) Create(ctx context.Context, s sales.Sale) error {
-	ret := _m.Called(ctx, s)
+// Create provides a mock function with given fields: ctx, payment
+func (_m *Repository) Create(ctx context.Context, payment payments.Payment) error {
+	ret := _m.Called(ctx, payment)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, sales.Sale) error); ok {
-		r0 = rf(ctx, s)
+	if rf, ok := ret.Get(0).(func(context.Context, payments.Payment) error); ok {
+		r0 = rf(ctx, payment)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -47,15 +47,15 @@ func (_m *Repository) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *Repository) GetAll(ctx context.Context) ([]sales.Sale, error) {
+func (_m *Repository) GetAll(ctx context.Context) ([]payments.Payment, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []sales.Sale
-	if rf, ok := ret.Get(0).(func(context.Context) []sales.Sale); ok {
+	var r0 []payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context) []payments.Payment); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]sales.Sale)
+			r0 = ret.Get(0).([]payments.Payment)
 		}
 	}
 
@@ -69,22 +69,22 @@ func (_m *Repository) GetAll(ctx context.Context) ([]sales.Sale, error) {
 	return r0, r1
 }
 
-// Search provides a mock function with given fields: ctx, start, end
-func (_m *Repository) Search(ctx context.Context, start time.Time, end time.Time) ([]sales.Sale, error) {
-	ret := _m.Called(ctx, start, end)
+// GetBetween provides a mock function with given fields: ctx, startAt, endAt
+func (_m *Repository) GetBetween(ctx context.Context, startAt time.Time, endAt time.Time) ([]payments.Payment, error) {
+	ret := _m.Called(ctx, startAt, endAt)
 
-	var r0 []sales.Sale
-	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []sales.Sale); ok {
-		r0 = rf(ctx, start, end)
+	var r0 []payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []payments.Payment); ok {
+		r0 = rf(ctx, startAt, endAt)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]sales.Sale)
+			r0 = ret.Get(0).([]payments.Payment)
 		}
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, time.Time, time.Time) error); ok {
-		r1 = rf(ctx, start, end)
+		r1 = rf(ctx, startAt, endAt)
 	} else {
 		r1 = ret.Error(1)
 	}

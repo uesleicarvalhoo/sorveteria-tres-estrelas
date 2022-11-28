@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	sales "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
+	payments "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
 
 	time "time"
 
@@ -18,8 +18,8 @@ type UseCase struct {
 	mock.Mock
 }
 
-// DeleteByID provides a mock function with given fields: ctx, id
-func (_m *UseCase) DeleteByID(ctx context.Context, id uuid.UUID) error {
+// DeletePayment provides a mock function with given fields: ctx, id
+func (_m *UseCase) DeletePayment(ctx context.Context, id uuid.UUID) error {
 	ret := _m.Called(ctx, id)
 
 	var r0 error
@@ -33,15 +33,15 @@ func (_m *UseCase) DeleteByID(ctx context.Context, id uuid.UUID) error {
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *UseCase) GetAll(ctx context.Context) ([]sales.Sale, error) {
+func (_m *UseCase) GetAll(ctx context.Context) ([]payments.Payment, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []sales.Sale
-	if rf, ok := ret.Get(0).(func(context.Context) []sales.Sale); ok {
+	var r0 []payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context) []payments.Payment); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]sales.Sale)
+			r0 = ret.Get(0).([]payments.Payment)
 		}
 	}
 
@@ -55,22 +55,22 @@ func (_m *UseCase) GetAll(ctx context.Context) ([]sales.Sale, error) {
 	return r0, r1
 }
 
-// GetByPeriod provides a mock function with given fields: ctx, start, end
-func (_m *UseCase) GetByPeriod(ctx context.Context, start time.Time, end time.Time) ([]sales.Sale, error) {
-	ret := _m.Called(ctx, start, end)
+// GetByPeriod provides a mock function with given fields: ctx, startAt, endAt
+func (_m *UseCase) GetByPeriod(ctx context.Context, startAt time.Time, endAt time.Time) ([]payments.Payment, error) {
+	ret := _m.Called(ctx, startAt, endAt)
 
-	var r0 []sales.Sale
-	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []sales.Sale); ok {
-		r0 = rf(ctx, start, end)
+	var r0 []payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []payments.Payment); ok {
+		r0 = rf(ctx, startAt, endAt)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]sales.Sale)
+			r0 = ret.Get(0).([]payments.Payment)
 		}
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, time.Time, time.Time) error); ok {
-		r1 = rf(ctx, start, end)
+		r1 = rf(ctx, startAt, endAt)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -78,20 +78,20 @@ func (_m *UseCase) GetByPeriod(ctx context.Context, start time.Time, end time.Ti
 	return r0, r1
 }
 
-// RegisterSale provides a mock function with given fields: ctx, desc, payment, cart
-func (_m *UseCase) RegisterSale(ctx context.Context, desc string, payment sales.PaymentType, cart sales.Cart) (sales.Sale, error) {
-	ret := _m.Called(ctx, desc, payment, cart)
+// RegisterPayment provides a mock function with given fields: ctx, value, desc
+func (_m *UseCase) RegisterPayment(ctx context.Context, value float32, desc string) (payments.Payment, error) {
+	ret := _m.Called(ctx, value, desc)
 
-	var r0 sales.Sale
-	if rf, ok := ret.Get(0).(func(context.Context, string, sales.PaymentType, sales.Cart) sales.Sale); ok {
-		r0 = rf(ctx, desc, payment, cart)
+	var r0 payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, float32, string) payments.Payment); ok {
+		r0 = rf(ctx, value, desc)
 	} else {
-		r0 = ret.Get(0).(sales.Sale)
+		r0 = ret.Get(0).(payments.Payment)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string, sales.PaymentType, sales.Cart) error); ok {
-		r1 = rf(ctx, desc, payment, cart)
+	if rf, ok := ret.Get(1).(func(context.Context, float32, string) error); ok {
+		r1 = rf(ctx, value, desc)
 	} else {
 		r1 = ret.Error(1)
 	}

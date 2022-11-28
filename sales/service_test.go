@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +17,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/mocks"
 )
 
-func TestNewSale(t *testing.T) {
+func TestRegisterSale(t *testing.T) {
 	t.Parallel()
 
 	t.Run("when all fields are ok", func(t *testing.T) {
@@ -128,5 +129,102 @@ func TestNewSale(t *testing.T) {
 			assert.Equal(t, sales.Sale{}, sale)
 			assert.EqualError(t, err, tc.expectedErr)
 		})
+	}
+}
+
+func TestGetAll(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		about         string
+		repoSales     []sales.Sale
+		repoError     error
+		expectedSales []sales.Sale
+		expectedError error
+	}{
+		{
+			about:         "when repository return an error",
+			repoError:     errors.New("failed to get all sales"),
+			expectedError: errors.New("failed to get all sales"),
+		},
+		{
+			about: "when repository return sales, should order by date",
+			repoSales: []sales.Sale{
+				{PaymentType: sales.CashPayment, Date: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)},
+				{PaymentType: sales.CashPayment, Date: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC)},
+				{PaymentType: sales.CashPayment, Date: time.Date(2021, 1, 3, 0, 0, 0, 0, time.UTC)},
+			},
+			expectedSales: []sales.Sale{
+				{PaymentType: sales.CashPayment, Date: time.Date(2021, 1, 3, 0, 0, 0, 0, time.UTC)},
+				{PaymentType: sales.CashPayment, Date: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC)},
+				{PaymentType: sales.CashPayment, Date: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)},
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+
+		t.Run(tc.about, func(t *testing.T) {
+			t.Parallel()
+
+			// Arrange
+			repo := mocks.NewRepository(t)
+			repo.On("GetAll", mock.Anything).Return(tc.repoSales, tc.repoError).Once()
+			productsSvc := productsMocks.NewUseCase(t)
+
+			sut := sales.NewService(productsSvc, repo)
+			// Action
+			sales, err := sut.GetAll(context.Background())
+
+			// Assert
+			assert.Equal(t, tc.expectedSales, sales)
+			assert.Equal(t, tc.expectedError, err)
+		})
+	}
+}
+
+func TestDeleteByID(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		about         string
+		id            uuid.UUID
+		repoError     error
+		expectedError error
+	}{
+		{
+			about:         "when repository return an error",
+			id:            uuid.New(),
+			repoError:     errors.New("failed to delete sale"),
+			expectedError: errors.New("failed to delete sale"),
+		},
+		{
+			about:         "when repository return nil error",
+			id:            uuid.New(),
+			repoError:     nil,
+			expectedError: nil,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+
+		t.Run(tc.about, func(t *testing.T) {
+			t.Parallel()
+
+			// Arrange
+			repo := mocks.NewRepository(t)
+			repo.On("DeleteByID", mock.Anything, mock.Anything).Return(tc.repoError).Once()
+			productsSvc := productsMocks.NewUseCase(t)
+
+			sut := sales.NewService(productsSvc, repo)
+
+			// Action
+			err := sut.DeleteByID(context.Background(), tc.id)
+
+			// Assert
+			assert.Equal(t, tc.expectedError, err)
+		})
+
 	}
 }

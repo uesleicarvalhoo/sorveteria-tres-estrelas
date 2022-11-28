@@ -41,10 +41,11 @@ func main() {
 	saleSvc := ioc.NewSaleService(db)
 	productSvc := ioc.NewProductService(db)
 	usersSvc := ioc.NewUserService(db)
-	balanceSvc := ioc.NewBalanceService(db)
+	paymentSvc := ioc.NewPaymentService(db)
+	cashflowSvc := ioc.NewCashFlowService(db)
 
 	h := fiber.Handlers(
-		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, balanceSvc)
+		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, paymentSvc, cashflowSvc)
 
 	if err := http.Start(cfg.HTTPPort, cfg.ServiceName, cfg.ServiceVersion, h, logger); err != nil {
 		panic(err)

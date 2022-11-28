@@ -10,9 +10,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/balances/postgres"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments/postgres"
 	"gorm.io/gorm"
 )
 
@@ -45,7 +45,7 @@ func (suite *BalancesPostgresTestSuite) SetupTest() {
 		suite.container.Port)
 	assert.NoError(suite.T(), err)
 
-	err = suite.db.AutoMigrate(&balances.Balance{})
+	err = suite.db.AutoMigrate(&payments.Payment{})
 	assert.NoError(suite.T(), err)
 }
 
@@ -56,100 +56,92 @@ func (suite *BalancesPostgresTestSuite) TeardownTest() {
 func (suite *BalancesPostgresTestSuite) TestCRUD() {
 	repo := postgres.NewRepository(suite.db)
 
-	balance := balances.Balance{
+	payment := payments.Payment{
 		ID:          uuid.New(),
 		Description: "new sale",
-		Operation:   balances.OperationSale,
 		Value:       1.20,
 		CreatedAt:   time.Now(),
 	}
 
-	suite.T().Run("test create balance", func(t *testing.T) {
-		err := repo.Create(suite.ctx, balance)
+	suite.T().Run("test create payment", func(t *testing.T) {
+		err := repo.Create(suite.ctx, payment)
 		assert.NoError(t, err)
 	})
 
-	suite.T().Run("test get balance", func(t *testing.T) {
-		found, err := repo.Get(suite.ctx, balance.ID)
+	suite.T().Run("test get payment", func(t *testing.T) {
+		found, err := repo.Get(suite.ctx, payment.ID)
 
 		assert.NoError(t, err)
-		assert.Equal(t, balance.ID, found.ID)
+		assert.Equal(t, payment.ID, found.ID)
 	})
 
-	suite.T().Run("test get all balance", func(t *testing.T) {
+	suite.T().Run("test get all payment", func(t *testing.T) {
 		found, err := repo.GetAll(suite.ctx)
 
 		assert.NoError(t, err)
 		assert.Len(t, found, 1)
-		assert.Equal(t, found[0].ID, balance.ID)
-		assert.Equal(t, found[0].Description, balance.Description)
-		assert.Equal(t, found[0].Operation, balance.Operation)
+		assert.Equal(t, found[0].ID, payment.ID)
+		assert.Equal(t, found[0].Description, payment.Description)
 	})
 
-	suite.T().Run("test update balance", func(t *testing.T) {
-		balance.Description = "venda de uma caixa de picoles"
+	suite.T().Run("test update payment", func(t *testing.T) {
+		payment.Description = "venda de uma caixa de picoles"
 
-		err := repo.Update(suite.ctx, &balance)
+		err := repo.Update(suite.ctx, &payment)
 
 		assert.NoError(t, err)
 
-		updated, err := repo.Get(suite.ctx, balance.ID)
+		updated, err := repo.Get(suite.ctx, payment.ID)
 		assert.NoError(t, err)
 
-		assert.Equal(t, balance.Description, updated.Description)
+		assert.Equal(t, payment.Description, updated.Description)
 	})
 
-	suite.T().Run("test delete balance", func(t *testing.T) {
-		err := repo.Delete(suite.ctx, balance.ID)
+	suite.T().Run("test delete payment", func(t *testing.T) {
+		err := repo.Delete(suite.ctx, payment.ID)
 
 		assert.NoError(t, err)
 	})
 
-	suite.T().Run("test GetBetween should return only balances between startAt and endAt", func(t *testing.T) {
+	suite.T().Run("test GetBetween should return only payment between startAt and endAt", func(t *testing.T) {
 		// Arrange
-		expected := []balances.Balance{
+		expected := []payments.Payment{
 			{
 				ID:          uuid.New(),
-				Description: "balance 1",
-				Operation:   balances.OperationSale,
+				Description: "payment 1",
 				Value:       1.20,
 				CreatedAt:   time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
 			},
 			{
 				ID:          uuid.New(),
-				Description: "balance 1",
-				Operation:   balances.OperationSale,
+				Description: "payment 1",
 				Value:       1.25,
 				CreatedAt:   time.Date(2022, 1, 20, 0, 0, 0, 0, time.Local),
 			},
 			{
 				ID:          uuid.New(),
-				Description: "balance 1",
-				Operation:   balances.OperationPayment,
+				Description: "payment 1",
 				Value:       12.00,
 				CreatedAt:   time.Date(2022, 1, 31, 0, 0, 0, 0, time.Local),
 			},
 		}
 
-		ignored := []balances.Balance{
+		ignored := []payments.Payment{
 			{
 				ID:          uuid.New(),
-				Description: "balance 1",
-				Operation:   balances.OperationSale,
+				Description: "payment 1",
 				Value:       1.20,
 				CreatedAt:   time.Date(2022, 2, 1, 0, 0, 0, 0, time.Local),
 			},
 			{
 				ID:          uuid.New(),
-				Description: "balance 1",
-				Operation:   balances.OperationSale,
+				Description: "payment 1",
 				Value:       1.25,
 				CreatedAt:   time.Date(2022, 2, 20, 0, 0, 0, 0, time.Local),
 			},
 			{
 				ID:          uuid.New(),
-				Description: "balance 1",
-				Operation:   balances.OperationPayment,
+				Description: "payment 1",
 				Value:       12.00,
 				CreatedAt:   time.Date(2022, 2, 31, 0, 0, 0, 0, time.Local),
 			},
@@ -158,13 +150,13 @@ func (suite *BalancesPostgresTestSuite) TestCRUD() {
 		startAt := time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local)
 		endAt := time.Date(2022, 1, 31, 0, 0, 0, 0, time.Local)
 
-		for _, b := range expected {
-			err := repo.Create(suite.ctx, b)
+		for _, p := range expected {
+			err := repo.Create(suite.ctx, p)
 			assert.NoError(t, err)
 		}
 
-		for _, b := range ignored {
-			err := repo.Create(suite.ctx, b)
+		for _, p := range ignored {
+			err := repo.Create(suite.ctx, p)
 			assert.NoError(t, err)
 		}
 
