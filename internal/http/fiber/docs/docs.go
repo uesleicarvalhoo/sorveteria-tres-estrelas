@@ -44,10 +44,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/auth.JwtToken"
-                            }
+                            "$ref": "#/definitions/auth.JwtToken"
                         }
                     },
                     "401": {
@@ -93,10 +90,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/auth.JwtToken"
-                            }
+                            "$ref": "#/definitions/auth.JwtToken"
                         }
                     },
                     "401": {
@@ -114,9 +108,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/balances": {
+        "/cashflow": {
             "get": {
-                "description": "get balances",
+                "description": "get cash flow",
                 "consumes": [
                     "application/json"
                 ],
@@ -126,7 +120,7 @@ const docTemplate = `{
                 "tags": [
                     "Balances"
                 ],
-                "summary": "List balances",
+                "summary": "Get cash flow",
                 "parameters": [
                     {
                         "type": "string",
@@ -147,52 +141,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/balances.CashFlow"
-                            }
+                            "$ref": "#/definitions/cashflow.CashFlow"
                         }
                     },
-                    "500": {
-                        "description": "when an error occurs",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Register a balance and return balance data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Balances"
-                ],
-                "summary": "Register a new balance",
-                "parameters": [
-                    {
-                        "description": "the payload data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RegisterBalancePayload"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/balances.Balance"
-                        }
-                    },
-                    "422": {
-                        "description": "when payload is invalid",
+                    "400": {
+                        "description": "when query is invalid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
                         }
@@ -224,6 +177,133 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/payments": {
+            "get": {
+                "description": "get payments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "List payments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "dateTime",
+                        "description": "name search by q",
+                        "name": "start_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "dateTime",
+                        "description": "name search by q",
+                        "name": "end_at",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/payments.Payment"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new payment and return payment data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Register a new payment",
+                "parameters": [
+                    {
+                        "description": "the payload data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreatePaymentPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/payments.Payment"
+                        }
+                    },
+                    "400": {
+                        "description": "when query is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/{id}": {
+            "delete": {
+                "description": "Delete payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Delete Payment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the id of payment",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
                         }
                     }
                 }
@@ -421,7 +501,7 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "422": {
+                    "400": {
                         "description": "when start or end param is invalid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
@@ -473,6 +553,41 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
                         }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
+        "/sales/{id}": {
+            "delete": {
+                "description": "Delete sale",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Delete Sale by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the id of sale",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
                     },
                     "500": {
                         "description": "when an error occurs",
@@ -577,42 +692,39 @@ const docTemplate = `{
                 }
             }
         },
-        "balances.Balance": {
+        "cashflow.CashFlow": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
+                "balance": {
+                    "type": "number"
                 },
-                "description": {
-                    "type": "string"
+                "payments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payments.Payment"
+                    }
                 },
-                "id": {
-                    "type": "string"
+                "sales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sales.Sale"
+                    }
                 },
-                "operation": {
-                    "type": "string"
+                "total_payments": {
+                    "type": "number"
                 },
-                "value": {
+                "total_sales": {
                     "type": "number"
                 }
             }
         },
-        "balances.CashFlow": {
+        "dto.CreatePaymentPayload": {
             "type": "object",
             "properties": {
-                "balances": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/balances.Balance"
-                    }
+                "description": {
+                    "type": "string"
                 },
-                "payments": {
-                    "type": "number"
-                },
-                "sales": {
-                    "type": "number"
-                },
-                "total": {
+                "value": {
                     "type": "number"
                 }
             }
@@ -675,20 +787,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterBalancePayload": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "operation": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number"
-                }
-            }
-        },
         "dto.RegisterSalePayload": {
             "type": "object",
             "properties": {
@@ -703,6 +801,23 @@ const docTemplate = `{
                 },
                 "payment_type": {
                     "type": "string"
+                }
+            }
+        },
+        "payments.Payment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         },
