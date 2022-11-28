@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
 	"github.com/urfave/negroni"
 )
@@ -23,7 +22,6 @@ func Start(
 ) error {
 	n := negroni.New()
 
-	n.Use(negroni.HandlerFunc(middleware.NewLogger(logger, svc, version)))
 	n.UseHandler(h)
 
 	srv := &http.Server{
@@ -55,4 +53,29 @@ func Start(
 	}
 
 	return nil
+}
+
+func WithReadTimeout(timeout time.Duration) Options {
+	return func(s *http.Server) {
+		s.ReadTimeout = timeout
+	}
+}
+
+func WithWriteTimeout(timeout time.Duration) Options {
+	return func(s *http.Server) {
+		s.WriteTimeout = timeout
+	}
+}
+
+func WithMiddlewares(middlwares ...negroni.HandlerFunc) Options {
+	return func(s *http.Server) {
+		n, ok := s.Handler.(*negroni.Negroni)
+		if !ok {
+			n = negroni.New()
+		}
+
+		for _, m := range middlwares {
+			n.Use(m)
+		}
+	}
 }
