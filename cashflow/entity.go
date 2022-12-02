@@ -7,13 +7,13 @@ import (
 type BalanceType string
 
 const (
-	SaleBalance    BalanceType = "sale"
-	BalancePayment BalanceType = "payment"
+	SaleBalance    BalanceType = "Venda"
+	BalancePayment BalanceType = "Pagamento"
 )
 
 type Detail struct {
 	Description string      `json:"description"`
-	Value       float32     `json:"amount"`
+	Value       float32     `json:"value"`
 	Date        time.Time   `json:"date"`
 	Type        BalanceType `json:"type"`
 }
