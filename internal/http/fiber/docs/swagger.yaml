@@ -14,17 +14,24 @@ definitions:
     properties:
       balance:
         type: number
-      payments:
+      details:
         items:
-          $ref: '#/definitions/payments.Payment'
-        type: array
-      sales:
-        items:
-          $ref: '#/definitions/sales.Sale'
+          $ref: '#/definitions/cashflow.Detail'
         type: array
       total_payments:
         type: number
       total_sales:
+        type: number
+    type: object
+  cashflow.Detail:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      type:
+        type: string
+      value:
         type: number
     type: object
   dto.CreatePaymentPayload:

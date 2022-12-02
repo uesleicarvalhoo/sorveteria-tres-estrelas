@@ -698,22 +698,33 @@ const docTemplate = `{
                 "balance": {
                     "type": "number"
                 },
-                "payments": {
+                "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/payments.Payment"
-                    }
-                },
-                "sales": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/sales.Sale"
+                        "$ref": "#/definitions/cashflow.Detail"
                     }
                 },
                 "total_payments": {
                     "type": "number"
                 },
                 "total_sales": {
+                    "type": "number"
+                }
+            }
+        },
+        "cashflow.Detail": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {
                     "type": "number"
                 }
             }

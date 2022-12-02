@@ -28,7 +28,7 @@ format:  ## Format code
 
 ## @ Application
 .PHONY: swagger run compose
-internal/http/fiber/docs/*: $(wildcard internal/http/fiber/main.go) $(wildcard internal/http/fiber/handler/*.go)
+internal/http/fiber/docs/*: $(wildcard internal/http/fiber/main.go) $(wildcard internal/http/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */repository.go) $(wildcard */dto.go) ## Generate swagger docs
 	@swag init --generalInfo ./cmd/api/main.go --output ./internal/http/fiber/docs
 
 swagger: internal/http/fiber/docs/*  ## Generate swagger docs
