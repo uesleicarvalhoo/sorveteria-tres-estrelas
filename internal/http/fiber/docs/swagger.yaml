@@ -360,6 +360,30 @@ paths:
       summary: Delete Payment by ID
       tags:
       - Payment
+    post:
+      consumes:
+      - application/json
+      description: Update payment data
+      parameters:
+      - description: the id of payment
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payments.Payment'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Update Payment by ID
+      tags:
+      - Payment
   /products/:
     get:
       consumes:

@@ -275,6 +275,42 @@ const docTemplate = `{
             }
         },
         "/payments/{id}": {
+            "post": {
+                "description": "Update payment data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Update Payment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the id of payment",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/payments.Payment"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete payment",
                 "consumes": [
