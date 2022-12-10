@@ -60,6 +60,27 @@ func (s Service) DeletePayment(ctx context.Context, id uuid.UUID) error {
 	return s.r.Delete(ctx, id)
 }
 
+func (s Service) UpdatePayment(ctx context.Context, id uuid.UUID, value float32, desc string) (Payment, error) {
+	p, err := s.r.Get(ctx, id)
+	if err != nil {
+		return Payment{}, err
+	}
+
+	if value != 0 {
+		p.Value = value
+	}
+
+	if desc != "" {
+		p.Description = desc
+	}
+
+	if err := s.r.Update(ctx, &p); err != nil {
+		return Payment{}, err
+	}
+
+	return p, nil
+}
+
 func (s Service) sort(payments []Payment) {
 	sort.Slice(payments, func(i, j int) bool {
 		return payments[i].CreatedAt.After(payments[j].CreatedAt)

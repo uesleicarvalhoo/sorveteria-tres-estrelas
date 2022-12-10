@@ -46,6 +46,27 @@ func (_m *Repository) Delete(ctx context.Context, id uuid.UUID) error {
 	return r0
 }
 
+// Get provides a mock function with given fields: ctx, id
+func (_m *Repository) Get(ctx context.Context, id uuid.UUID) (payments.Payment, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) payments.Payment); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(payments.Payment)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetAll provides a mock function with given fields: ctx
 func (_m *Repository) GetAll(ctx context.Context) ([]payments.Payment, error) {
 	ret := _m.Called(ctx)
@@ -90,6 +111,20 @@ func (_m *Repository) GetBetween(ctx context.Context, startAt time.Time, endAt t
 	}
 
 	return r0, r1
+}
+
+// Update provides a mock function with given fields: ctx, payment
+func (_m *Repository) Update(ctx context.Context, payment *payments.Payment) error {
+	ret := _m.Called(ctx, payment)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *payments.Payment) error); ok {
+		r0 = rf(ctx, payment)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 type mockConstructorTestingTNewRepository interface {

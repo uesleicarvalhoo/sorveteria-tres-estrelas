@@ -99,6 +99,27 @@ func (_m *UseCase) RegisterPayment(ctx context.Context, value float32, desc stri
 	return r0, r1
 }
 
+// UpdatePayment provides a mock function with given fields: ctx, id, value, desc
+func (_m *UseCase) UpdatePayment(ctx context.Context, id uuid.UUID, value float32, desc string) (payments.Payment, error) {
+	ret := _m.Called(ctx, id, value, desc)
+
+	var r0 payments.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, float32, string) payments.Payment); ok {
+		r0 = rf(ctx, id, value, desc)
+	} else {
+		r0 = ret.Get(0).(payments.Payment)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, float32, string) error); ok {
+		r1 = rf(ctx, id, value, desc)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type mockConstructorTestingTNewUseCase interface {
 	mock.TestingT
 	Cleanup(func())

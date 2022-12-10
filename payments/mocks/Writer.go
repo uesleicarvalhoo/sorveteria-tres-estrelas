@@ -44,6 +44,20 @@ func (_m *Writer) Delete(ctx context.Context, id uuid.UUID) error {
 	return r0
 }
 
+// Update provides a mock function with given fields: ctx, payment
+func (_m *Writer) Update(ctx context.Context, payment *payments.Payment) error {
+	ret := _m.Called(ctx, payment)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *payments.Payment) error); ok {
+		r0 = rf(ctx, payment)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewWriter interface {
 	mock.TestingT
 	Cleanup(func())

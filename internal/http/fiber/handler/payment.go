@@ -11,6 +11,7 @@ func MakePaymentsRoutes(router fiber.Router, service payments.UseCase) {
 	router.Get("/", getPayments(service))
 	router.Post("/", createPayment(service))
 	router.Delete("/:id", deletePaymentByID(service))
+	router.Post("/:id", updatePayment(service))
 }
 
 // @Summary      List payments
@@ -97,5 +98,35 @@ func deletePaymentByID(svc payments.UseCase) fiber.Handler {
 		}
 
 		return c.SendStatus(fiber.StatusAccepted)
+	}
+}
+
+// @Summary     Update Payment by ID
+// @Description Update payment data
+// @Tags        Payment
+// @Accept      json
+// @Produce     json
+// @Param       id path string true "the id of payment"
+// @Success     200 {object} payments.Payment
+// @Failure     500 {object} dto.MessageJSON "when an error occurs"
+// @Router      /payments/{id} [post]
+func updatePayment(svc payments.UseCase) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		id, err := uuid.Parse(c.Params("id"))
+		if err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
+		}
+
+		var payload dto.UpdatePaymentPayload
+		if err := c.BodyParser(&payload); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+
+		p, err := svc.UpdatePayment(c.Context(), id, payload.Value, payload.Description)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
+		}
+
+		return c.Status(fiber.StatusOK).JSON(p)
 	}
 }

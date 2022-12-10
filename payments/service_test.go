@@ -275,3 +275,79 @@ func TestDelete(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdate(t *testing.T) {
+	t.Parallel()
+
+	t.Run("check errors", func(t *testing.T) {
+		t.Parallel()
+
+		tests := []struct {
+			about           string
+			payment         payments.Payment
+			newDescription  string
+			newValue        float32
+			repoGetError    error
+			repoUpdateError error
+			expectedError   error
+		}{
+			{
+				about:         "when repository get returns an error",
+				payment:       payments.Payment{},
+				repoGetError:  errors.New("repository get error"),
+				expectedError: errors.New("repository get error"),
+			},
+			{
+				about:           "when repository update returns an error",
+				payment:         payments.Payment{},
+				repoUpdateError: errors.New("repository update error"),
+				expectedError:   errors.New("repository update error"),
+			},
+		}
+
+		for _, tc := range tests {
+			tc := tc
+
+			t.Run(tc.about, func(t *testing.T) {
+				t.Parallel()
+
+				// Arrange
+				repo := mocks.NewRepository(t)
+				repo.On("Get", mock.Anything, tc.payment.ID).Return(tc.payment, tc.repoGetError).Once()
+				repo.On("Update", mock.Anything, mock.Anything).Return(tc.repoUpdateError).Maybe()
+
+				sut := payments.NewService(repo)
+
+				// Action
+				p, err := sut.UpdatePayment(context.Background(), tc.payment.ID, tc.newValue, tc.newDescription)
+
+				// Assert
+				assert.Equal(t, payments.Payment{}, p)
+				assert.Equal(t, tc.expectedError, err)
+			})
+		}
+	})
+
+	t.Run("check success", func(t *testing.T) {
+		t.Parallel()
+
+		storedPayment := payments.Payment{}
+
+		// Arrange
+
+		repo := mocks.NewRepository(t)
+		repo.On("Get", mock.Anything, storedPayment.ID).Return(storedPayment, nil).Once()
+		repo.On("Update", mock.Anything, mock.Anything).Return(nil).Once()
+
+		sut := payments.NewService(repo)
+
+		// Action
+		p, err := sut.UpdatePayment(context.Background(), storedPayment.ID, 1, "test")
+
+		// Assert
+		assert.Equal(t, p.ID, storedPayment.ID)
+		assert.Equal(t, p.Description, "test")
+		assert.Equal(t, p.Value, float32(1))
+		assert.NoError(t, err)
+	})
+}
