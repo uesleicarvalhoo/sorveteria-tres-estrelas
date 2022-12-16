@@ -39,12 +39,41 @@ func (s Service) Index(ctx context.Context) ([]Product, error) {
 	return s.r.GetAll(ctx)
 }
 
-func (s Service) Update(ctx context.Context, p *Product) error {
-	if err := p.Validate(); err != nil {
-		return err
+func (s Service) Update(ctx context.Context, id uuid.UUID, payload UpdatePayload) (Product, error) {
+	if payload.IsEmpty() {
+		return Product{}, ErrNoDataForUpdate
 	}
 
-	return s.r.Update(ctx, p)
+	p, err := s.r.Get(ctx, id)
+	if err != nil {
+		return Product{}, err
+	}
+
+	if payload.Name != "" {
+		p.Name = payload.Name
+	}
+
+	if payload.PriceVarejo != 0 {
+		p.PriceVarejo = payload.PriceVarejo
+	}
+
+	if payload.PriceAtacado != 0 {
+		p.PriceAtacado = payload.PriceAtacado
+	}
+
+	if payload.AtacadoAmount != 0 {
+		p.AtacadoAmount = payload.AtacadoAmount
+	}
+
+	if err := p.Validate(); err != nil {
+		return Product{}, err
+	}
+
+	if err := s.r.Update(ctx, &p); err != nil {
+		return Product{}, err
+	}
+
+	return p, nil
 }
 
 func (s Service) Delete(ctx context.Context, id uuid.UUID) error {

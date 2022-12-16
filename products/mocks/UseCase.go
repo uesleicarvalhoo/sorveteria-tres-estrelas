@@ -95,18 +95,25 @@ func (_m *UseCase) Store(ctx context.Context, name string, varejoPrice float64, 
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, p
-func (_m *UseCase) Update(ctx context.Context, p *products.Product) error {
-	ret := _m.Called(ctx, p)
+// Update provides a mock function with given fields: ctx, id, payload
+func (_m *UseCase) Update(ctx context.Context, id uuid.UUID, payload products.UpdatePayload) (products.Product, error) {
+	ret := _m.Called(ctx, id, payload)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *products.Product) error); ok {
-		r0 = rf(ctx, p)
+	var r0 products.Product
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, products.UpdatePayload) products.Product); ok {
+		r0 = rf(ctx, id, payload)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(products.Product)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, products.UpdatePayload) error); ok {
+		r1 = rf(ctx, id, payload)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 type mockConstructorTestingTNewUseCase interface {

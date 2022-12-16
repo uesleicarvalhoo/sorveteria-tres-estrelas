@@ -63,7 +63,7 @@ func TestLogin(t *testing.T) {
 		assert.NoError(t, err)
 
 		// Assert
-		assert.Equal(t, res.StatusCode, http.StatusCreated)
+		assert.Equal(t, res.StatusCode, http.StatusOK)
 		assert.Equal(t, jwtToken.GrantType, body.GrantType)
 		assert.Equal(t, jwtToken.AcessToken, body.AcessToken)
 		assert.Equal(t, jwtToken.RefreshToken, body.RefreshToken)

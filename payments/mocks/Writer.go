@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	sales "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
+	payments "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
 
 	uuid "github.com/google/uuid"
 )
@@ -16,13 +16,13 @@ type Writer struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, s
-func (_m *Writer) Create(ctx context.Context, s sales.Sale) error {
-	ret := _m.Called(ctx, s)
+// Create provides a mock function with given fields: ctx, payment
+func (_m *Writer) Create(ctx context.Context, payment payments.Payment) error {
+	ret := _m.Called(ctx, payment)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, sales.Sale) error); ok {
-		r0 = rf(ctx, s)
+	if rf, ok := ret.Get(0).(func(context.Context, payments.Payment) error); ok {
+		r0 = rf(ctx, payment)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -37,6 +37,20 @@ func (_m *Writer) Delete(ctx context.Context, id uuid.UUID) error {
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) error); ok {
 		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Update provides a mock function with given fields: ctx, payment
+func (_m *Writer) Update(ctx context.Context, payment *payments.Payment) error {
+	ret := _m.Called(ctx, payment)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *payments.Payment) error); ok {
+		r0 = rf(ctx, payment)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -44,10 +44,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/auth.JwtToken"
-                            }
+                            "$ref": "#/definitions/auth.JwtToken"
                         }
                     },
                     "401": {
@@ -93,10 +90,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/auth.JwtToken"
-                            }
+                            "$ref": "#/definitions/auth.JwtToken"
                         }
                     },
                     "401": {
@@ -114,9 +108,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/balances": {
+        "/cashflow": {
             "get": {
-                "description": "get balances",
+                "description": "get cash flow",
                 "consumes": [
                     "application/json"
                 ],
@@ -124,9 +118,83 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Balances"
+                    "Cashflow"
                 ],
-                "summary": "List balances",
+                "summary": "Get cash flow",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "dateTime",
+                        "description": "name search by q",
+                        "name": "start_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "dateTime",
+                        "description": "name search by q",
+                        "name": "end_at",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cashflow.CashFlow"
+                        }
+                    },
+                    "400": {
+                        "description": "when query is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Check app and dependencies status",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health Check"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/payments": {
+            "get": {
+                "description": "get payments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "List payments",
                 "parameters": [
                     {
                         "type": "string",
@@ -149,7 +217,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/balances.CashFlow"
+                                "$ref": "#/definitions/payments.Payment"
                             }
                         }
                     },
@@ -162,7 +230,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Register a balance and return balance data",
+                "description": "Create a new payment and return payment data",
                 "consumes": [
                     "application/json"
                 ],
@@ -170,9 +238,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Balances"
+                    "Payment"
                 ],
-                "summary": "Register a new balance",
+                "summary": "Register a new payment",
                 "parameters": [
                     {
                         "description": "the payload data",
@@ -180,7 +248,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterBalancePayload"
+                            "$ref": "#/definitions/dto.CreatePaymentPayload"
                         }
                     }
                 ],
@@ -188,11 +256,11 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/balances.Balance"
+                            "$ref": "#/definitions/payments.Payment"
                         }
                     },
-                    "422": {
-                        "description": "when payload is invalid",
+                    "400": {
+                        "description": "when query is invalid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
                         }
@@ -206,24 +274,72 @@ const docTemplate = `{
                 }
             }
         },
-        "/health": {
-            "get": {
-                "description": "Check app and dependencies status",
+        "/payments/{id}": {
+            "post": {
+                "description": "Update payment data",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Health check"
+                    "Payment"
                 ],
-                "summary": "Health Cehck",
+                "summary": "Update Payment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the id of payment",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/payments.Payment"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Delete Payment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the id of payment",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
                         }
                     }
                 }
@@ -392,7 +508,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "List sales",
                 "parameters": [
@@ -421,7 +537,7 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "422": {
+                    "400": {
                         "description": "when start or end param is invalid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
@@ -444,7 +560,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Sales"
+                    "Sale"
                 ],
                 "summary": "Register a new sale",
                 "parameters": [
@@ -473,6 +589,41 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
                         }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
+        "/sales/{id}": {
+            "delete": {
+                "description": "Delete sale",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sale"
+                ],
+                "summary": "Delete Sale by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the id of sale",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
                     },
                     "500": {
                         "description": "when an error occurs",
@@ -577,19 +728,36 @@ const docTemplate = `{
                 }
             }
         },
-        "balances.Balance": {
+        "cashflow.CashFlow": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "balance": {
+                    "type": "number"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cashflow.Detail"
+                    }
+                },
+                "total_payments": {
+                    "type": "number"
+                },
+                "total_sales": {
+                    "type": "number"
+                }
+            }
+        },
+        "cashflow.Detail": {
+            "type": "object",
+            "properties": {
+                "date": {
                     "type": "string"
                 },
                 "description": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
-                "operation": {
+                "type": {
                     "type": "string"
                 },
                 "value": {
@@ -597,22 +765,13 @@ const docTemplate = `{
                 }
             }
         },
-        "balances.CashFlow": {
+        "dto.CreatePaymentPayload": {
             "type": "object",
             "properties": {
-                "balances": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/balances.Balance"
-                    }
+                "description": {
+                    "type": "string"
                 },
-                "payments": {
-                    "type": "number"
-                },
-                "sales": {
-                    "type": "number"
-                },
-                "total": {
+                "value": {
                     "type": "number"
                 }
             }
@@ -675,20 +834,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterBalancePayload": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "operation": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number"
-                }
-            }
-        },
         "dto.RegisterSalePayload": {
             "type": "object",
             "properties": {
@@ -703,6 +848,23 @@ const docTemplate = `{
                 },
                 "payment_type": {
                     "type": "string"
+                }
+            }
+        },
+        "payments.Payment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         },

@@ -11,7 +11,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/ioc"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/pkg/logger"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
 )
 
 func main() {
@@ -41,10 +41,11 @@ func main() {
 	saleSvc := ioc.NewSaleService(db)
 	productSvc := ioc.NewProductService(db)
 	usersSvc := ioc.NewUserService(db)
-	balanceSvc := ioc.NewBalanceService(db)
+	paymentSvc := ioc.NewPaymentService(db)
+	cashflowSvc := ioc.NewCashFlowService(db)
 
 	h := fiber.Handlers(
-		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, balanceSvc)
+		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, paymentSvc, cashflowSvc)
 
 	if err := http.Start(cfg.HTTPPort, cfg.ServiceName, cfg.ServiceVersion, h, logger); err != nil {
 		panic(err)
