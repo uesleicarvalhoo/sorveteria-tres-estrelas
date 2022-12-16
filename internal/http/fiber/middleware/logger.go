@@ -5,20 +5,21 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
 )
 
-func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middleware {
-	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-		if strings.Contains(r.URL.Path, "/health") {
-			next(w, r)
-
-			return
+func NewLogger(logger logger.Logger, serviceName, serviceVersion string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		if strings.Contains(c.Path(), "/health") {
+			return c.Next()
 		}
 
-		next(w, r)
+		if err := c.Next(); err != nil {
+			return err
+		}
 
-		statusCode := r.Response.StatusCode
+		statusCode := c.Response().StatusCode()
 
 		entry := map[string]interface{}{
 			"log_version": "1.0.0",
@@ -28,23 +29,23 @@ func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middlew
 				"application": serviceName,
 				"version":     serviceVersion,
 				"http": map[string]string{
-					"method": r.Method,
-					"path":   r.URL.Path,
+					"method": c.Method(),
+					"path":   c.Path(),
 				},
 			},
 			"origin": map[string]interface{}{
 				"application": serviceName,
-				"ip":          r.RemoteAddr,
+				"ip":          c.Context().RemoteAddr(),
 				"headers": map[string]string{
-					"user_agent": r.UserAgent(),
-					"origin":     r.Header.Get("Origin"),
-					"refer":      r.Referer(),
+					"user_agent": string(c.Context().UserAgent()),
+					"origin":     c.GetRespHeader("Origin"),
+					"refer":      string(c.Context().Referer()),
 				},
 			},
 			"context": map[string]interface{}{
 				"service":     serviceName,
 				"status_code": statusCode,
-				"request_id":  r.Response.Header.Get("X-Request-Id"),
+				"request_id":  c.GetRespHeader("X-Request-Id"),
 			},
 		}
 
@@ -56,5 +57,7 @@ func NewLogger(logger logger.Logger, serviceName, serviceVersion string) Middlew
 		default:
 			logger.InfoJSON(entry)
 		}
+
+		return nil
 	}
 }
