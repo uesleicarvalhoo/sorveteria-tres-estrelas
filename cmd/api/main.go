@@ -39,7 +39,7 @@ func main() {
 
 	con, _ := db.DB()
 
-	healthSvc := ioc.NewHealthCheckService(con, cache)
+	healthSvc := ioc.NewHealthCheckService(cfg, con, cache)
 	authSvc := ioc.NewAuthService(cfg.SecretKey, db, cache)
 	saleSvc := ioc.NewSaleService(db)
 	productSvc := ioc.NewProductService(db)

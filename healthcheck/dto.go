@@ -8,7 +8,8 @@ const (
 )
 
 type HealthStatus struct {
-	App      Status `json:"app"`
+	Version  string `json:"version"`
+	Status   Status `json:"status"`
 	Database Status `json:"database"`
 	Cache    Status `json:"cache"`
 }

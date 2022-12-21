@@ -21,7 +21,7 @@ func healthCheck(svc healthcheck.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		s := svc.HealthCheck(c.Context())
 
-		if s.App != healthcheck.StatusUp {
+		if s.Status != healthcheck.StatusUp {
 			return c.Status(http.StatusInternalServerError).JSON(s)
 		}
 
