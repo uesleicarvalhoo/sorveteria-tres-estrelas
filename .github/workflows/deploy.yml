@@ -1,0 +1,47 @@
+name: deploy app in remote server
+
+on:
+  release:
+    types:
+      - published
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
+  RELEASE_TAG: ${{ github.ref }}
+
+jobs:
+  deploy:
+    name: Continuous integration
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    steps:
+      - name: Run docker container in remote server
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+            docker stop ${{ env.CONTAINER_NAME }} || true
+            docker rm ${{ env.CONTAINER_NAME }} || true
+            docker run -d \
+            --name ${{ env.CONTAINER_NAME }} \
+            -p ${{ secrets.HTTP_SERVER_PORT }}:${{ secrets.HTTP_SERVER_PORT }} \
+            -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
+            -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
+            -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
+            -e DATABASE_PORT=${{ secrets.DATABASE_PORT }} \
+            -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
+            -e CACHE_URI=${{ secrets.CACHE_URI }} \
+            -e CACHE_PASSWORD=${{ secrets.CACHE_PASSWORD }} \
+            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            -e LOG_LEVEL=${{ secrets.LOG_LEVEL }} \
+            -e SERVICE_NAME=${{ secrets.SERVICE_NAME }} \
+            -e SERVICE_VERSION=${{ env.RELEASE_TAG }} \
+            -e HTTP_SERVER_PORT=${{ secrets.HTTP_SERVER_PORT }} \
+            --network=${{ secrets.DOCKER_NETWORK }} \
+             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}
