@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/config"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/healthcheck"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/healthcheck/mocks"
 )
@@ -17,21 +18,26 @@ func TestService(t *testing.T) {
 		about          string
 		cacheErr       error
 		dbErr          error
+		version        string
 		expectedStatus healthcheck.HealthStatus
 	}{
 		{
-			about: "when all services are ok",
+			about:   "when all services are ok",
+			version: "0.0.0",
 			expectedStatus: healthcheck.HealthStatus{
-				App:      healthcheck.StatusUp,
+				Version:  "0.0.0",
+				Status:   healthcheck.StatusUp,
 				Database: healthcheck.StatusUp,
 				Cache:    healthcheck.StatusUp,
 			},
 		},
 		{
-			about: "when database is down",
-			dbErr: errors.New("db error"),
+			about:   "when database is down",
+			dbErr:   errors.New("db error"),
+			version: "0.0.0",
 			expectedStatus: healthcheck.HealthStatus{
-				App:      healthcheck.StatusDown,
+				Version:  "0.0.0",
+				Status:   healthcheck.StatusDown,
 				Database: healthcheck.StatusDown,
 				Cache:    healthcheck.StatusUp,
 			},
@@ -39,8 +45,10 @@ func TestService(t *testing.T) {
 		{
 			about:    "when cache is down",
 			cacheErr: errors.New("cache error"),
+			version:  "0.0.0",
 			expectedStatus: healthcheck.HealthStatus{
-				App:      healthcheck.StatusDown,
+				Version:  "0.0.0",
+				Status:   healthcheck.StatusDown,
 				Database: healthcheck.StatusUp,
 				Cache:    healthcheck.StatusDown,
 			},
@@ -57,9 +65,13 @@ func TestService(t *testing.T) {
 			dbMock := mocks.NewDatabasePing(t)
 			dbMock.On("Ping").Return(tc.dbErr)
 
+			cfg := &config.Config{
+				ServiceVersion: tc.version,
+			}
+
 			cacheMock := mocks.NewCachePing(t)
 			cacheMock.On("Ping", context.Background()).Return(tc.cacheErr)
-			svc := healthcheck.NewService(dbMock, cacheMock)
+			svc := healthcheck.NewService(cfg, dbMock, cacheMock)
 
 			// Action
 			status := svc.HealthCheck(context.Background())
