@@ -37,6 +37,9 @@ func main() {
 		logger.Fatalf("couldn't connect to redis: %s", err)
 	}
 
+	con, _ := db.DB()
+
+	healthSvc := ioc.NewHealthCheckService(con, cache)
 	authSvc := ioc.NewAuthService(cfg.SecretKey, db, cache)
 	saleSvc := ioc.NewSaleService(db)
 	productSvc := ioc.NewProductService(db)
@@ -45,7 +48,7 @@ func main() {
 	cashflowSvc := ioc.NewCashFlowService(db)
 
 	h := fiber.Handlers(
-		cfg.ServiceName, cfg.ServiceVersion, authSvc, usersSvc, productSvc, saleSvc, paymentSvc, cashflowSvc)
+		cfg.ServiceName, cfg.ServiceVersion, healthSvc, authSvc, usersSvc, productSvc, saleSvc, paymentSvc, cashflowSvc)
 
 	if err := http.Start(cfg.HTTPPort, cfg.ServiceName, cfg.ServiceVersion, h, logger); err != nil {
 		panic(err)

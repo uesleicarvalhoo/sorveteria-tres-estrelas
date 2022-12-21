@@ -59,3 +59,9 @@ func (cache *RedisClient) Del(ctx context.Context, key string) error {
 
 	return err
 }
+
+func (cache *RedisClient) Ping(ctx context.Context) error {
+	_, err := cache.Client.Ping(ctx).Result()
+
+	return err
+}
