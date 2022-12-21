@@ -36,7 +36,8 @@ COPY --from=builder /go/src/internal/database/migrations/ /app/internal/database
 WORKDIR /app
 COPY --from=builder /go/bin/api .
 
-ENV PORT 80
-EXPOSE 80
+ENV HTTP_SERVER_PORT 80
+
+EXPOSE ${HTTP_SERVER_PORT}
 
 CMD ["/app/api"]
