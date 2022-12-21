@@ -40,12 +40,14 @@ CREATE TABLE users (
 );
 
 
--- balances
-CREATE TABLE balances (
-	"id" uuid NOT NULL,
+-- payments
+
+CREATE TABLE payments (
+	"id" text NOT NULL,
 	"value" numeric NULL,
 	"description" text NULL,
-	"operation" text NULL,
 	"created_at" timestamptz NULL,
-	CONSTRAINT balances_pkey PRIMARY KEY (id)
+	CONSTRAINT payments_pkey PRIMARY KEY (id)
 );
+
+CREATE INDEX payments_created_at_idx ON public.payments USING btree (created_at);

@@ -28,10 +28,10 @@ format:  ## Format code
 
 ## @ Application
 .PHONY: swagger run compose
-internal/api/fiber/docs/*: $(wildcard internal/api/fiber/main.go) $(wildcard internal/api/fiber/handler/*.go)
+internal/http/fiber/docs/*: $(wildcard internal/http/fiber/main.go) $(wildcard internal/http/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */repository.go) $(wildcard */dto.go) ## Generate swagger docs
 	@swag init --generalInfo ./cmd/api/main.go --output ./internal/http/fiber/docs
 
-swagger: internal/api/fiber/docs/*  ## Generate swagger docs
+swagger: internal/http/fiber/docs/*  ## Generate swagger docs
 
 run: swagger  ## Run app
 	@go run cmd/api/*.go
@@ -44,18 +44,20 @@ compose:  ## Init containers with dev dependencies
 generate-mocks: clean-mocks  ## Generate mock files
 	@mockery --dir products --output products/mocks --all
 	@mockery --dir sales --output sales/mocks --all
-	@mockery --dir balances --output balances/mocks --all
 	@mockery --dir users --output users/mocks --all
 	@mockery --dir auth --output auth/mocks --all
 	@mockery --dir cache --output cache/mocks --all
+	@mockery --dir payments --output payments/mocks --all
+	@mockery --dir cashflow --output cashflow/mocks --all
 
 clean-mocks:  ## Clean mock files
 	@rm -rf products/mocks/*
 	@rm -rf sales/mocks/*
-	@rm -rf balances/mocks/*
 	@rm -rf users/mocks/*
 	@rm -rf auth/mocks/*
 	@rm -rf cache/mocks/*
+	@rm -rf payments/mocks/*
+	@rm -rf cashflow/mocks/*
 
 test:  ## Run tests all tests
 	@go test ./... -race -v -count=1 -tags="all" -coverprofile=$(COVERAGE_OUTPUT)

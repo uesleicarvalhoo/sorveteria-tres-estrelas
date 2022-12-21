@@ -2,8 +2,10 @@ package sales
 
 import (
 	"context"
+	"sort"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
 )
 
@@ -54,9 +56,33 @@ func (s *Service) RegisterSale(
 }
 
 func (s *Service) GetAll(ctx context.Context) ([]Sale, error) {
-	return s.repo.GetAll(ctx)
+	sales, err := s.repo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	s.sort(sales)
+
+	return sales, nil
 }
 
 func (s *Service) GetByPeriod(ctx context.Context, start, end time.Time) ([]Sale, error) {
-	return s.repo.Search(ctx, start, end)
+	sales, err := s.repo.Search(ctx, start, end)
+	if err != nil {
+		return nil, err
+	}
+
+	s.sort(sales)
+
+	return sales, nil
+}
+
+func (s *Service) DeleteByID(ctx context.Context, id uuid.UUID) error {
+	return s.repo.Delete(ctx, id)
+}
+
+func (s *Service) sort(sales []Sale) {
+	sort.Slice(sales, func(i, j int) bool {
+		return sales[i].Date.After(sales[j].Date)
+	})
 }

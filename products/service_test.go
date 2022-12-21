@@ -224,21 +224,30 @@ func TestServiceUpdate(t *testing.T) {
 			AtacadoAmount: 20,
 		}
 
+		payload := product.UpdatePayload{
+			Name:          "coco com goiaba",
+			PriceVarejo:   1.25,
+			PriceAtacado:  1,
+			AtacadoAmount: 30,
+		}
+
 		repo := mocks.NewRepository(t)
-		repo.On("Update", mock.Anything, &p).Return(nil).Once()
+		repo.On("Get", mock.Anything, p.ID).Return(p, nil).Once()
+		repo.On("Update", mock.Anything, mock.Anything).Return(nil).Once()
 
 		sut := product.NewService(repo)
 
 		// Action
-		p.Name = "coco com goiaba"
-		p.PriceVarejo = 1.25
-		p.PriceAtacado = 1.0
-		p.AtacadoAmount = 30
 
-		err := sut.Update(context.Background(), &p)
+		updated, err := sut.Update(context.Background(), p.ID, payload)
 
 		// Assert
 		assert.NoError(t, err)
+		assert.Equal(t, p.ID, updated.ID)
+		assert.Equal(t, payload.Name, updated.Name)
+		assert.Equal(t, payload.PriceVarejo, updated.PriceVarejo)
+		assert.Equal(t, payload.PriceAtacado, updated.PriceAtacado)
+		assert.Equal(t, payload.AtacadoAmount, updated.AtacadoAmount)
 	})
 
 	t.Run("when update return an errror", func(t *testing.T) {
@@ -247,22 +256,27 @@ func TestServiceUpdate(t *testing.T) {
 		// Arrange
 		p := product.Product{ID: uuid.New(), Name: "amendoin", PriceVarejo: 1.25, PriceAtacado: 1, AtacadoAmount: 15}
 
+		payload := product.UpdatePayload{
+			Name: "amendoin com chocolate",
+		}
+
 		mockError := errors.New("failed to update product")
 		expectedErr := "failed to update product"
 
 		repo := mocks.NewRepository(t)
-		repo.On("Update", mock.Anything, &p).Return(mockError).Once()
+		repo.On("Get", mock.Anything, p.ID).Return(p, nil).Once()
+		repo.On("Update", mock.Anything, mock.Anything).Return(mockError).Once()
 
 		sut := product.NewService(repo)
 
 		// Action
-		err := sut.Update(context.Background(), &p)
+		_, err := sut.Update(context.Background(), p.ID, payload)
 
 		// Assert
 		assert.EqualError(t, err, expectedErr)
 	})
 
-	t.Run("when new entity is invalid", func(t *testing.T) {
+	t.Run("when has no data for update", func(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
@@ -274,18 +288,18 @@ func TestServiceUpdate(t *testing.T) {
 			AtacadoAmount: 10,
 		}
 
+		payload := product.UpdatePayload{}
+
 		repo := mocks.NewRepository(t)
-		repo.On("Update", mock.Anything, &p).Return(nil).Maybe()
 
 		sut := product.NewService(repo)
 
 		// Action
-		p.Name = ""
 
-		err := sut.Update(context.Background(), &p)
+		_, err := sut.Update(context.Background(), p.ID, payload)
 
 		// Assert
-		assert.EqualError(t, err, "nome: campo obrigatório")
+		assert.EqualError(t, err, product.ErrNoDataForUpdate.Error())
 	})
 }
 

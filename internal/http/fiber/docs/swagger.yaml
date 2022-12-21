@@ -10,30 +10,35 @@ definitions:
       refresh_token:
         type: string
     type: object
-  balances.Balance:
+  cashflow.CashFlow:
     properties:
-      created_at:
+      balance:
+        type: number
+      details:
+        items:
+          $ref: '#/definitions/cashflow.Detail'
+        type: array
+      total_payments:
+        type: number
+      total_sales:
+        type: number
+    type: object
+  cashflow.Detail:
+    properties:
+      date:
         type: string
       description:
         type: string
-      id:
-        type: string
-      operation:
+      type:
         type: string
       value:
         type: number
     type: object
-  balances.CashFlow:
+  dto.CreatePaymentPayload:
     properties:
-      balances:
-        items:
-          $ref: '#/definitions/balances.Balance'
-        type: array
-      payments:
-        type: number
-      sales:
-        type: number
-      total:
+      description:
+        type: string
+      value:
         type: number
     type: object
   dto.CreateProductPayload:
@@ -73,15 +78,6 @@ definitions:
       refresh_token:
         type: string
     type: object
-  dto.RegisterBalancePayload:
-    properties:
-      description:
-        type: string
-      operation:
-        type: string
-      value:
-        type: number
-    type: object
   dto.RegisterSalePayload:
     properties:
       description:
@@ -92,6 +88,17 @@ definitions:
         type: array
       payment_type:
         type: string
+    type: object
+  payments.Payment:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      value:
+        type: number
     type: object
   products.Product:
     properties:
@@ -178,9 +185,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/auth.JwtToken'
-            type: array
+            $ref: '#/definitions/auth.JwtToken'
         "401":
           description: when email or password is invalid
           schema:
@@ -210,9 +215,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/auth.JwtToken'
-            type: array
+            $ref: '#/definitions/auth.JwtToken'
         "401":
           description: when token is invalid
           schema:
@@ -224,11 +227,60 @@ paths:
       summary: Refresh access-token
       tags:
       - Auth
-  /balances:
+  /cashflow:
     get:
       consumes:
       - application/json
-      description: get balances
+      description: get cash flow
+      parameters:
+      - description: name search by q
+        format: dateTime
+        in: query
+        name: start_at
+        type: string
+      - description: name search by q
+        format: dateTime
+        in: query
+        name: end_at
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cashflow.CashFlow'
+        "400":
+          description: when query is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Get cash flow
+      tags:
+      - Cashflow
+  /health:
+    get:
+      description: Check app and dependencies status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health Check
+      tags:
+      - Health Check
+  /payments:
+    get:
+      consumes:
+      - application/json
+      description: get payments
       parameters:
       - description: name search by q
         format: dateTime
@@ -247,59 +299,91 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/balances.CashFlow'
+              $ref: '#/definitions/payments.Payment'
             type: array
         "500":
           description: when an error occurs
           schema:
             $ref: '#/definitions/dto.MessageJSON'
-      summary: List balances
+      summary: List payments
       tags:
-      - Balances
+      - Payment
     post:
       consumes:
       - application/json
-      description: Register a balance and return balance data
+      description: Create a new payment and return payment data
       parameters:
       - description: the payload data
         in: body
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/dto.RegisterBalancePayload'
+          $ref: '#/definitions/dto.CreatePaymentPayload'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/balances.Balance'
-        "422":
-          description: when payload is invalid
+            $ref: '#/definitions/payments.Payment'
+        "400":
+          description: when query is invalid
           schema:
             $ref: '#/definitions/dto.MessageJSON'
         "500":
           description: when an error occurs
           schema:
             $ref: '#/definitions/dto.MessageJSON'
-      summary: Register a new balance
+      summary: Register a new payment
       tags:
-      - Balances
-  /health:
-    get:
-      description: Check app and dependencies status
+      - Payment
+  /payments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete payment
+      parameters:
+      - description: the id of payment
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Delete Payment by ID
+      tags:
+      - Payment
+    post:
+      consumes:
+      - application/json
+      description: Update payment data
+      parameters:
+      - description: the id of payment
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Health Cehck
+            $ref: '#/definitions/payments.Payment'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Update Payment by ID
       tags:
-      - Health check
+      - Payment
   /products/:
     get:
       consumes:
@@ -426,7 +510,7 @@ paths:
             items:
               $ref: '#/definitions/sales.Sale'
             type: array
-        "422":
+        "400":
           description: when start or end param is invalid
           schema:
             $ref: '#/definitions/dto.MessageJSON'
@@ -436,7 +520,7 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: List sales
       tags:
-      - Sales
+      - Sale
     post:
       consumes:
       - application/json
@@ -467,7 +551,30 @@ paths:
             $ref: '#/definitions/dto.MessageJSON'
       summary: Register a new sale
       tags:
-      - Sales
+      - Sale
+  /sales/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete sale
+      parameters:
+      - description: the id of sale
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Delete Sale by ID
+      tags:
+      - Sale
   /users:
     post:
       consumes:
