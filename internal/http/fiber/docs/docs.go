@@ -300,46 +300,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/payments.Payment"
-                        }
-                    },
-                    "500": {
-                        "description": "when an error occurs",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete payment",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Payment"
-                ],
-                "summary": "Delete Payment by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "the id of payment",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "202": {
-                        "description": "Accepted"
-                    },
-                    "500": {
-                        "description": "when an error occurs",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
+                            "$ref": "#/definitions/healthcheck.HealthStatus"
                         }
                     }
                 }
@@ -840,6 +801,20 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "operation": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.RegisterSalePayload": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "items": {
                     "type": "array",
                     "items": {
@@ -851,20 +826,17 @@ const docTemplate = `{
                 }
             }
         },
-        "payments.Payment": {
+        "healthcheck.HealthStatus": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "app": {
                     "type": "string"
                 },
-                "description": {
+                "cache": {
                     "type": "string"
                 },
-                "id": {
+                "database": {
                     "type": "string"
-                },
-                "value": {
-                    "type": "number"
                 }
             }
         },

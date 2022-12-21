@@ -1,23 +1,30 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/healthcheck"
 )
 
-func MakeHealthCheckRoutes(r fiber.Router) {
-	r.Get("/health", healthCheck())
+func MakeHealthCheckRoutes(r fiber.Router, svc healthcheck.UseCase) {
+	r.Get("/health", healthCheck(svc))
 }
 
-// @Summary     Health Check
-// @Description Check app and dependencies status
-// @Tags        Health Check
-// @Produce     json
-// @Success     200 {object} map[string]string
-// @Router      /health [get]
-func healthCheck() fiber.Handler {
+// @Summary		Health Cehck
+// @Description	Check app and dependencies status
+// @Tags		Health check
+// @Produce		json
+// @Success		200	{object} healthcheck.HealthStatus
+// @Router		/health [get]
+func healthCheck(svc healthcheck.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"status": "ok",
-		})
+		s := svc.HealthCheck(c.Context())
+
+		if s.App != healthcheck.StatusUp {
+			return c.Status(http.StatusInternalServerError).JSON(s)
+		}
+
+		return c.Status(http.StatusOK).JSON(s)
 	}
 }

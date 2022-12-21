@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cashflow"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/healthcheck"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
@@ -21,6 +22,7 @@ import (
 func Handlers(
 	appName,
 	appVersion string,
+	healthSvc healthcheck.UseCase,
 	authSvc auth.UseCase,
 	userSvc users.UseCase,
 	productSvc products.UseCase,
@@ -41,7 +43,7 @@ func Handlers(
 
 	authMiddleware := middleware.NewAuth(authSvc)
 
-	handler.MakeHealthCheckRoutes(app)
+	handler.MakeHealthCheckRoutes(app, healthSvc)
 	handler.MakeSwaggerRoutes(app.Group("/docs"))
 	handler.MakeAuhtRoutes(app.Group("/auth"), authSvc)
 	handler.MakeUserRoutes(app.Group("/users", authMiddleware), userSvc)
