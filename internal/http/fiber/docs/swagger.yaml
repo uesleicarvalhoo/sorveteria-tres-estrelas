@@ -91,12 +91,25 @@ definitions:
     type: object
   healthcheck.HealthStatus:
     properties:
-      app:
-        type: string
       cache:
         type: string
       database:
         type: string
+      status:
+        type: string
+      version:
+        type: string
+    type: object
+  payments.Payment:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      value:
+        type: number
     type: object
   products.Product:
     properties:
@@ -268,12 +281,10 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Health Check
+            $ref: '#/definitions/healthcheck.HealthStatus'
+      summary: Health Cehck
       tags:
-      - Health Check
+      - Health check
   /payments:
     get:
       consumes:
@@ -374,8 +385,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/healthcheck.HealthStatus'
-      summary: Health Cehck
+            $ref: '#/definitions/payments.Payment'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Update Payment by ID
       tags:
       - Payment
   /products/:
