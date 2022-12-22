@@ -166,17 +166,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Health Check"
+                    "Health check"
                 ],
-                "summary": "Health Check",
+                "summary": "Health Cehck",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/healthcheck.HealthStatus"
                         }
                     }
                 }
@@ -300,7 +297,46 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/healthcheck.HealthStatus"
+                            "$ref": "#/definitions/payments.Payment"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Delete Payment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the id of payment",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
                         }
                     }
                 }
@@ -801,20 +837,6 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "operation": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number"
-                }
-            }
-        },
-        "dto.RegisterSalePayload": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
                 "items": {
                     "type": "array",
                     "items": {
@@ -829,14 +851,34 @@ const docTemplate = `{
         "healthcheck.HealthStatus": {
             "type": "object",
             "properties": {
-                "app": {
-                    "type": "string"
-                },
                 "cache": {
                     "type": "string"
                 },
                 "database": {
                     "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "payments.Payment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         },
