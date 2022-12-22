@@ -48,7 +48,17 @@ func main() {
 	cashflowSvc := ioc.NewCashFlowService(db)
 
 	h := fiber.Handlers(
-		cfg.ServiceName, cfg.ServiceVersion, healthSvc, authSvc, usersSvc, productSvc, saleSvc, paymentSvc, cashflowSvc)
+		cfg.ServiceName,
+		cfg.ServiceVersion,
+		logger,
+		healthSvc,
+		authSvc,
+		usersSvc,
+		productSvc,
+		saleSvc,
+		paymentSvc,
+		cashflowSvc,
+	)
 
 	if err := http.Start(cfg.HTTPPort, cfg.ServiceName, cfg.ServiceVersion, h, logger); err != nil {
 		panic(err)

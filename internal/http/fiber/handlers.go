@@ -13,6 +13,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/healthcheck"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber/middleware"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
@@ -22,6 +23,7 @@ import (
 func Handlers(
 	appName,
 	appVersion string,
+	logger logger.Logger,
 	healthSvc healthcheck.UseCase,
 	authSvc auth.UseCase,
 	userSvc users.UseCase,
@@ -39,6 +41,7 @@ func Handlers(
 		recover.New(),
 		cors.New(),
 		requestid.New(),
+		middleware.NewLogger(logger, appName, appVersion),
 	)
 
 	authMiddleware := middleware.NewAuth(authSvc)
