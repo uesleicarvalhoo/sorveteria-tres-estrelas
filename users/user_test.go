@@ -3,6 +3,7 @@
 package users_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -13,11 +14,11 @@ import (
 func TestNewUser(t *testing.T) {
 	t.Parallel()
 
-	t.Run("when permissions are empty", func(t *testing.T) {
+	t.Run("should convert email to lower case", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		name := "Ueslei Carvalho"
-		email := "uesleicdoliveira@gmail.com"
+		email := "UESLEICDOLIVEIRA@gmail.com"
 		passwd := "secret123"
 
 		// Action
@@ -26,7 +27,7 @@ func TestNewUser(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.NotEqual(t, uuid.Nil, user.ID)
-		assert.Equal(t, email, user.Email)
+		assert.Equal(t, strings.ToLower(email), user.Email)
 		assert.NotEqual(t, passwd, user.PasswordHash)
 		assert.True(t, user.CheckPassword(passwd))
 		assert.False(t, user.CheckPassword("wrong-password"))
