@@ -30,7 +30,7 @@ func NewUser(name, email, password string) (User, error) {
 	u := User{
 		ID:           uuid.New(),
 		Name:         strings.TrimSpace(name),
-		Email:        email,
+		Email:        strings.TrimSpace(strings.ToLower(email)),
 		PasswordHash: pwd,
 	}
 

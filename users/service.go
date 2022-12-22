@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -39,6 +40,8 @@ func (s *Service) Get(ctx context.Context, id uuid.UUID) (User, error) {
 }
 
 func (s *Service) GetByEmail(ctx context.Context, email string) (User, error) {
+	email = strings.ToLower(email)
+
 	u, err := s.r.GetByEmail(ctx, email)
 	if err != nil {
 		return User{}, err
