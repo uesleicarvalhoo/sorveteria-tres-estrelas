@@ -59,7 +59,7 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}
             docker stop ${{ env.CONTAINER_NAME }} || true
             docker rm ${{ env.CONTAINER_NAME }} || true
-            docker run -d \
+            docker run -d --restart=always \
             --name ${{ env.CONTAINER_NAME }} \
             -p ${{ secrets.HTTP_SERVER_PORT }}:${{ secrets.HTTP_SERVER_PORT }} \
             -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
