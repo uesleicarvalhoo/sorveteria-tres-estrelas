@@ -10,7 +10,6 @@ type UserModel struct {
 	Name         string
 	Email        string
 	PasswordHash string
-	Permissions  string
 }
 
 func (u UserModel) TableName() string { return "users" }
