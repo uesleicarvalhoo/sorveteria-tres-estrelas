@@ -25,10 +25,11 @@ func Start(
 	n.UseHandler(h)
 
 	srv := &http.Server{
-		ReadTimeout:  TIMEOUT,
-		WriteTimeout: TIMEOUT,
-		Addr:         fmt.Sprintf(":%d", port),
-		Handler:      n,
+		ReadHeaderTimeout: TIMEOUT,
+		ReadTimeout:       TIMEOUT,
+		WriteTimeout:      TIMEOUT,
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           n,
 	}
 
 	for _, opt := range option {
