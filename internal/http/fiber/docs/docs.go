@@ -53,6 +53,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.MessageJSON"
                         }
                     },
+                    "422": {
+                        "description": "when payload is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    },
                     "500": {
                         "description": "when an error occurs",
                         "schema": {
@@ -256,8 +262,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/payments.Payment"
                         }
                     },
-                    "400": {
-                        "description": "when query is invalid",
+                    "422": {
+                        "description": "when payload is invalid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
                         }
