@@ -74,5 +74,7 @@ jobs:
             -e SERVICE_NAME=${{ secrets.SERVICE_NAME }} \
             -e SERVICE_VERSION=${{ env.RELEASE_TAG }} \
             -e HTTP_SERVER_PORT=${{ secrets.HTTP_SERVER_PORT }} \
+            -e TRACER_ENDPOINT=${{ secrets.TRACER_ENDPOINT }} \
+            -e TRACER_ENABLED=${{ secrets.TRACER_ENABLED }}
             --network=${{ secrets.DOCKER_NETWORK }} \
              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}

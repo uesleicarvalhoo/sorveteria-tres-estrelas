@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 
 func MakePaymentsRoutes(router fiber.Router, service payments.UseCase) {
@@ -24,25 +25,34 @@ func MakePaymentsRoutes(router fiber.Router, service payments.UseCase) {
 // @Success      200         {object} []payments.Payment
 // @Failure      500         {object} dto.MessageJSON "when an error occurs"
 // @Router       /payments [get]
-func getPayments(svc payments.UseCase) fiber.Handler { //nolint:dupl
+func getPayments(svc payments.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "get-payments")
+		defer span.End()
+
 		var query dto.GetPaymentByPeriodQuery
 
 		if err := c.QueryParser(&query); err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusBadRequest).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
 		if query.StartAt.IsZero() || query.EndAt.IsZero() {
-			payments, err := svc.GetAll(c.Context())
+			payments, err := svc.GetAll(ctx)
 			if err != nil {
+				trace.AddSpanError(span, err)
+
 				return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 			}
 
 			return c.JSON(payments)
 		}
 
-		payments, err := svc.GetByPeriod(c.Context(), query.StartAt, query.EndAt)
+		payments, err := svc.GetByPeriod(ctx, query.StartAt, query.EndAt)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -57,18 +67,26 @@ func getPayments(svc payments.UseCase) fiber.Handler { //nolint:dupl
 // @Produce     json
 // @Param       payload body     dto.CreatePaymentPayload true "the payload data"
 // @Success     201     {object} payments.Payment
-// @Failure     400     {object} dto.MessageJSON "when query is invalid"
+// @Failure     422     {object} dto.MessageJSON "when payload is invalid"
 // @Failure     500     {object} dto.MessageJSON "when an error occurs"
 // @Router      /payments [post]
-func createPayment(svc payments.UseCase) fiber.Handler {
+func createPayment(svc payments.UseCase) fiber.Handler { //nolint:dupl
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "register-payment")
+		defer span.End()
+
 		var payload payments.Payment
+
 		if err := c.BodyParser(&payload); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+			trace.AddSpanError(span, err)
+
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		p, err := svc.RegisterPayment(c.Context(), payload.Value, payload.Description)
+		p, err := svc.RegisterPayment(ctx, payload.Value, payload.Description)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -87,13 +105,21 @@ func createPayment(svc payments.UseCase) fiber.Handler {
 // @Router      /payments/{id} [delete]
 func deletePaymentByID(svc payments.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "delete-payment")
+
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		err = svc.DeletePayment(c.Context(), id)
+		trace.AddSpanTags(span, map[string]string{"payment-id": id.String()})
+
+		err = svc.DeletePayment(ctx, id)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -112,6 +138,9 @@ func deletePaymentByID(svc payments.UseCase) fiber.Handler {
 // @Router      /payments/{id} [post]
 func updatePayment(svc payments.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "update-payment")
+		defer span.End()
+
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
@@ -119,11 +148,17 @@ func updatePayment(svc payments.UseCase) fiber.Handler {
 
 		var payload dto.UpdatePaymentPayload
 		if err := c.BodyParser(&payload); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+			trace.AddSpanError(span, err)
+
+			return c.Status(fiber.StatusBadRequest).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		p, err := svc.UpdatePayment(c.Context(), id, payload.Value, payload.Description)
+		trace.AddSpanTags(span, map[string]string{"payment-id": id.String()})
+
+		p, err := svc.UpdatePayment(ctx, id, payload.Value, payload.Description)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 

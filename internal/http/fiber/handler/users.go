@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
 )
 
@@ -21,6 +22,9 @@ func MakeUserRoutes(r fiber.Router, userSvc users.UseCase) {
 // @Router      /users/me [get]
 func getMe(svc users.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		_, span := trace.NewSpan(c.UserContext(), "get-me")
+		defer span.End()
+
 		u, _ := c.Locals("user").(*users.User)
 		if u == nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: "user not found"})
@@ -42,15 +46,22 @@ func getMe(svc users.UseCase) fiber.Handler {
 // @Router      /users [post]
 func createUser(svc users.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "create-user")
+		defer span.End()
+
 		var payload dto.CreateUserPayload
 
 		if err := c.BodyParser(&payload); err != nil {
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"message": err.Error()})
+			trace.AddSpanError(span, err)
+
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		user, err := svc.Create(c.Context(), payload.Name, payload.Email, payload.Password)
+		user, err := svc.Create(ctx, payload.Name, payload.Email, payload.Password)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
+			trace.AddSpanError(span, err)
+
+			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
 		return c.Status(fiber.StatusCreated).JSON(user)

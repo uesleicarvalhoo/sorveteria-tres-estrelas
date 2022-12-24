@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cashflow"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 
 func MakeCashFlowHandler(r fiber.Router, svc cashflow.UseCase) {
@@ -21,15 +22,18 @@ func MakeCashFlowHandler(r fiber.Router, svc cashflow.UseCase) {
 // @Failure      400         {object} dto.MessageJSON "when query is invalid"
 // @Failure      500         {object} dto.MessageJSON "when an error occurs"
 // @Router       /cashflow [get]
-func cashflowIndex(svc cashflow.UseCase) fiber.Handler { //nolint:dupl
+func cashflowIndex(svc cashflow.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "get-cash-flow")
+		defer span.End()
+
 		var query dto.GetCashFlowByPeriodQuery
 		if err := c.QueryParser(&query); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
 		if query.StartAt.IsZero() || query.EndAt.IsZero() {
-			cf, err := svc.GetCashFlow(c.Context())
+			cf, err := svc.GetCashFlow(ctx)
 			if err != nil {
 				return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 			}
@@ -37,7 +41,7 @@ func cashflowIndex(svc cashflow.UseCase) fiber.Handler { //nolint:dupl
 			return c.JSON(cf)
 		}
 
-		cf, err := svc.GetCashFlowBetween(c.Context(), query.StartAt, query.EndAt)
+		cf, err := svc.GetCashFlowBetween(ctx, query.StartAt, query.EndAt)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
