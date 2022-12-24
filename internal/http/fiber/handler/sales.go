@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 
 func MakeSalesRoutes(r fiber.Router, svc sales.UseCase) {
@@ -24,24 +25,32 @@ func MakeSalesRoutes(r fiber.Router, svc sales.UseCase) {
 // @Failure      400 {object} dto.MessageJSON "when start or end param is invalid"
 // @Failure      500 {object} dto.MessageJSON "when an error occurs"
 // @Router       /sales [get]
-func salesIndex(svc sales.UseCase) fiber.Handler { //nolint:dupl
+func salesIndex(svc sales.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "get-sales")
+
 		var payload dto.GetSalesByPeriodQuery
 		if err := c.QueryParser(&payload); err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusBadRequest).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
 		if payload.EndAt.IsZero() || payload.StartAt.IsZero() {
-			sales, err := svc.GetAll(c.Context())
+			sales, err := svc.GetAll(ctx)
 			if err != nil {
+				trace.AddSpanError(span, err)
+
 				return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 			}
 
 			return c.JSON(sales)
 		}
 
-		sales, err := svc.GetByPeriod(c.Context(), payload.StartAt, payload.EndAt)
+		sales, err := svc.GetByPeriod(ctx, payload.StartAt, payload.EndAt)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -61,15 +70,22 @@ func salesIndex(svc sales.UseCase) fiber.Handler { //nolint:dupl
 // @Router      /sales [post]
 func registerSale(svc sales.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "register-sale")
+		defer span.End()
+
 		var payload dto.RegisterSalePayload
 
 		if err := c.BodyParser(&payload); err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
 		sale, err := svc.RegisterSale(
-			c.Context(), payload.Description, payload.PaymentType, sales.Cart{Items: payload.Items})
+			ctx, payload.Description, payload.PaymentType, sales.Cart{Items: payload.Items})
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -88,13 +104,19 @@ func registerSale(svc sales.UseCase) fiber.Handler {
 // @Router      /sales/{id} [delete]
 func deleteSaleByID(svc sales.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "delete-sale-by-id")
+
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		err = svc.DeleteByID(c.Context(), id)
+		err = svc.DeleteByID(ctx, id)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 

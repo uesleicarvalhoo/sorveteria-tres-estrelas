@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 
 func MakeProductsRoutes(r fiber.Router, svc products.UseCase) {
@@ -29,13 +30,20 @@ func MakeProductsRoutes(r fiber.Router, svc products.UseCase) {
 // @Router      /products/{id} [get]
 func getProductByID(svc products.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "get-product-by-id")
+		defer span.End()
+
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		p, err := svc.Get(c.Context(), id)
+		p, err := svc.Get(ctx, id)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -53,8 +61,13 @@ func getProductByID(svc products.UseCase) fiber.Handler {
 // @Router      /products/ [get]
 func getAllProducts(svc products.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		records, err := svc.Index(c.Context())
+		ctx, span := trace.NewSpan(c.UserContext(), "get-products")
+		defer span.End()
+
+		records, err := svc.Index(ctx)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -74,14 +87,21 @@ func getAllProducts(svc products.UseCase) fiber.Handler {
 // @Router      /products/ [post]
 func createProduct(svc products.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "create-product")
+		defer span.End()
+
 		var payload dto.CreateProductPayload
 
 		if err := c.BodyParser(&payload); err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		p, err := svc.Store(c.Context(), payload.Name, payload.PriceVarejo, payload.PriceAtacado, payload.AtacadoAmount)
+		p, err := svc.Store(ctx, payload.Name, payload.PriceVarejo, payload.PriceAtacado, payload.AtacadoAmount)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -100,13 +120,20 @@ func createProduct(svc products.UseCase) fiber.Handler {
 // @Router      /products/{id} [delete]
 func deleteProductByID(svc products.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "delete-product-by-id")
+		defer span.End()
+
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: "invalid product id"})
 		}
 
-		err = svc.Delete(c.Context(), id)
+		err = svc.Delete(ctx, id)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
@@ -127,18 +154,27 @@ func deleteProductByID(svc products.UseCase) fiber.Handler {
 // Router      /products/{id} [put]
 func updateProductByID(svc products.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ctx, span := trace.NewSpan(c.UserContext(), "update-product-by-id")
+		defer span.End()
+
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: "invalid product id"})
 		}
 
 		var payload products.UpdatePayload
 		if err := c.BodyParser(&payload); err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		p, err := svc.Update(c.Context(), id, payload)
+		p, err := svc.Update(ctx, id, payload)
 		if err != nil {
+			trace.AddSpanError(span, err)
+
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 

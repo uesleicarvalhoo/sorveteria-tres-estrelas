@@ -41,6 +41,7 @@ func Handlers(
 		recover.New(),
 		cors.New(),
 		requestid.New(),
+		middleware.NewOtel(appName),
 		middleware.NewLogger(logger, appName, appVersion),
 	)
 

@@ -5,6 +5,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/config"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
@@ -12,6 +14,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/ioc"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 
 func main() {
@@ -36,6 +39,19 @@ func main() {
 	if err != nil {
 		logger.Fatalf("couldn't connect to redis: %s", err)
 	}
+
+	provider, err := trace.NewProvider(
+		trace.ProviderConfig{
+			Endpoint:       cfg.TraceEndpoint,
+			ServiceName:    cfg.ServiceName,
+			ServiceVersion: cfg.ServiceVersion,
+			Environment:    cfg.Environment,
+			Disabled:       cfg.TraceEnabled,
+		})
+	if err != nil {
+		logger.Fatalf("couldn't connect to provider: %s", err)
+	}
+	defer provider.Close(context.Background())
 
 	con, _ := db.DB()
 
