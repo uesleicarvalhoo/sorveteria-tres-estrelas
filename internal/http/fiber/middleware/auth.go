@@ -18,7 +18,7 @@ func NewAuth(authSvc auth.UseCase) fiber.Handler {
 
 		token := authHeader[len("Bearer")+1:]
 
-		user, err := authSvc.Authorize(c.Context(), token)
+		user, err := authSvc.Authorize(c.UserContext(), token)
 		if err != nil {
 			return c.Status(http.StatusUnauthorized).JSON(dto.MessageJSON{Message: err.Error()})
 		}

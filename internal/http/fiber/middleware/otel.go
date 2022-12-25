@@ -6,5 +6,13 @@ import (
 )
 
 func NewOtel(serverName string) fiber.Handler {
-	return otelfiber.Middleware(serverName)
+	m := otelfiber.Middleware(serverName)
+
+	return func(c *fiber.Ctx) error {
+		if c.Path() == "/health" {
+			return c.Next()
+		}
+
+		return m(c)
+	}
 }
