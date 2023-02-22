@@ -28,10 +28,10 @@ format:  ## Format code
 
 ## @ Application
 .PHONY: swagger run compose
-internal/http/fiber/docs/*: $(wildcard internal/http/fiber/main.go) $(wildcard internal/http/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */repository.go) $(wildcard */dto.go) ## Generate swagger docs
-	@swag init --generalInfo ./cmd/api/main.go --output ./internal/http/fiber/docs
+cmd/api/fiber/http/docs/*: $(wildcard cmd/api/http/fiber/main.go) $(wildcard cmd/api/http/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */repository.go) $(wildcard */dto.go) ## Generate swagger docs
+	@swag init --generalInfo ./cmd/api/main.go --output ./cmd/api/fiber/docs
 
-swagger: internal/http/fiber/docs/*  ## Generate swagger docs
+swagger: cmd/api/fiber/http/docs/*  ## Generate swagger docs
 
 run: swagger  ## Run app
 	@go run cmd/api/*.go

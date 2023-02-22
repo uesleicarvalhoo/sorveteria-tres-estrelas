@@ -15,8 +15,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber/handler"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber/handler"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/mocks"
 )

@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/validator"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/validator"
 )
 
 func TestValidator(t *testing.T) {

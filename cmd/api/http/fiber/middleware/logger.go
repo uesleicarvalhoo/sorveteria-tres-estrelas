@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/logger"
 )
 
 func NewLogger(logger logger.Logger, serviceName, serviceVersion string) fiber.Handler {

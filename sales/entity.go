@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/validator"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/validator"
 )
 
 type Item struct {

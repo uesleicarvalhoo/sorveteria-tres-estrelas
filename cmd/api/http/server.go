@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/logger"
 	"github.com/urfave/negroni"
 )
 
