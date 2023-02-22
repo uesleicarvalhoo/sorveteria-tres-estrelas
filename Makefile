@@ -14,7 +14,7 @@ help: ## Display this help
 .PHONY: install-tools
 install-tools:  ## Instal mockery, gofumpt, swago and golangci-lint
 	@go install mvdan.cc/gofumpt@latest
-	@go install github.com/vektra/mockery/v2@latest
+	@go install github.com/vektra/mockery/v22.20.0
 	@go install github.com/swaggo/swag/cmd/swag@latest
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.0
 
