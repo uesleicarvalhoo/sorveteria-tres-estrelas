@@ -6,16 +6,16 @@ import (
 	"sort"
 	"time"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 )
 
 type Service struct {
-	payments payments.UseCase
+	payments payment.UseCase
 	sales    sales.UseCase
 }
 
-func NewService(paymentSvc payments.UseCase, salesSvc sales.UseCase) Service {
+func NewService(paymentSvc payment.UseCase, salesSvc sales.UseCase) Service {
 	return Service{
 		payments: paymentSvc,
 		sales:    salesSvc,
@@ -50,7 +50,7 @@ func (s Service) GetCashFlowBetween(ctx context.Context, startAt, endAt time.Tim
 	return s.parseCashFlow(payments, sales), nil
 }
 
-func (s Service) parseCashFlow(payments []payments.Payment, sales []sales.Sale) CashFlow {
+func (s Service) parseCashFlow(payments []payment.Payment, sales []sales.Sale) CashFlow {
 	var totalSales, totalPayments float32
 
 	details := []Detail{}
@@ -66,14 +66,14 @@ func (s Service) parseCashFlow(payments []payments.Payment, sales []sales.Sale) 
 		})
 	}
 
-	for _, payment := range payments {
-		totalPayments += payment.Value
+	for _, p := range payments {
+		totalPayments += p.Value
 
 		details = append(details, Detail{
-			Description: payment.Description,
-			Value:       payment.Value,
+			Description: p.Description,
+			Value:       p.Value,
 			Type:        BalancePayment,
-			Date:        payment.CreatedAt,
+			Date:        p.CreatedAt,
 		})
 	}
 

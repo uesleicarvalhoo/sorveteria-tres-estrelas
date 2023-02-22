@@ -1,4 +1,4 @@
-package payments_test
+package payment_test
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment/mocks"
 )
 
 func TestServiceRegisterPayment(t *testing.T) {
@@ -25,7 +25,7 @@ func TestServiceRegisterPayment(t *testing.T) {
 			desc            string
 			mockError       error
 			expectedError   error
-			expectedPayment payments.Payment
+			expectedPayment payment.Payment
 		}{
 			{
 				about:           "when repository returns an error",
@@ -33,7 +33,7 @@ func TestServiceRegisterPayment(t *testing.T) {
 				desc:            "test repository error",
 				mockError:       errors.New("repository error"),
 				expectedError:   errors.New("repository error"),
-				expectedPayment: payments.Payment{},
+				expectedPayment: payment.Payment{},
 			},
 		}
 
@@ -44,9 +44,9 @@ func TestServiceRegisterPayment(t *testing.T) {
 				t.Parallel()
 				// Arrange
 				repo := mocks.NewRepository(t)
-				repo.On("Create", mock.Anything, mock.AnythingOfType("payments.Payment")).Return(tc.mockError).Once()
+				repo.On("Create", mock.Anything, mock.AnythingOfType("payment.Payment")).Return(tc.mockError).Once()
 
-				sut := payments.NewService(repo)
+				sut := payment.NewService(repo)
 
 				// Action
 				_, err := sut.RegisterPayment(context.Background(), tc.value, tc.desc)
@@ -64,16 +64,16 @@ func TestServiceRegisterPayment(t *testing.T) {
 		desc := "test success"
 
 		repo := mocks.NewRepository(t)
-		repo.On("Create", mock.Anything, mock.AnythingOfType("payments.Payment")).Return(nil).Once()
+		repo.On("Create", mock.Anything, mock.AnythingOfType("payment.Payment")).Return(nil).Once()
 
-		sut := payments.NewService(repo)
+		sut := payment.NewService(repo)
 
 		// Action
 		p, err := sut.RegisterPayment(context.Background(), value, desc)
 
 		// Assert
 		assert.NoError(t, err)
-		assert.NotEqual(t, payments.Payment{}, p)
+		assert.NotEqual(t, payment.Payment{}, p)
 	})
 }
 
@@ -84,20 +84,20 @@ func TestGetAll(t *testing.T) {
 
 	tests := []struct {
 		about            string
-		mockPayments     []payments.Payment
+		mockPayments     []payment.Payment
 		mockError        error
 		expectedError    error
-		expectedPayments []payments.Payment
+		expectedPayments []payment.Payment
 	}{
 		{
 			about:         "when repository returns an error",
-			mockPayments:  []payments.Payment{},
+			mockPayments:  []payment.Payment{},
 			mockError:     repoErr,
 			expectedError: repoErr,
 		},
 		{
 			about: "when repository returns payments, should order by date",
-			mockPayments: []payments.Payment{
+			mockPayments: []payment.Payment{
 				{
 					ID:          uuid.Nil,
 					Value:       1,
@@ -113,7 +113,7 @@ func TestGetAll(t *testing.T) {
 			},
 			mockError:     nil,
 			expectedError: nil,
-			expectedPayments: []payments.Payment{
+			expectedPayments: []payment.Payment{
 				{
 					ID:          uuid.Nil,
 					Value:       2,
@@ -140,7 +140,7 @@ func TestGetAll(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("GetAll", mock.Anything).Return(tc.mockPayments, tc.mockError).Once()
 
-			sut := payments.NewService(repo)
+			sut := payment.NewService(repo)
 
 			// Action
 			found, err := sut.GetAll(context.Background())
@@ -160,20 +160,20 @@ func TestGetBetween(t *testing.T) {
 		about            string
 		startAt          time.Time
 		endAt            time.Time
-		mockPayments     []payments.Payment
+		mockPayments     []payment.Payment
 		mockError        error
 		expectedError    error
-		expectedPayments []payments.Payment
+		expectedPayments []payment.Payment
 	}{
 		{
 			about:         "when repository returns an error",
-			mockPayments:  []payments.Payment{},
+			mockPayments:  []payment.Payment{},
 			mockError:     repoErr,
 			expectedError: repoErr,
 		},
 		{
 			about: "when repository returns payments, should order by date",
-			mockPayments: []payments.Payment{
+			mockPayments: []payment.Payment{
 				{
 					ID:          uuid.Nil,
 					Value:       1,
@@ -190,7 +190,7 @@ func TestGetBetween(t *testing.T) {
 			},
 			mockError:     nil,
 			expectedError: nil,
-			expectedPayments: []payments.Payment{
+			expectedPayments: []payment.Payment{
 				{
 					ID:          uuid.Nil,
 					Value:       2,
@@ -220,7 +220,7 @@ func TestGetBetween(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("GetBetween", mock.Anything, tc.startAt, tc.endAt).Return(tc.mockPayments, tc.mockError).Once()
 
-			sut := payments.NewService(repo)
+			sut := payment.NewService(repo)
 
 			// Action
 			found, err := sut.GetByPeriod(context.Background(), tc.startAt, tc.endAt)
@@ -265,7 +265,7 @@ func TestDelete(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("Delete", mock.Anything, tc.id).Return(tc.repoError).Once()
 
-			sut := payments.NewService(repo)
+			sut := payment.NewService(repo)
 
 			// Action
 			err := sut.DeletePayment(context.Background(), tc.id)
@@ -284,7 +284,7 @@ func TestUpdate(t *testing.T) {
 
 		tests := []struct {
 			about           string
-			payment         payments.Payment
+			payment         payment.Payment
 			newDescription  string
 			newValue        float32
 			repoGetError    error
@@ -293,13 +293,13 @@ func TestUpdate(t *testing.T) {
 		}{
 			{
 				about:         "when repository get returns an error",
-				payment:       payments.Payment{},
+				payment:       payment.Payment{},
 				repoGetError:  errors.New("repository get error"),
 				expectedError: errors.New("repository get error"),
 			},
 			{
 				about:           "when repository update returns an error",
-				payment:         payments.Payment{},
+				payment:         payment.Payment{},
 				repoUpdateError: errors.New("repository update error"),
 				expectedError:   errors.New("repository update error"),
 			},
@@ -316,13 +316,13 @@ func TestUpdate(t *testing.T) {
 				repo.On("Get", mock.Anything, tc.payment.ID).Return(tc.payment, tc.repoGetError).Once()
 				repo.On("Update", mock.Anything, mock.Anything).Return(tc.repoUpdateError).Maybe()
 
-				sut := payments.NewService(repo)
+				sut := payment.NewService(repo)
 
 				// Action
 				p, err := sut.UpdatePayment(context.Background(), tc.payment.ID, tc.newValue, tc.newDescription)
 
 				// Assert
-				assert.Equal(t, payments.Payment{}, p)
+				assert.Equal(t, payment.Payment{}, p)
 				assert.Equal(t, tc.expectedError, err)
 			})
 		}
@@ -331,7 +331,7 @@ func TestUpdate(t *testing.T) {
 	t.Run("check success", func(t *testing.T) {
 		t.Parallel()
 
-		storedPayment := payments.Payment{}
+		storedPayment := payment.Payment{}
 
 		// Arrange
 
@@ -339,7 +339,7 @@ func TestUpdate(t *testing.T) {
 		repo.On("Get", mock.Anything, storedPayment.ID).Return(storedPayment, nil).Once()
 		repo.On("Update", mock.Anything, mock.Anything).Return(nil).Once()
 
-		sut := payments.NewService(repo)
+		sut := payment.NewService(repo)
 
 		// Action
 		p, err := sut.UpdatePayment(context.Background(), storedPayment.ID, 1, "test")

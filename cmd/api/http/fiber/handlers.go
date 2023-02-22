@@ -14,7 +14,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/healthcheck"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/logger"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
@@ -29,7 +29,7 @@ func Handlers(
 	userSvc user.UseCase,
 	productSvc products.UseCase,
 	salesSvc sales.UseCase,
-	paymentSvc payments.UseCase,
+	paymentSvc payment.UseCase,
 	cashflowSvc cashflow.UseCase,
 ) http.Handler {
 	app := fiber.New(fiber.Config{

@@ -4,11 +4,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 
-func MakePaymentsRoutes(router fiber.Router, service payments.UseCase) {
+func MakePaymentsRoutes(router fiber.Router, service payment.UseCase) {
 	router.Get("/", getPayments(service))
 	router.Post("/", createPayment(service))
 	router.Delete("/:id", deletePaymentByID(service))
@@ -22,10 +22,10 @@ func MakePaymentsRoutes(router fiber.Router, service payments.UseCase) {
 // @Produce      json
 // @Param        start_at    query   string  false  "name search by q"  Format(dateTime)
 // @Param        end_at      query   string  false  "name search by q"  Format(dateTime)
-// @Success      200         {object} []payments.Payment
+// @Success      200         {object} []payment.Payment
 // @Failure      500         {object} dto.MessageJSON "when an error occurs"
 // @Router       /payments [get]
-func getPayments(svc payments.UseCase) fiber.Handler {
+func getPayments(svc payment.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "get-payments")
 		defer span.End()
@@ -66,16 +66,16 @@ func getPayments(svc payments.UseCase) fiber.Handler {
 // @Accept      json
 // @Produce     json
 // @Param       payload body     dto.CreatePaymentPayload true "the payload data"
-// @Success     201     {object} payments.Payment
+// @Success     201     {object} payment.Payment
 // @Failure     422     {object} dto.MessageJSON "when payload is invalid"
 // @Failure     500     {object} dto.MessageJSON "when an error occurs"
 // @Router      /payments [post]
-func createPayment(svc payments.UseCase) fiber.Handler { //nolint:dupl
+func createPayment(svc payment.UseCase) fiber.Handler { //nolint:dupl
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "register-payment")
 		defer span.End()
 
-		var payload payments.Payment
+		var payload payment.Payment
 
 		if err := c.BodyParser(&payload); err != nil {
 			trace.AddSpanError(span, err)
@@ -103,7 +103,7 @@ func createPayment(svc payments.UseCase) fiber.Handler { //nolint:dupl
 // @Success     202
 // @Failure     500 {object} dto.MessageJSON "when an error occurs"
 // @Router      /payments/{id} [delete]
-func deletePaymentByID(svc payments.UseCase) fiber.Handler {
+func deletePaymentByID(svc payment.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "delete-payment")
 
@@ -133,10 +133,10 @@ func deletePaymentByID(svc payments.UseCase) fiber.Handler {
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "the id of payment"
-// @Success     200 {object} payments.Payment
+// @Success     200 {object} payment.Payment
 // @Failure     500 {object} dto.MessageJSON "when an error occurs"
 // @Router      /payments/{id} [post]
-func updatePayment(svc payments.UseCase) fiber.Handler {
+func updatePayment(svc payment.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "update-payment")
 		defer span.End()

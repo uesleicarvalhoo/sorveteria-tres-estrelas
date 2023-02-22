@@ -1,4 +1,4 @@
-package payments
+package payment
 
 type UpdatePayload struct {
 	Value       float32 `json:"value"`

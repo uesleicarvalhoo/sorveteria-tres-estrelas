@@ -48,6 +48,8 @@ generate-mocks: clean-mocks  ## Generate mock files
 	@mockery --dir auth --output auth/mocks --all
 	@mockery --dir cache --output cache/mocks --all
 	@mockery --dir healthcheck --output healthcheck/mocks --all
+	@mockery --dir payment --output payment/mocks --all
+	@mockery --dir cashflow --output cashflow/mocks --all
 
 clean-mocks:  ## Clean mock files
 	@rm -rf products/mocks/*
@@ -56,6 +58,8 @@ clean-mocks:  ## Clean mock files
 	@rm -rf auth/mocks/*
 	@rm -rf cache/mocks/*
 	@rm -rf healthcheck/mocks/*
+	@rm -rf payment/mocks/*
+	@rm -rf cashflow/mocks/*
 
 test:  ## Run tests all tests
 	@go test ./... -race -v -count=1 -tags="all" -coverprofile=$(COVERAGE_OUTPUT)
