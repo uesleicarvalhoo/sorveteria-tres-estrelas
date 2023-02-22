@@ -220,7 +220,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/payments.Payment"
+                                "$ref": "#/definitions/payment.Payment"
                             }
                         }
                     },
@@ -259,7 +259,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/payments.Payment"
+                            "$ref": "#/definitions/payment.Payment"
                         }
                     },
                     "422": {
@@ -303,7 +303,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/payments.Payment"
+                            "$ref": "#/definitions/payment.Payment"
                         }
                     },
                     "500": {
@@ -367,7 +367,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/products.Product"
+                                "$ref": "#/definitions/product.Product"
                             }
                         }
                     },
@@ -406,7 +406,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/products.Product"
+                            "$ref": "#/definitions/product.Product"
                         }
                     },
                     "422": {
@@ -450,7 +450,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/products.Product"
+                            "$ref": "#/definitions/product.Product"
                         }
                     },
                     "422": {
@@ -637,6 +637,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/me": {
+            "get": {
+                "description": "Get current user data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get Me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "description": "Create a new user and return user data",
@@ -665,42 +694,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/users.User"
+                            "$ref": "#/definitions/user.User"
                         }
                     },
                     "422": {
                         "description": "when payload is invalid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    },
-                    "500": {
-                        "description": "when an error occurs",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/me": {
-            "get": {
-                "description": "Get current user data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get Me",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/users.User"
                         }
                     },
                     "500": {
@@ -871,7 +871,7 @@ const docTemplate = `{
                 }
             }
         },
-        "payments.Payment": {
+        "payment.Payment": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -888,7 +888,7 @@ const docTemplate = `{
                 }
             }
         },
-        "products.Product": {
+        "product.Product": {
             "type": "object",
             "required": [
                 "name",
@@ -965,7 +965,7 @@ const docTemplate = `{
                 }
             }
         },
-        "users.User": {
+        "user.User": {
             "type": "object",
             "properties": {
                 "email": {

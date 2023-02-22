@@ -29,7 +29,7 @@ format:  ## Format code
 ## @ Application
 .PHONY: swagger run compose
 cmd/api/fiber/http/docs/*: $(wildcard cmd/api/http/fiber/main.go) $(wildcard cmd/api/http/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */repository.go) $(wildcard */dto.go) ## Generate swagger docs
-	@swag init --generalInfo ./cmd/api/main.go --output ./cmd/api/fiber/docs
+	@swag init --generalInfo ./cmd/api/main.go --output ./cmd/api/http/fiber/docs
 
 swagger: cmd/api/fiber/http/docs/*  ## Generate swagger docs
 
