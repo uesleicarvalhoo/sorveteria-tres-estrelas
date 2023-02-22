@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products/postgres"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product/postgres"
 	"gorm.io/gorm"
 )
 
@@ -44,7 +44,7 @@ func (suite *ProductsPostgresTestSuite) SetupTest() {
 		suite.container.Port)
 	assert.NoError(suite.T(), err)
 
-	err = suite.db.AutoMigrate(&products.Product{})
+	err = suite.db.AutoMigrate(&product.Product{})
 	assert.NoError(suite.T(), err)
 }
 
@@ -55,7 +55,7 @@ func (suite *ProductsPostgresTestSuite) TeardownTest() {
 func (suite *ProductsPostgresTestSuite) TestCRUD() {
 	repo := postgres.NewRepository(suite.db)
 
-	product := products.Product{
+	product := product.Product{
 		ID:            uuid.New(),
 		Name:          "picole de morango",
 		PriceVarejo:   1.20,

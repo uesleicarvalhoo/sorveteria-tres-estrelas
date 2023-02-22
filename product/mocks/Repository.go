@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	products "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
+	products "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
 
 	uuid "github.com/google/uuid"
 )

@@ -367,7 +367,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/products.Product"
+                                "$ref": "#/definitions/product.Product"
                             }
                         }
                     },
@@ -406,7 +406,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/products.Product"
+                            "$ref": "#/definitions/product.Product"
                         }
                     },
                     "422": {
@@ -450,7 +450,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/products.Product"
+                            "$ref": "#/definitions/product.Product"
                         }
                     },
                     "422": {
@@ -888,7 +888,7 @@ const docTemplate = `{
                 }
             }
         },
-        "products.Product": {
+        "product.Product": {
             "type": "object",
             "required": [
                 "name",

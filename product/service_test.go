@@ -1,6 +1,6 @@
 //go:build unit || all
 
-package products_test
+package product_test
 
 import (
 	"context"
@@ -11,8 +11,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	product "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products/mocks"
+	product "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product/mocks"
 )
 
 func TestStore(t *testing.T) {

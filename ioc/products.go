@@ -1,13 +1,13 @@
 package ioc
 
 import (
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products/postgres"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product/postgres"
 	"gorm.io/gorm"
 )
 
-func NewProductService(db *gorm.DB) products.UseCase {
+func NewProductService(db *gorm.DB) product.UseCase {
 	r := postgres.NewRepository(db)
 
-	return products.NewService(r)
+	return product.NewService(r)
 }

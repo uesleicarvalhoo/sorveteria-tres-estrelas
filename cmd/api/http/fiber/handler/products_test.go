@@ -19,8 +19,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product/mocks"
 )
 
 func TestProductsGet(t *testing.T) {
@@ -30,7 +30,7 @@ func TestProductsGet(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedProduct := products.Product{
+		storedProduct := product.Product{
 			ID:            uuid.New(),
 			Name:          "picole de limão",
 			PriceVarejo:   1.25,
@@ -52,7 +52,7 @@ func TestProductsGet(t *testing.T) {
 			defer res.Body.Close()
 		}
 
-		body := products.Product{}
+		body := product.Product{}
 		err = json.NewDecoder(res.Body).Decode(&body)
 		assert.NoError(t, err)
 
@@ -64,7 +64,7 @@ func TestProductsGet(t *testing.T) {
 	t.Run("test errors", func(t *testing.T) {
 		t.Parallel()
 
-		storedProducts := products.Product{
+		storedProducts := product.Product{
 			ID:            uuid.New(),
 			Name:          "picole de limão",
 			PriceVarejo:   1.25,
@@ -75,7 +75,7 @@ func TestProductsGet(t *testing.T) {
 		tests := []struct {
 			about              string
 			id                 string
-			mockReturn         products.Product
+			mockReturn         product.Product
 			mockError          error
 			expectedStatusCode int
 			expectedBody       map[string]any
@@ -136,7 +136,7 @@ func TestProductsIndex(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedProducts := []products.Product{
+		storedProducts := []product.Product{
 			{
 				ID:            id,
 				Name:          "picole de limão",
@@ -160,7 +160,7 @@ func TestProductsIndex(t *testing.T) {
 			defer res.Body.Close()
 		}
 
-		var body []products.Product
+		var body []product.Product
 		json.NewDecoder(res.Body).Decode(&body)
 		assert.NoError(t, err)
 
@@ -174,14 +174,14 @@ func TestProductsIndex(t *testing.T) {
 
 		tests := []struct {
 			about              string
-			mockReturn         []products.Product
+			mockReturn         []product.Product
 			mockError          error
 			expectedStatusCode int
 			expectedBody       []byte
 		}{
 			{
 				about:              "when service return a empty list",
-				mockReturn:         []products.Product{},
+				mockReturn:         []product.Product{},
 				expectedStatusCode: http.StatusOK,
 				expectedBody:       []byte("[]"),
 			},
@@ -234,7 +234,7 @@ func TestProductsStore(t *testing.T) {
 			Name: "picole de amendoin", PriceVarejo: 1.23, PriceAtacado: 1, AtacadoAmount: 10,
 		}
 
-		createdProduct := products.Product{
+		createdProduct := product.Product{
 			ID:            uuid.New(),
 			Name:          payload.Name,
 			PriceVarejo:   payload.PriceVarejo,
@@ -263,7 +263,7 @@ func TestProductsStore(t *testing.T) {
 			defer res.Body.Close()
 		}
 
-		var body products.Product
+		var body product.Product
 		err = json.NewDecoder(res.Body).Decode(&body)
 		assert.NoError(t, err)
 
@@ -275,7 +275,7 @@ func TestProductsStore(t *testing.T) {
 	t.Run("test errors", func(t *testing.T) {
 		t.Parallel()
 
-		createdProduct := products.Product{
+		createdProduct := product.Product{
 			ID:            uuid.New(),
 			Name:          "picole de limão",
 			PriceVarejo:   1.25,
@@ -286,7 +286,7 @@ func TestProductsStore(t *testing.T) {
 		tests := []struct {
 			about              string
 			payload            dto.CreateProductPayload
-			mockReturn         products.Product
+			mockReturn         product.Product
 			mockError          error
 			expectedStatusCode int
 			expectedBody       map[string]any
@@ -299,7 +299,7 @@ func TestProductsStore(t *testing.T) {
 					PriceAtacado:  createdProduct.PriceAtacado,
 					AtacadoAmount: createdProduct.AtacadoAmount,
 				},
-				mockReturn:         products.Product{},
+				mockReturn:         product.Product{},
 				mockError:          errors.New("service error"),
 				expectedStatusCode: http.StatusInternalServerError,
 				expectedBody:       map[string]any{"message": "service error"},

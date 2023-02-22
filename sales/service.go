@@ -6,15 +6,15 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
 )
 
 type Service struct {
-	products products.UseCase
+	products product.UseCase
 	repo     Repository
 }
 
-func NewService(productSvc products.UseCase, r Repository) *Service {
+func NewService(productSvc product.UseCase, r Repository) *Service {
 	return &Service{
 		products: productSvc,
 		repo:     r,

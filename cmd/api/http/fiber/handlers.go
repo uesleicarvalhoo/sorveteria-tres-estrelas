@@ -15,7 +15,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/healthcheck"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/logger"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
@@ -27,7 +27,7 @@ func Handlers(
 	healthSvc healthcheck.UseCase,
 	authSvc auth.UseCase,
 	userSvc user.UseCase,
-	productSvc products.UseCase,
+	productSvc product.UseCase,
 	salesSvc sales.UseCase,
 	paymentSvc payment.UseCase,
 	cashflowSvc cashflow.UseCase,

@@ -358,7 +358,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/products.Product"
+                                "$ref": "#/definitions/product.Product"
                             }
                         }
                     },
@@ -397,7 +397,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/products.Product"
+                            "$ref": "#/definitions/product.Product"
                         }
                     },
                     "422": {
@@ -441,7 +441,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/products.Product"
+                            "$ref": "#/definitions/product.Product"
                         }
                     },
                     "422": {
@@ -879,7 +879,7 @@
                 }
             }
         },
-        "products.Product": {
+        "product.Product": {
             "type": "object",
             "required": [
                 "name",

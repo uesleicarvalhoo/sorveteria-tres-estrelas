@@ -111,7 +111,7 @@ definitions:
       value:
         type: number
     type: object
-  products.Product:
+  product.Product:
     properties:
       atacado_amount:
         minimum: 1
@@ -409,7 +409,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/products.Product'
+              $ref: '#/definitions/product.Product'
             type: array
         "500":
           description: when an error occurs
@@ -435,7 +435,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/products.Product'
+            $ref: '#/definitions/product.Product'
         "422":
           description: when data is invalid
           schema:
@@ -486,7 +486,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/products.Product'
+            $ref: '#/definitions/product.Product'
         "422":
           description: when id is invalid
           schema:

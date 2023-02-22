@@ -42,7 +42,7 @@ compose:  ## Init containers with dev dependencies
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
 generate-mocks: clean-mocks  ## Generate mock files
-	@mockery --dir products --output products/mocks --all
+	@mockery --dir product --output product/mocks --all
 	@mockery --dir sales --output sales/mocks --all
 	@mockery --dir user --output user/mocks --all
 	@mockery --dir auth --output auth/mocks --all
@@ -52,7 +52,7 @@ generate-mocks: clean-mocks  ## Generate mock files
 	@mockery --dir cashflow --output cashflow/mocks --all
 
 clean-mocks:  ## Clean mock files
-	@rm -rf products/mocks/*
+	@rm -rf product/mocks/*
 	@rm -rf sales/mocks/*
 	@rm -rf user/mocks/*
 	@rm -rf auth/mocks/*
