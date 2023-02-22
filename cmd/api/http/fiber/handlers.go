@@ -17,7 +17,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
 
 func Handlers(
@@ -26,7 +26,7 @@ func Handlers(
 	logger logger.Logger,
 	healthSvc healthcheck.UseCase,
 	authSvc auth.UseCase,
-	userSvc users.UseCase,
+	userSvc user.UseCase,
 	productSvc products.UseCase,
 	salesSvc sales.UseCase,
 	paymentSvc payments.UseCase,
@@ -50,7 +50,7 @@ func Handlers(
 	handler.MakeHealthCheckRoutes(app, healthSvc)
 	handler.MakeSwaggerRoutes(app.Group("/docs"))
 	handler.MakeAuhtRoutes(app.Group("/auth"), authSvc)
-	handler.MakeUserRoutes(app.Group("/users", authMiddleware), userSvc)
+	handler.MakeUserRoutes(app.Group("/user", authMiddleware), userSvc)
 	handler.MakeSalesRoutes(app.Group("/sales", authMiddleware), salesSvc)
 	handler.MakeProductsRoutes(app.Group("/products", authMiddleware), productSvc)
 	handler.MakePaymentsRoutes(app.Group("/payments", authMiddleware), paymentSvc)

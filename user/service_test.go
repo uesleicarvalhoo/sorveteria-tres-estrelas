@@ -1,6 +1,6 @@
 //go:build unit || all
 
-package users_test
+package user_test
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user/mocks"
 )
 
 func TestCreate(t *testing.T) {
@@ -24,7 +24,7 @@ func TestCreate(t *testing.T) {
 		repo := mocks.NewRepository(t)
 		repo.On("Create", mock.Anything, mock.Anything).Return(nil).Once()
 
-		sut := users.NewService(repo)
+		sut := user.NewService(repo)
 
 		name := "Ueslei Carvalho"
 		email := "ueslei.carvalho@email.com"
@@ -91,12 +91,12 @@ func TestCreate(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("Create", mock.Anything, mock.Anything).Return(tc.repoError).Maybe()
 
-			sut := users.NewService(repo)
+			sut := user.NewService(repo)
 			// Action
 			u, err := sut.Create(context.Background(), tc.name, tc.email, tc.password)
 
 			// Assert
-			assert.Equal(t, users.User{}, u)
+			assert.Equal(t, user.User{}, u)
 			assert.EqualError(t, err, tc.expectedError)
 		})
 	}
@@ -105,12 +105,12 @@ func TestCreate(t *testing.T) {
 func TestGet(t *testing.T) {
 	t.Parallel()
 
-	storedUser, _ := users.NewUser("Name LastName", "user@email.com.br", "fakehash:123")
+	storedUser, _ := user.NewUser("Name LastName", "user@email.com.br", "fakehash:123")
 
 	tests := []struct {
 		about        string
 		id           uuid.UUID
-		expectedUser users.User
+		expectedUser user.User
 		mockError    error
 		expectedErr  error
 	}{
@@ -137,7 +137,7 @@ func TestGet(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("Get", mock.Anything, storedUser.ID).Return(storedUser, tc.mockError).Once()
 
-			sut := users.NewService(repo)
+			sut := user.NewService(repo)
 
 			// Action
 			found, err := sut.Get(context.Background(), tc.id)
@@ -153,12 +153,12 @@ func TestGet(t *testing.T) {
 func TestGetByEmail(t *testing.T) {
 	t.Parallel()
 
-	storedUser, _ := users.NewUser("Name LastName", "user@email.com.br", "fakehash:123")
+	storedUser, _ := user.NewUser("Name LastName", "user@email.com.br", "fakehash:123")
 
 	tests := []struct {
 		about        string
 		email        string
-		expectedUser users.User
+		expectedUser user.User
 		mockError    error
 		expectedErr  error
 	}{
@@ -185,7 +185,7 @@ func TestGetByEmail(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("GetByEmail", mock.Anything, storedUser.Email).Return(storedUser, tc.mockError).Once()
 
-			sut := users.NewService(repo)
+			sut := user.NewService(repo)
 
 			// Action
 			found, err := sut.GetByEmail(context.Background(), tc.email)

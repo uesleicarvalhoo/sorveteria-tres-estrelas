@@ -16,8 +16,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user/mocks"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -27,7 +27,7 @@ func TestCreateUser(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		currentUser, err := users.NewUser(
+		currentUser, err := user.NewUser(
 			"current user", "current.user@email.com", "passwd")
 		assert.NoError(t, err)
 
@@ -37,7 +37,7 @@ func TestCreateUser(t *testing.T) {
 			Password: "secret123",
 		}
 
-		storedUser, err := users.NewUser(payload.Name, payload.Email, payload.Password)
+		storedUser, err := user.NewUser(payload.Name, payload.Email, payload.Password)
 		assert.NoError(t, err)
 
 		svc := mocks.NewUseCase(t)
@@ -61,7 +61,7 @@ func TestCreateUser(t *testing.T) {
 			defer res.Body.Close()
 		}
 
-		var body users.User
+		var body user.User
 		err = json.NewDecoder(res.Body).Decode(&body)
 		assert.NoError(t, err)
 
@@ -80,7 +80,7 @@ func TestCreateUser(t *testing.T) {
 			about              string
 			id                 string
 			payload            dto.CreateUserPayload
-			mockReturn         users.User
+			mockReturn         user.User
 			mockError          error
 			expectedStatusCode int
 			expectedBody       map[string]any
@@ -105,7 +105,7 @@ func TestCreateUser(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
-				currentUser, err := users.NewUser(
+				currentUser, err := user.NewUser(
 					"current user", "current.user@email.com", "passwd")
 				assert.NoError(t, err)
 

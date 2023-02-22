@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 	"gorm.io/gorm"
 )
 
@@ -18,34 +18,34 @@ func NewRepository(db *gorm.DB) *UserPostgres {
 	}
 }
 
-func (r UserPostgres) Get(ctx context.Context, id uuid.UUID) (users.User, error) {
+func (r UserPostgres) Get(ctx context.Context, id uuid.UUID) (user.User, error) {
 	var m UserModel
 
 	if tx := r.db.WithContext(ctx).First(&m, "id = ?", id); tx.Error != nil {
-		return users.User{}, tx.Error
+		return user.User{}, tx.Error
 	}
 
 	return userModelToEntity(m), nil
 }
 
-func (r UserPostgres) GetByEmail(ctx context.Context, email string) (users.User, error) {
+func (r UserPostgres) GetByEmail(ctx context.Context, email string) (user.User, error) {
 	var m UserModel
 
 	if tx := r.db.WithContext(ctx).First(&m, "email = ?", email); tx.Error != nil {
-		return users.User{}, tx.Error
+		return user.User{}, tx.Error
 	}
 
 	return userModelToEntity(m), nil
 }
 
-func (r UserPostgres) GetAll(ctx context.Context) ([]users.User, error) {
+func (r UserPostgres) GetAll(ctx context.Context) ([]user.User, error) {
 	var records []UserModel
 
 	if tx := r.db.WithContext(ctx).Find(&records); tx.Error != nil {
 		return nil, tx.Error
 	}
 
-	users := make([]users.User, len(records))
+	users := make([]user.User, len(records))
 	for i, model := range records {
 		users[i] = userModelToEntity(model)
 	}
@@ -53,13 +53,13 @@ func (r UserPostgres) GetAll(ctx context.Context) ([]users.User, error) {
 	return users, nil
 }
 
-func (r UserPostgres) Create(ctx context.Context, u users.User) error {
+func (r UserPostgres) Create(ctx context.Context, u user.User) error {
 	m := userToModel(u)
 
 	return r.db.WithContext(ctx).Create(&m).Error
 }
 
-func (r UserPostgres) Update(ctx context.Context, u users.User) error {
+func (r UserPostgres) Update(ctx context.Context, u user.User) error {
 	m := userToModel(u)
 
 	return r.db.WithContext(ctx).Save(&m).Error

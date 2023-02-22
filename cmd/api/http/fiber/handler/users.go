@@ -4,10 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
 
-func MakeUserRoutes(r fiber.Router, userSvc users.UseCase) {
+func MakeUserRoutes(r fiber.Router, userSvc user.UseCase) {
 	r.Get("/me", getMe(userSvc))
 	r.Post("/", createUser(userSvc))
 }
@@ -17,15 +17,15 @@ func MakeUserRoutes(r fiber.Router, userSvc users.UseCase) {
 // @Tags        User
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} users.User
+// @Success     200 {object} user.User
 // @Failure     500 {object} dto.MessageJSON "when an error occurs"
-// @Router      /users/me [get]
-func getMe(svc users.UseCase) fiber.Handler {
+// @Router      /user/me [get]
+func getMe(svc user.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		_, span := trace.NewSpan(c.UserContext(), "get-me")
 		defer span.End()
 
-		u, _ := c.Locals("user").(*users.User)
+		u, _ := c.Locals("user").(*user.User)
 		if u == nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: "user not found"})
 		}
@@ -40,11 +40,11 @@ func getMe(svc users.UseCase) fiber.Handler {
 // @Accept      json
 // @Produce     json
 // @Param       payload body dto.CreateUserPayload true "the user data"
-// @Success     201 {object} users.User
+// @Success     201 {object} user.User
 // @Failure     422 {object} dto.MessageJSON "when payload is invalid"
 // @Failure     500 {object} dto.MessageJSON "when an error occurs"
 // @Router      /users [post]
-func createUser(svc users.UseCase) fiber.Handler {
+func createUser(svc user.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "create-user")
 		defer span.End()

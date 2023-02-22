@@ -1,6 +1,6 @@
-// go:build unit || all
+//go:build unit || all
 
-package users_test
+package user_test
 
 import (
 	"strings"
@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
 
 func TestNewUser(t *testing.T) {
@@ -22,15 +22,15 @@ func TestNewUser(t *testing.T) {
 		passwd := "secret123"
 
 		// Action
-		user, err := users.NewUser(name, email, passwd)
+		u, err := user.NewUser(name, email, passwd)
 
 		// Assert
 		assert.NoError(t, err)
-		assert.NotEqual(t, uuid.Nil, user.ID)
-		assert.Equal(t, strings.ToLower(email), user.Email)
-		assert.NotEqual(t, passwd, user.PasswordHash)
-		assert.True(t, user.CheckPassword(passwd))
-		assert.False(t, user.CheckPassword("wrong-password"))
+		assert.NotEqual(t, uuid.Nil, u.ID)
+		assert.Equal(t, strings.ToLower(email), u.Email)
+		assert.NotEqual(t, passwd, u.PasswordHash)
+		assert.True(t, u.CheckPassword(passwd))
+		assert.False(t, u.CheckPassword("wrong-password"))
 	})
 
 	t.Run("errors", func(t *testing.T) {
@@ -80,10 +80,10 @@ func TestNewUser(t *testing.T) {
 				t.Parallel()
 
 				// Action
-				u, err := users.NewUser(tc.name, tc.email, tc.passwd)
+				u, err := user.NewUser(tc.name, tc.email, tc.passwd)
 
 				// Assert
-				assert.Equal(t, users.User{}, u)
+				assert.Equal(t, user.User{}, u)
 				assert.EqualError(t, err, tc.expectedErr)
 			})
 		}
@@ -97,7 +97,7 @@ func TestUserValidate(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		u := users.User{
+		u := user.User{
 			ID:           uuid.New(),
 			Name:         "Ueslei Carvalho",
 			Email:        "uesleicdoliveira@gmail.com",
@@ -113,12 +113,12 @@ func TestUserValidate(t *testing.T) {
 
 	tests := []struct {
 		about         string
-		user          users.User
+		user          user.User
 		expectedError string
 	}{
 		{
 			about: "when name is empty",
-			user: users.User{
+			user: user.User{
 				ID:           uuid.New(),
 				Email:        "uesleicdoliveira@gmail.com",
 				PasswordHash: "mySecretPassword!",
@@ -127,7 +127,7 @@ func TestUserValidate(t *testing.T) {
 		},
 		{
 			about: "when email is empty",
-			user: users.User{
+			user: user.User{
 				ID:           uuid.New(),
 				Name:         "Ueslei Carvalho",
 				PasswordHash: "mySecretPassword!",
@@ -136,7 +136,7 @@ func TestUserValidate(t *testing.T) {
 		},
 		{
 			about: "when email is invalid",
-			user: users.User{
+			user: user.User{
 				ID:           uuid.New(),
 				Name:         "Ueslei Carvalho",
 				Email:        "wrong!",

@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/postgres"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user/postgres"
 	"gorm.io/gorm"
 )
 
@@ -54,7 +54,7 @@ func (suite *UsersTestSuite) TeardownTest() {
 func (suite *UsersTestSuite) TestCRUD() {
 	repo := postgres.NewRepository(suite.db)
 
-	storedUser, _ := users.NewUser("Fake LastName", "fakeuser@email.com", "fakehash:123")
+	storedUser, _ := user.NewUser("Fake LastName", "fakeuser@email.com", "fakehash:123")
 
 	suite.T().Run("test create a new user", func(t *testing.T) {
 		err := repo.Create(suite.ctx, storedUser)
@@ -108,7 +108,7 @@ func (suite *UsersTestSuite) TestCRUD() {
 
 		found, err := repo.Get(suite.ctx, storedUser.ID)
 
-		assert.Equal(t, users.User{}, found)
+		assert.Equal(t, user.User{}, found)
 		assert.Error(t, err)
 	})
 }

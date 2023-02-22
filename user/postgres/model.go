@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
 
 type UserModel struct {
@@ -14,7 +14,7 @@ type UserModel struct {
 
 func (u UserModel) TableName() string { return "users" }
 
-func userToModel(u users.User) UserModel {
+func userToModel(u user.User) UserModel {
 	return UserModel{
 		ID:           u.ID,
 		Name:         u.Name,
@@ -23,8 +23,8 @@ func userToModel(u users.User) UserModel {
 	}
 }
 
-func userModelToEntity(u UserModel) users.User {
-	return users.User{
+func userModelToEntity(u UserModel) user.User {
+	return user.User{
 		ID:           u.ID,
 		Name:         u.Name,
 		Email:        u.Email,

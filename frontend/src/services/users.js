@@ -4,7 +4,7 @@ import { authHeaders } from "./auth"
 
 export const userService = {
   async getMe (token) {
-    const res = await axios.get(`${apiUrl}/users/me`, authHeaders(token))
+    const res = await axios.get(`${apiUrl}/user/me`, authHeaders(token))
     return res.data
   }
 }

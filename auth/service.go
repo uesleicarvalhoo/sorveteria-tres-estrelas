@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
 
 const (
@@ -27,10 +27,10 @@ func getCacheTokenKey(prefix string, id uuid.UUID) string {
 type Service struct {
 	secret string
 	cache  cache.Cache
-	userUc users.UseCase
+	userUc user.UseCase
 }
 
-func NewService(secret string, userUc users.UseCase, cache cache.Cache) *Service {
+func NewService(secret string, userUc user.UseCase, cache cache.Cache) *Service {
 	return &Service{
 		secret: secret,
 		userUc: userUc,
@@ -102,16 +102,16 @@ func (s *Service) validateToken(ctx context.Context, prefix, token string) (uuid
 }
 
 func (s *Service) Login(ctx context.Context, email, password string) (JwtToken, error) {
-	user, err := s.userUc.GetByEmail(ctx, email)
+	u, err := s.userUc.GetByEmail(ctx, email)
 	if err != nil {
 		return JwtToken{}, err
 	}
 
-	if !user.CheckPassword(password) {
+	if !u.CheckPassword(password) {
 		return JwtToken{}, ErrNotAuthorized
 	}
 
-	return s.createAccessToken(ctx, user.ID)
+	return s.createAccessToken(ctx, u.ID)
 }
 
 func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, error) {
@@ -123,15 +123,15 @@ func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, err
 	return s.createAccessToken(ctx, id)
 }
 
-func (s *Service) Authorize(ctx context.Context, token string) (users.User, error) {
+func (s *Service) Authorize(ctx context.Context, token string) (user.User, error) {
 	id, err := s.validateToken(ctx, accessToken, token)
 	if err != nil {
-		return users.User{}, err
+		return user.User{}, err
 	}
 
 	u, err := s.userUc.Get(ctx, id)
 	if err != nil {
-		return users.User{}, err
+		return user.User{}, err
 	}
 
 	return u, nil

@@ -1,4 +1,4 @@
-package users
+package user
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/validator"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/validator"
 	"golang.org/x/crypto/bcrypt"
 )
 

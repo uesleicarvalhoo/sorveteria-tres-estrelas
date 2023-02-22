@@ -14,8 +14,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	cacheMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache/mocks"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users"
-	usersMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/users/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
+	userMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user/mocks"
 )
 
 const secretKey = "my-super-secret-key"
@@ -24,13 +24,13 @@ func TestLogin(t *testing.T) {
 	t.Parallel()
 
 	password := "my-secret-password"
-	storedUser, _ := users.NewUser("User LastName", "user.lastname@email.com", password)
+	storedUser, _ := user.NewUser("User LastName", "user.lastname@email.com", password)
 
 	t.Run("test valid", func(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		repo := usersMock.NewRepository(t)
+		repo := userMock.NewRepository(t)
 		repo.On("GetByEmail", mock.Anything, storedUser.Email).Return(storedUser, nil).Once()
 
 		accessKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
@@ -42,7 +42,7 @@ func TestLogin(t *testing.T) {
 
 		startAt := time.Now()
 
-		userUc := users.NewService(repo)
+		userUc := user.NewService(repo)
 
 		sut := auth.NewService(secretKey, userUc, mockCache)
 
@@ -67,7 +67,7 @@ func TestLogin(t *testing.T) {
 			about           string
 			email           string
 			password        string
-			repositoryUser  users.User
+			repositoryUser  user.User
 			repositoryError error
 			cacheError      error
 			expectedError   string
@@ -102,7 +102,7 @@ func TestLogin(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
-				repo := usersMock.NewRepository(t)
+				repo := userMock.NewRepository(t)
 				repo.On("GetByEmail", mock.Anything, tc.email).Return(tc.repositoryUser, tc.repositoryError).Once()
 
 				accessKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
@@ -114,7 +114,7 @@ func TestLogin(t *testing.T) {
 				mockCache.On("Set", mock.Anything, refreshKey, mock.Anything, auth.RefreshTokenDuration).
 					Return(tc.cacheError).Maybe()
 
-				sut := auth.NewService(secretKey, users.NewService(repo), mockCache)
+				sut := auth.NewService(secretKey, user.NewService(repo), mockCache)
 
 				// Action
 				token, err := sut.Login(context.Background(), tc.email, tc.password)
@@ -147,7 +147,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache.On("Set", mock.Anything, refreshKey, mock.Anything, auth.RefreshTokenDuration).Return(nil).Once()
 		mockCache.On("Get", mock.Anything, refreshKey).Return(token, nil).Once()
 
-		sut := auth.NewService(secretKey, users.NewService(usersMock.NewRepository(t)), mockCache)
+		sut := auth.NewService(secretKey, user.NewService(userMock.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -174,7 +174,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache := cacheMocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("wrong-token", nil).Once()
 
-		sut := auth.NewService(secretKey, users.NewService(usersMock.NewRepository(t)), mockCache)
+		sut := auth.NewService(secretKey, user.NewService(userMock.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -200,7 +200,7 @@ func TestRefreshToken(t *testing.T) {
 		mockCache := cacheMocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("", mockError).Once()
 
-		sut := auth.NewService(secretKey, users.NewService(usersMock.NewRepository(t)), mockCache)
+		sut := auth.NewService(secretKey, user.NewService(userMock.NewRepository(t)), mockCache)
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
@@ -219,7 +219,7 @@ func TestAuthorize(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123")
+		storedUser, err := user.NewUser("User Name", "user@email.com.br", "secret123")
 
 		token, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
@@ -229,7 +229,7 @@ func TestAuthorize(t *testing.T) {
 		mockCache := cacheMocks.NewCache(t)
 		mockCache.On("Get", mock.Anything, accessTokenKey).Return(token, nil).Once()
 
-		mockUserSvc := usersMock.NewUseCase(t)
+		mockUserSvc := userMock.NewUseCase(t)
 		mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, nil)
 
 		sut := auth.NewService(secretKey, mockUserSvc, mockCache)
@@ -245,7 +245,7 @@ func TestAuthorize(t *testing.T) {
 	t.Run("check errors", func(t *testing.T) {
 		t.Parallel()
 
-		storedUser, err := users.NewUser("User Name", "user@email.com.br", "secret123")
+		storedUser, err := user.NewUser("User Name", "user@email.com.br", "secret123")
 
 		validToken, err := auth.GenerateJwtToken(secretKey, storedUser.ID, time.Now().Add(time.Hour))
 		assert.NoError(t, err)
@@ -288,16 +288,16 @@ func TestAuthorize(t *testing.T) {
 				mockCache := cacheMocks.NewCache(t)
 				mockCache.On("Get", mock.Anything, accessTokenKey).Return(tc.mockCacheReturn, tc.mockCacheError).Once()
 
-				mockUserSvc := usersMock.NewUseCase(t)
+				mockUserSvc := userMock.NewUseCase(t)
 				mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, err).Maybe()
 
 				sut := auth.NewService(secretKey, mockUserSvc, mockCache)
 
 				// Action
-				user, err := sut.Authorize(context.Background(), validToken)
+				u, err := sut.Authorize(context.Background(), validToken)
 
 				// Assert
-				assert.Equal(t, users.User{}, user)
+				assert.Equal(t, user.User{}, u)
 				assert.EqualError(t, err, tc.expectedError)
 			})
 		}
