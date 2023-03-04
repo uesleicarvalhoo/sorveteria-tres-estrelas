@@ -14,7 +14,7 @@ help: ## Display this help
 .PHONY: install-tools
 install-tools:  ## Instal mockery, gofumpt, swago and golangci-lint
 	@go install mvdan.cc/gofumpt@latest
-	@go install github.com/vektra/mockery/v2@latest
+	@go install github.com/vektra/mockery/v22.20.0
 	@go install github.com/swaggo/swag/cmd/swag@latest
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.0
 
@@ -28,10 +28,10 @@ format:  ## Format code
 
 ## @ Application
 .PHONY: swagger run compose
-internal/http/fiber/docs/*: $(wildcard internal/http/fiber/main.go) $(wildcard internal/http/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */repository.go) $(wildcard */dto.go) ## Generate swagger docs
-	@swag init --generalInfo ./cmd/api/main.go --output ./internal/http/fiber/docs
+cmd/api/fiber/http/docs/*: $(wildcard cmd/api/http/fiber/main.go) $(wildcard cmd/api/http/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */repository.go) $(wildcard */dto.go) ## Generate swagger docs
+	@swag init --generalInfo ./cmd/api/main.go --output ./cmd/api/http/fiber/docs
 
-swagger: internal/http/fiber/docs/*  ## Generate swagger docs
+swagger: cmd/api/fiber/http/docs/*  ## Generate swagger docs
 
 run: swagger  ## Run app
 	@go run cmd/api/*.go
@@ -42,20 +42,24 @@ compose:  ## Init containers with dev dependencies
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks
 generate-mocks: clean-mocks  ## Generate mock files
-	@mockery --dir products --output products/mocks --all
+	@mockery --dir product --output product/mocks --all
 	@mockery --dir sales --output sales/mocks --all
-	@mockery --dir users --output users/mocks --all
+	@mockery --dir user --output user/mocks --all
 	@mockery --dir auth --output auth/mocks --all
 	@mockery --dir cache --output cache/mocks --all
 	@mockery --dir healthcheck --output healthcheck/mocks --all
+	@mockery --dir payment --output payment/mocks --all
+	@mockery --dir cashflow --output cashflow/mocks --all
 
 clean-mocks:  ## Clean mock files
-	@rm -rf products/mocks/*
+	@rm -rf product/mocks/*
 	@rm -rf sales/mocks/*
-	@rm -rf users/mocks/*
+	@rm -rf user/mocks/*
 	@rm -rf auth/mocks/*
 	@rm -rf cache/mocks/*
 	@rm -rf healthcheck/mocks/*
+	@rm -rf payment/mocks/*
+	@rm -rf cashflow/mocks/*
 
 test:  ## Run tests all tests
 	@go test ./... -race -v -count=1 -tags="all" -coverprofile=$(COVERAGE_OUTPUT)

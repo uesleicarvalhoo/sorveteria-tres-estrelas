@@ -8,12 +8,12 @@ import (
 	"context"
 
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/config"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/database"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/http/fiber"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/ioc"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/internal/logger"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/ioc"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/logger"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
 )
 

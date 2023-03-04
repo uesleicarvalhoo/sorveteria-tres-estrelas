@@ -11,8 +11,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products"
-	productsMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/products/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	productsMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product/mocks"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/mocks"
 )
@@ -24,7 +24,7 @@ func TestRegisterSale(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		storedProduct := products.Product{
+		storedProduct := product.Product{
 			ID:            uuid.New(),
 			Name:          "picole de chocolate",
 			PriceVarejo:   7.5,
@@ -69,7 +69,7 @@ func TestRegisterSale(t *testing.T) {
 		cart              sales.Cart
 		description       string
 		payment           sales.PaymentType
-		productRepoReturn products.Product
+		productRepoReturn product.Product
 		productRepoErr    error
 		saleRepoErr       error
 		expectedErr       string

@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cashflow"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments"
-	mockPayments "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payments/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment"
+	mockPayments "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/payment/mocks"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales"
 	mockSales "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/sales/mocks"
 )
@@ -28,7 +28,7 @@ func TestGetAll(t *testing.T) {
 	tests := []struct {
 		about            string
 		paymentsError    error
-		storedPayments   []payments.Payment
+		storedPayments   []payment.Payment
 		salesError       error
 		storedSales      []sales.Sale
 		expectedCashFlow cashflow.CashFlow
@@ -46,7 +46,7 @@ func TestGetAll(t *testing.T) {
 		},
 		{
 			about: "should return a cash flow with all sales and payments ordered by date",
-			storedPayments: []payments.Payment{
+			storedPayments: []payment.Payment{
 				{ID: uuid.Nil, Description: "payment 1", Value: 5, CreatedAt: makeDate(2020, 1, 1)},
 				{ID: uuid.Nil, Description: "payment 2", Value: 3, CreatedAt: makeDate(2020, 1, 5)},
 				{ID: uuid.Nil, Description: "payment 3", Value: 2, CreatedAt: makeDate(2020, 1, 7)},
@@ -111,7 +111,7 @@ func TestGetByPeriod(t *testing.T) {
 		startAt          time.Time
 		endAt            time.Time
 		paymentsError    error
-		storedPayments   []payments.Payment
+		storedPayments   []payment.Payment
 		salesError       error
 		storedSales      []sales.Sale
 		expectedCashFlow cashflow.CashFlow
@@ -129,7 +129,7 @@ func TestGetByPeriod(t *testing.T) {
 		},
 		{
 			about: "should return a cash flow dates with all sales and payments",
-			storedPayments: []payments.Payment{
+			storedPayments: []payment.Payment{
 				{ID: uuid.Nil, Description: "payment 1", Value: 15, CreatedAt: makeDate(2020, 1, 1)},
 				{ID: uuid.Nil, Description: "payment 2", Value: 2, CreatedAt: makeDate(2020, 1, 5)},
 			},
