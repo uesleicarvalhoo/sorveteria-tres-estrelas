@@ -14,7 +14,7 @@ export async function refreshToken (to, from, next) {
     return next()
   } else {
     const now = Date.now() / 1000
-    if (now > context.state.expireTokenTime) {
+    if ((now - 60) > context.state.expireTokenTime) {
       await dispatchRefreshToken()
     }
 
