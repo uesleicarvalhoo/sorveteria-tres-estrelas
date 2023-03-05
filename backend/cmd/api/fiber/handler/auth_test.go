@@ -15,9 +15,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/cmd/api/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/auth"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/auth/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/cmd/api/fiber/handler"
 )
 
 func TestLogin(t *testing.T) {
