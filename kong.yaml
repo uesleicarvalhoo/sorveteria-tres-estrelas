@@ -1,0 +1,37 @@
+_format_version: "3.0"
+
+plugins:
+  - name: jwt
+    service: backend
+    enabled: false
+    config:
+      key_claim_name: iss
+      claims_to_verify:
+        - exp
+
+consumers:
+  - username: auth-consumer
+
+jwt_secrets:
+  - consumer: auth-consumer
+    key: auth-jwt
+
+services:
+  - name: backend
+    url: http://backend/
+
+  - name: auth
+    url: http://backend/auth
+
+routes:
+  - name: auth-api
+    service: auth
+    paths:
+      - /api/auth
+
+  - name: backend-api
+    service: backend
+    paths:
+      - /api
+    plugins:
+      - name: jwt

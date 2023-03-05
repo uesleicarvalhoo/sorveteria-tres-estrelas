@@ -6,7 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth/jwt"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/infrastructure/cache"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
 
@@ -25,26 +26,26 @@ func getCacheTokenKey(prefix string, id uuid.UUID) string {
 }
 
 type Service struct {
-	secret string
+	jwt    jwt.UseCase
 	cache  cache.Cache
 	userUc user.UseCase
 }
 
-func NewService(secret string, userUc user.UseCase, cache cache.Cache) *Service {
+func NewService(userUc user.UseCase, jwtUc jwt.UseCase, cache cache.Cache) *Service {
 	return &Service{
-		secret: secret,
 		userUc: userUc,
 		cache:  cache,
+		jwt:    jwtUc,
 	}
 }
 
-func (s *Service) generateToken(ctx context.Context, id uuid.UUID, prefix string, exp time.Time) (string, error) {
-	token, err := GenerateJwtToken(s.secret, id, exp)
+func (s *Service) generateToken(ctx context.Context, u user.User, prefix string, exp time.Time) (string, error) {
+	token, err := s.jwt.Generate(ctx, u, exp)
 	if err != nil {
 		return "", err
 	}
 
-	key := getCacheTokenKey(prefix, id)
+	key := getCacheTokenKey(prefix, u.ID)
 
 	var duration time.Duration
 	if prefix == accessToken {
@@ -60,17 +61,17 @@ func (s *Service) generateToken(ctx context.Context, id uuid.UUID, prefix string
 	return token, nil
 }
 
-func (s *Service) createAccessToken(ctx context.Context, id uuid.UUID) (JwtToken, error) {
+func (s *Service) createAccessToken(ctx context.Context, u user.User) (JwtToken, error) {
 	now := time.Now()
 	accessExp := now.Add(AccessTokenDuration)
 	refreshExp := now.Add(RefreshTokenDuration)
 
-	accessToken, err := s.generateToken(ctx, id, accessToken, accessExp)
+	accessToken, err := s.generateToken(ctx, u, accessToken, accessExp)
 	if err != nil {
 		return JwtToken{}, err
 	}
 
-	refreshToken, err := s.generateToken(ctx, id, refreshToken, refreshExp)
+	refreshToken, err := s.generateToken(ctx, u, refreshToken, refreshExp)
 	if err != nil {
 		return JwtToken{}, err
 	}
@@ -83,22 +84,22 @@ func (s *Service) createAccessToken(ctx context.Context, id uuid.UUID) (JwtToken
 	}, nil
 }
 
-func (s *Service) validateToken(ctx context.Context, prefix, token string) (uuid.UUID, error) {
-	id, err := ValidateJwtToken(token, s.secret)
+func (s *Service) validateToken(ctx context.Context, prefix, token string) (user.User, error) {
+	u, err := s.jwt.Validate(ctx, token)
 	if err != nil {
-		return uuid.Nil, err
+		return user.User{}, err
 	}
 
-	cachedToken, err := s.cache.Get(ctx, getCacheTokenKey(prefix, id))
+	cachedToken, err := s.cache.Get(ctx, getCacheTokenKey(prefix, u.ID))
 	if err != nil {
-		return uuid.Nil, err
+		return user.User{}, err
 	}
 
 	if cachedToken != token {
-		return uuid.Nil, ErrTokenNotFound
+		return user.User{}, ErrTokenNotFound
 	}
 
-	return id, nil
+	return u, nil
 }
 
 func (s *Service) Login(ctx context.Context, email, password string) (JwtToken, error) {
@@ -111,7 +112,7 @@ func (s *Service) Login(ctx context.Context, email, password string) (JwtToken, 
 		return JwtToken{}, ErrNotAuthorized
 	}
 
-	return s.createAccessToken(ctx, u.ID)
+	return s.createAccessToken(ctx, u)
 }
 
 func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, error) {
@@ -124,12 +125,7 @@ func (s *Service) RefreshToken(ctx context.Context, token string) (JwtToken, err
 }
 
 func (s *Service) Authorize(ctx context.Context, token string) (user.User, error) {
-	id, err := s.validateToken(ctx, accessToken, token)
-	if err != nil {
-		return user.User{}, err
-	}
-
-	u, err := s.userUc.Get(ctx, id)
+	u, err := s.validateToken(ctx, accessToken, token)
 	if err != nil {
 		return user.User{}, err
 	}
