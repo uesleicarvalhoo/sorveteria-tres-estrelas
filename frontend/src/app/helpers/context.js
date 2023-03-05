@@ -74,8 +74,8 @@ export const context = createStore({
       state.loggedIn = paylolad
     },
     accessToken (state, payload) {
-      state.accessToken = payload.access_token
-      state.refreshToken = payload.refresh_token
+      state.accessToken = payload.token
+      state.refreshToken = payload.token
       state.expireTokenTime = payload.expiration
     },
     sales (state, payload) {
