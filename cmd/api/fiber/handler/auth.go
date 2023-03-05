@@ -17,18 +17,18 @@ func MakeAuhtRoutes(r fiber.Router, authSvc auth.UseCase) {
 // @Tags        Auth
 // @Accept      json
 // @Produce     json
-// @Param       payload      body dto.LoginPayload true "user info"
+// @Param       payload      body auth.LoginPayload true "user info"
 // @Success     200 {object} auth.JwtToken
 // @Failure     401 {object} dto.MessageJSON "when email or password is invalid"
 // @Failure     422 {object} dto.MessageJSON "when payload is invalid"
 // @Failure     500 {object} dto.MessageJSON "when an error occurs"
 // @Router      /auth/login [post]
-func login(svc auth.UseCase) fiber.Handler { //nolint:dupl
+func login(svc auth.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "login")
 		defer span.End()
 
-		var payload dto.LoginPayload
+		var payload auth.LoginPayload
 
 		if err := c.BodyParser(&payload); err != nil {
 			trace.AddSpanError(span, err)
@@ -36,7 +36,7 @@ func login(svc auth.UseCase) fiber.Handler { //nolint:dupl
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		token, err := svc.Login(ctx, payload.Email, payload.Password)
+		token, err := svc.Login(ctx, payload)
 		if err != nil {
 			trace.AddSpanError(span, err)
 
@@ -52,7 +52,7 @@ func login(svc auth.UseCase) fiber.Handler { //nolint:dupl
 // @Tags    Auth
 // @Accept  json
 // @Produce json
-// @Param   payload	body dto.RefreshTokenPayload true "the refresh token"
+// @Param   payload	body auth.RefreshTokenPayload true "the refresh token"
 // @Success 200 {object} auth.JwtToken
 // @Failure 401 {object} dto.MessageJSON "when token is invalid"
 // @Failure 500 {object} dto.MessageJSON "when an error occurs"
@@ -62,7 +62,7 @@ func refreshToken(svc auth.UseCase) fiber.Handler {
 		ctx, span := trace.NewSpan(c.UserContext(), "refresh-token")
 		defer span.End()
 
-		var payload dto.RefreshTokenPayload
+		var payload auth.RefreshTokenPayload
 
 		if err := c.BodyParser(&payload); err != nil {
 			trace.AddSpanError(span, err)
@@ -70,7 +70,7 @@ func refreshToken(svc auth.UseCase) fiber.Handler {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
-		token, err := svc.RefreshToken(ctx, payload.RefreshToken)
+		token, err := svc.RefreshToken(ctx, payload)
 		if err != nil {
 			trace.AddSpanError(span, err)
 

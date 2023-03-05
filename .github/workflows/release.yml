@@ -77,11 +77,14 @@ jobs:
             -e CACHE_PASSWORD=${{ secrets.CACHE_PASSWORD }} \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             -e LOG_LEVEL=${{ secrets.LOG_LEVEL }} \
-            -e SERVICE_NAME=${{ secrets.SERVICE_NAME }} \
+            -e SERVICE_NAME=${{ secrets.BACKEND_SERVICE_NAME }} \
             -e SERVICE_VERSION=${{ env.RELEASE_TAG }} \
             -e HTTP_SERVER_PORT=${{ secrets.HTTP_SERVER_PORT }} \
             -e TRACER_ENDPOINT=${{ secrets.TRACER_ENDPOINT }} \
             -e TRACER_ENABLED=${{ secrets.TRACER_ENABLED }} \
+            -e KONG_URL=${{ secrets.KONG_URL }} \
+            -e KONG_CONSUMER={{ secrets.KONG_CONSUMER }} \
+            -e KONG_JWT_KEY={{ secrets.KONG_JWT_KEY }} \
             --network=${{ secrets.DOCKER_NETWORK }} \
              ${{ env.REGISTRY }}/${{ BACKENDTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
 

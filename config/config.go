@@ -27,6 +27,11 @@ type Config struct {
 	// Tracer
 	TraceEndpoint string `env:"TRACER_ENDPOINT,default=http://localhost:9411/api/v2/spans"`
 	TraceEnabled  bool   `env:"TRACE_ENABLED,default=false"`
+
+	// Kong
+	KongURL      string `env:"KONG_URL,default=http://localhost:8001"`
+	KongConsumer string `env:"KONG_CONSUMER,default=auth-consumer"`
+	KongJwtKey   string `env:"KONG_JWT_KEY,default=auth-jwt"`
 }
 
 func NewFromEnv() (*Config, error) {

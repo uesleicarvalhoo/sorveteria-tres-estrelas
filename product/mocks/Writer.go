@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	products "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	product "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
 
 	uuid "github.com/google/uuid"
 )
@@ -17,11 +17,11 @@ type Writer struct {
 }
 
 // Create provides a mock function with given fields: ctx, p
-func (_m *Writer) Create(ctx context.Context, p products.Product) error {
+func (_m *Writer) Create(ctx context.Context, p product.Product) error {
 	ret := _m.Called(ctx, p)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, products.Product) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, product.Product) error); ok {
 		r0 = rf(ctx, p)
 	} else {
 		r0 = ret.Error(0)
@@ -45,11 +45,11 @@ func (_m *Writer) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 // Update provides a mock function with given fields: ctx, p
-func (_m *Writer) Update(ctx context.Context, p *products.Product) error {
+func (_m *Writer) Update(ctx context.Context, p *product.Product) error {
 	ret := _m.Called(ctx, p)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *products.Product) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *product.Product) error); ok {
 		r0 = rf(ctx, p)
 	} else {
 		r0 = ret.Error(0)

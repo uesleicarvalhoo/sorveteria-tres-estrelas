@@ -17,8 +17,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth/mocks"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber/handler"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/fiber/handler"
 )
 
 func TestLogin(t *testing.T) {
@@ -28,20 +27,19 @@ func TestLogin(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		payload := dto.LoginPayload{
+		payload := auth.LoginPayload{
 			Email:    "user@email.com",
 			Password: "secret123",
 		}
 
 		jwtToken := auth.JwtToken{
-			GrantType:    "beaerer",
-			AcessToken:   "my-access-token",
-			RefreshToken: "my-refresh-token",
-			ExpiresAt:    time.Now().Unix(),
+			GrantType: "beaerer",
+			Token:     "my-access-token",
+			ExpiresAt: time.Now().Unix(),
 		}
 
 		svc := mocks.NewUseCase(t)
-		svc.On("Login", mock.Anything, payload.Email, payload.Password).Return(jwtToken, nil).Once()
+		svc.On("Login", mock.Anything, payload).Return(jwtToken, nil).Once()
 
 		app := fiber.New()
 		handler.MakeAuhtRoutes(app, svc)
@@ -65,8 +63,7 @@ func TestLogin(t *testing.T) {
 		// Assert
 		assert.Equal(t, res.StatusCode, http.StatusOK)
 		assert.Equal(t, jwtToken.GrantType, body.GrantType)
-		assert.Equal(t, jwtToken.AcessToken, body.AcessToken)
-		assert.Equal(t, jwtToken.RefreshToken, body.RefreshToken)
+		assert.Equal(t, jwtToken.Token, body.Token)
 	})
 
 	t.Run("test errors", func(t *testing.T) {
@@ -75,7 +72,7 @@ func TestLogin(t *testing.T) {
 		tests := []struct {
 			about              string
 			id                 string
-			payload            dto.LoginPayload
+			payload            auth.LoginPayload
 			mockReturn         auth.JwtToken
 			mockError          error
 			expectedStatusCode int
@@ -84,7 +81,7 @@ func TestLogin(t *testing.T) {
 			{
 				about:     "when service return an error",
 				mockError: errors.New("service error"),
-				payload: dto.LoginPayload{
+				payload: auth.LoginPayload{
 					Email:    "user@email.com",
 					Password: "secret123",
 				},
@@ -101,7 +98,7 @@ func TestLogin(t *testing.T) {
 
 				// Arrange
 				svc := mocks.NewUseCase(t)
-				svc.On("Login", mock.Anything, tc.payload.Email, tc.payload.Password).
+				svc.On("Login", mock.Anything, tc.payload).
 					Return(tc.mockReturn, tc.mockError).Once()
 
 				app := fiber.New()

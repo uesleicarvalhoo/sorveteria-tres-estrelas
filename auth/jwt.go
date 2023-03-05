@@ -1,48 +1,58 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 )
 
-type JwtToken struct {
-	GrantType    string `json:"grant_type"`
-	AcessToken   string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresAt    int64  `json:"expiration"`
-}
-
-func GenerateJwtToken(secret string, userID uuid.UUID, exp time.Time) (string, error) {
+func GenerateJwtToken(ctx context.Context, u user.User, exp time.Time, issuer, secretKey string) (string, error) {
 	claims := jwt.NewWithClaims(
-		jwt.SigningMethodHS256, jwt.StandardClaims{
-			Subject:   userID.String(),
-			ExpiresAt: exp.Unix(),
+		jwt.SigningMethodHS256, jwt.MapClaims{
+			"iss":   issuer,
+			"sub":   u.ID.String(),
+			"name":  u.Name,
+			"email": u.Email,
+			"iat":   time.Now().Unix(),
+			"exp":   exp.Unix(),
 		})
 
-	return claims.SignedString([]byte(secret))
+	return claims.SignedString([]byte(secretKey))
 }
 
-func ValidateJwtToken(token, secret string) (uuid.UUID, error) {
+func ValidateJwtToken(ctx context.Context, token, secretKey string) (user.User, error) {
 	tokenObj, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %s", token.Header["alg"])
 		}
 
-		return []byte(secret), nil
+		return []byte(secretKey), nil
 	})
 	if err != nil {
-		return uuid.Nil, err
+		return user.User{}, err
 	}
 
 	claims, ok := tokenObj.Claims.(jwt.MapClaims)
-	if ok && tokenObj.Valid {
-		sub, _ := claims["sub"].(string)
-
-		return uuid.Parse(sub)
+	if !ok || !tokenObj.Valid {
+		return user.User{}, ErrInvalidToken
 	}
 
-	return uuid.Nil, ErrInvalidToken
+	sub, _ := claims["sub"].(string)
+	name, _ := claims["name"].(string)
+	email, _ := claims["email"].(string)
+
+	id, err := uuid.Parse(sub)
+	if err != nil {
+		return user.User{}, err
+	}
+
+	return user.User{
+		ID:    id,
+		Name:  name,
+		Email: email,
+	}, nil
 }

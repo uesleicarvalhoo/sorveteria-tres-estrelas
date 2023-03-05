@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	products "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	product "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
 
 	uuid "github.com/google/uuid"
 )
@@ -17,18 +17,18 @@ type Reader struct {
 }
 
 // Get provides a mock function with given fields: ctx, id
-func (_m *Reader) Get(ctx context.Context, id uuid.UUID) (products.Product, error) {
+func (_m *Reader) Get(ctx context.Context, id uuid.UUID) (product.Product, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 products.Product
+	var r0 product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) (products.Product, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) (product.Product, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) products.Product); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) product.Product); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(products.Product)
+		r0 = ret.Get(0).(product.Product)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
@@ -41,19 +41,19 @@ func (_m *Reader) Get(ctx context.Context, id uuid.UUID) (products.Product, erro
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *Reader) GetAll(ctx context.Context) ([]products.Product, error) {
+func (_m *Reader) GetAll(ctx context.Context) ([]product.Product, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []products.Product
+	var r0 []product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]products.Product, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) ([]product.Product, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []products.Product); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) []product.Product); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]products.Product)
+			r0 = ret.Get(0).([]product.Product)
 		}
 	}
 

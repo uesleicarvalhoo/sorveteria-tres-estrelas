@@ -1,12 +1,22 @@
 definitions:
   auth.JwtToken:
     properties:
-      access_token:
-        type: string
       expiration:
         type: integer
       grant_type:
         type: string
+      token:
+        type: string
+    type: object
+  auth.LoginPayload:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  auth.RefreshTokenPayload:
+    properties:
       refresh_token:
         type: string
     type: object
@@ -61,21 +71,9 @@ definitions:
       password:
         type: string
     type: object
-  dto.LoginPayload:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    type: object
   dto.MessageJSON:
     properties:
       message:
-        type: string
-    type: object
-  dto.RefreshTokenPayload:
-    properties:
-      refresh_token:
         type: string
     type: object
   dto.RegisterSalePayload:
@@ -175,7 +173,7 @@ info:
   contact: {}
   description: API para o cadastro de produtos, controle de vendas e fluxo de caixa
     para a sorveteria três estrelas
-  title: Sorveteria três estrelas - API
+  title: Sorveteria três estrelas - Backend API
   version: "1.0"
 paths:
   /auth/login:
@@ -189,7 +187,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/dto.LoginPayload'
+          $ref: '#/definitions/auth.LoginPayload'
       produces:
       - application/json
       responses:
@@ -223,7 +221,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/dto.RefreshTokenPayload'
+          $ref: '#/definitions/auth.RefreshTokenPayload'
       produces:
       - application/json
       responses:

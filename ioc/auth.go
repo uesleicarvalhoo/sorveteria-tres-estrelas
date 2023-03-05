@@ -1,13 +1,17 @@
 package ioc
 
 import (
+	"github.com/kong/go-kong/kong"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/infrastructure/cache"
 	"gorm.io/gorm"
 )
 
-func NewAuthService(secretKey string, db *gorm.DB, cache cache.Cache) auth.UseCase {
+func NewAuthService(
+	db *gorm.DB, cache cache.Cache, kongCli *kong.Client, secret, kongConsumer, kongJwtKey string,
+) auth.UseCase {
 	userSvc := NewUserService(db)
+	provider := auth.NewKongProvider(kongCli, kongConsumer, kongJwtKey)
 
-	return auth.NewService(secretKey, userSvc, cache)
+	return auth.NewService(userSvc, provider)
 }

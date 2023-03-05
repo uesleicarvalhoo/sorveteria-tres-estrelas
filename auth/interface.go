@@ -7,7 +7,12 @@ import (
 )
 
 type UseCase interface {
-	Login(ctx context.Context, email, password string) (JwtToken, error)
-	RefreshToken(ctx context.Context, token string) (JwtToken, error)
+	Login(ctx context.Context, payload LoginPayload) (JwtToken, error)
+	RefreshToken(ctx context.Context, payload RefreshTokenPayload) (JwtToken, error)
 	Authorize(ctx context.Context, token string) (user.User, error)
+}
+
+type ConfigProvider interface {
+	GetSecretKey(ctx context.Context) (string, error)
+	GetIssuer(ctx context.Context) (string, error)
 }

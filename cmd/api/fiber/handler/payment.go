@@ -70,7 +70,7 @@ func getPayments(svc payment.UseCase) fiber.Handler {
 // @Failure     422     {object} dto.MessageJSON "when payload is invalid"
 // @Failure     500     {object} dto.MessageJSON "when an error occurs"
 // @Router      /payments [post]
-func createPayment(svc payment.UseCase) fiber.Handler { //nolint:dupl
+func createPayment(svc payment.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "register-payment")
 		defer span.End()
