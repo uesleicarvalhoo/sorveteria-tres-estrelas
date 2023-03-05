@@ -41,23 +41,23 @@ func (_m *UseCase) Authorize(ctx context.Context, token string) (user.User, erro
 	return r0, r1
 }
 
-// Login provides a mock function with given fields: ctx, email, password
-func (_m *UseCase) Login(ctx context.Context, email string, password string) (auth.JwtToken, error) {
-	ret := _m.Called(ctx, email, password)
+// Login provides a mock function with given fields: ctx, payload
+func (_m *UseCase) Login(ctx context.Context, payload auth.LoginPayload) (auth.JwtToken, error) {
+	ret := _m.Called(ctx, payload)
 
 	var r0 auth.JwtToken
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) (auth.JwtToken, error)); ok {
-		return rf(ctx, email, password)
+	if rf, ok := ret.Get(0).(func(context.Context, auth.LoginPayload) (auth.JwtToken, error)); ok {
+		return rf(ctx, payload)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) auth.JwtToken); ok {
-		r0 = rf(ctx, email, password)
+	if rf, ok := ret.Get(0).(func(context.Context, auth.LoginPayload) auth.JwtToken); ok {
+		r0 = rf(ctx, payload)
 	} else {
 		r0 = ret.Get(0).(auth.JwtToken)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
-		r1 = rf(ctx, email, password)
+	if rf, ok := ret.Get(1).(func(context.Context, auth.LoginPayload) error); ok {
+		r1 = rf(ctx, payload)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -65,23 +65,23 @@ func (_m *UseCase) Login(ctx context.Context, email string, password string) (au
 	return r0, r1
 }
 
-// RefreshToken provides a mock function with given fields: ctx, token
-func (_m *UseCase) RefreshToken(ctx context.Context, token string) (auth.JwtToken, error) {
-	ret := _m.Called(ctx, token)
+// RefreshToken provides a mock function with given fields: ctx, payload
+func (_m *UseCase) RefreshToken(ctx context.Context, payload auth.RefreshTokenPayload) (auth.JwtToken, error) {
+	ret := _m.Called(ctx, payload)
 
 	var r0 auth.JwtToken
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (auth.JwtToken, error)); ok {
-		return rf(ctx, token)
+	if rf, ok := ret.Get(0).(func(context.Context, auth.RefreshTokenPayload) (auth.JwtToken, error)); ok {
+		return rf(ctx, payload)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) auth.JwtToken); ok {
-		r0 = rf(ctx, token)
+	if rf, ok := ret.Get(0).(func(context.Context, auth.RefreshTokenPayload) auth.JwtToken); ok {
+		r0 = rf(ctx, payload)
 	} else {
 		r0 = ret.Get(0).(auth.JwtToken)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, token)
+	if rf, ok := ret.Get(1).(func(context.Context, auth.RefreshTokenPayload) error); ok {
+		r1 = rf(ctx, payload)
 	} else {
 		r1 = ret.Error(1)
 	}

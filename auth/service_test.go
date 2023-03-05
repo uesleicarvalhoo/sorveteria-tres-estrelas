@@ -5,7 +5,6 @@ package auth_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 	"time"
 
@@ -13,13 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth/jwt"
-	cacheMocks "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/infrastructure/cache/mocks"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user"
 	userMock "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/user/mocks"
 )
 
-const secretKey = "my-super-secret-key"
+const (
+	secretKey = "my-super-secret-key"
+	issuer    = "test"
+)
 
 func TestLogin(t *testing.T) {
 	t.Parallel()
@@ -31,36 +31,32 @@ func TestLogin(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		jwtSvc := jwt.NewService(secretKey)
+		provider := auth.NewStaticProvider(secretKey, issuer)
 
 		repo := userMock.NewRepository(t)
 		repo.On("GetByEmail", mock.Anything, storedUser.Email).Return(storedUser, nil).Once()
-
-		accessKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
-		refreshKey := fmt.Sprintf("refresh-token-%s", storedUser.ID.String())
-
-		mockCache := cacheMocks.NewCache(t)
-		mockCache.On("Set", mock.Anything, accessKey, mock.Anything, auth.AccessTokenDuration).Return(nil).Once()
-		mockCache.On("Set", mock.Anything, refreshKey, mock.Anything, auth.RefreshTokenDuration).Return(nil).Once()
 
 		startAt := time.Now()
 
 		userUc := user.NewService(repo)
 
-		sut := auth.NewService(userUc, jwtSvc, mockCache)
+		sut := auth.NewService(userUc, provider)
 
 		// Action
-		token, err := sut.Login(context.Background(), storedUser.Email, password)
+		token, err := sut.Login(context.Background(), auth.LoginPayload{Email: storedUser.Email, Password: password})
 
 		// Assert
 		assert.NoError(t, err)
 
 		assert.Equal(t, "bearer", token.GrantType)
 		assert.Greater(t, token.ExpiresAt, startAt.Unix())
+		assert.NotEmpty(t, token.Token)
 
-		assert.NotEmpty(t, token.AcessToken)
-		assert.NotEmpty(t, token.RefreshToken)
-		assert.NotEqual(t, token.AcessToken, token.RefreshToken)
+		u, err := sut.Authorize(context.Background(), token.Token)
+		assert.Equal(t, storedUser.ID, u.ID)
+		assert.Equal(t, storedUser.Name, u.Name)
+		assert.Equal(t, storedUser.Email, u.Email)
+		assert.NoError(t, err)
 	})
 
 	t.Run("test errors", func(t *testing.T) {
@@ -72,7 +68,6 @@ func TestLogin(t *testing.T) {
 			password        string
 			repositoryUser  user.User
 			repositoryError error
-			cacheError      error
 			expectedError   string
 		}{
 			{
@@ -80,14 +75,6 @@ func TestLogin(t *testing.T) {
 				email:           "inexisting@email.com",
 				repositoryError: errors.New("user not found"),
 				expectedError:   "user not found",
-			},
-			{
-				about:          "when cache return an error",
-				email:          storedUser.Email,
-				password:       password,
-				repositoryUser: storedUser,
-				cacheError:     errors.New("couldn't set value into cache"),
-				expectedError:  "couldn't set value into cache",
 			},
 			{
 				about:          "when password is invalid",
@@ -105,24 +92,15 @@ func TestLogin(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
-				jwtSvc := jwt.NewService(secretKey)
+				provider := auth.NewStaticProvider(secretKey, issuer)
 
 				repo := userMock.NewRepository(t)
 				repo.On("GetByEmail", mock.Anything, tc.email).Return(tc.repositoryUser, tc.repositoryError).Once()
 
-				accessKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
-				refreshKey := fmt.Sprintf("refresh-token-%s", storedUser.ID.String())
-
-				mockCache := cacheMocks.NewCache(t)
-				mockCache.On("Set", mock.Anything, accessKey, mock.Anything, auth.AccessTokenDuration).
-					Return(tc.cacheError).Maybe()
-				mockCache.On("Set", mock.Anything, refreshKey, mock.Anything, auth.RefreshTokenDuration).
-					Return(tc.cacheError).Maybe()
-
-				sut := auth.NewService(user.NewService(repo), jwtSvc, mockCache)
+				sut := auth.NewService(user.NewService(repo), provider)
 
 				// Action
-				token, err := sut.Login(context.Background(), tc.email, tc.password)
+				token, err := sut.Login(context.Background(), auth.LoginPayload{tc.email, tc.password})
 
 				// Assert
 				assert.EqualError(t, err, tc.expectedError)
@@ -135,185 +113,52 @@ func TestLogin(t *testing.T) {
 func TestRefreshToken(t *testing.T) {
 	t.Parallel()
 
-	t.Run("when token is valid and cache not return an error", func(t *testing.T) {
+	t.Run("when token is valid", func(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		jwtSvc := jwt.NewService(secretKey)
-
 		storedUser := user.User{ID: uuid.New()}
 
-		token, err := jwtSvc.Generate(context.Background(), storedUser, time.Now().Add(time.Hour))
+		token, err := auth.GenerateJwtToken(context.Background(), storedUser, time.Now().Add(time.Hour), issuer, secretKey)
 		assert.NoError(t, err)
 
-		accessKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
-		refreshKey := fmt.Sprintf("refresh-token-%s", storedUser.ID.String())
-
-		mockCache := cacheMocks.NewCache(t)
-		mockCache.On("Set", mock.Anything, accessKey, mock.Anything, auth.AccessTokenDuration).Return(nil).Once()
-		mockCache.On("Set", mock.Anything, refreshKey, mock.Anything, auth.RefreshTokenDuration).Return(nil).Once()
-		mockCache.On("Get", mock.Anything, refreshKey).Return(token, nil).Once()
-
-		sut := auth.NewService(user.NewService(userMock.NewRepository(t)), jwtSvc, mockCache)
+		sut := auth.NewService(user.NewService(userMock.NewRepository(t)), auth.NewStaticProvider(secretKey, issuer))
 
 		// Action
 		time.Sleep(time.Second) // Wait 1 second for change token
-		newToken, err := sut.RefreshToken(context.Background(), token)
+		newToken, err := sut.RefreshToken(context.Background(), auth.RefreshTokenPayload{token})
 
 		// Assert
 		assert.NoError(t, err)
-		assert.NotEqual(t, token, newToken.AcessToken)
-		assert.NotEqual(t, token, newToken.RefreshToken)
+		assert.NotEqual(t, token, newToken.Token)
 		assert.Greater(t, newToken.ExpiresAt, time.Now().Unix())
-	})
-
-	t.Run("when token is valid but not match with cached token", func(t *testing.T) {
-		t.Parallel()
-
-		// Arrange
-		storedUser := user.User{ID: uuid.New()}
-		jwtSvc := jwt.NewService(secretKey)
-
-		token, err := jwtSvc.Generate(context.Background(), storedUser, time.Now().Add(time.Hour))
-		assert.NoError(t, err)
-
-		refreshTokenKey := fmt.Sprintf("refresh-token-%s", storedUser.ID.String())
-
-		mockCache := cacheMocks.NewCache(t)
-		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("wrong-token", nil).Once()
-
-		sut := auth.NewService(user.NewService(userMock.NewRepository(t)), jwtSvc, mockCache)
-
-		// Action
-		time.Sleep(time.Second) // Wait 1 second for change token
-		newToken, err := sut.RefreshToken(context.Background(), token)
-
-		// Assert
-		assert.EqualError(t, err, auth.ErrTokenNotFound.Error())
-		assert.Equal(t, auth.JwtToken{}, newToken)
-	})
-
-	t.Run("when cache return an error", func(t *testing.T) {
-		t.Parallel()
-
-		// Arrange
-		storedUser := user.User{ID: uuid.New()}
-		jwtSvc := jwt.NewService(secretKey)
-
-		token, err := jwtSvc.Generate(context.Background(), storedUser, time.Now().Add(time.Hour))
-		assert.NoError(t, err)
-
-		refreshTokenKey := fmt.Sprintf("refresh-token-%s", storedUser.ID.String())
-		mockError := errors.New("cache error")
-
-		mockCache := cacheMocks.NewCache(t)
-		mockCache.On("Get", mock.Anything, refreshTokenKey).Return("", mockError).Once()
-
-		sut := auth.NewService(user.NewService(userMock.NewRepository(t)), jwtSvc, mockCache)
-
-		// Action
-		time.Sleep(time.Second) // Wait 1 second for change token
-		newToken, err := sut.RefreshToken(context.Background(), token)
-
-		// Assert
-		assert.EqualError(t, err, mockError.Error())
-		assert.Equal(t, auth.JwtToken{}, newToken)
 	})
 }
 
 func TestAuthorize(t *testing.T) {
 	t.Parallel()
 
-	t.Run("when token is valid and cache not return an error", func(t *testing.T) {
+	t.Run("when token is valid", func(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		jwtSvc := jwt.NewService(secretKey)
-
 		storedUser, err := user.NewUser("User Name", "user@email.com.br", "secret123")
 		assert.NoError(t, err)
 
-		token, err := jwtSvc.Generate(context.Background(), storedUser, time.Now().Add(time.Hour))
+		token, err := auth.GenerateJwtToken(context.Background(), storedUser, time.Now().Add(time.Hour), issuer, secretKey)
 		assert.NoError(t, err)
 
-		accessTokenKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
-
-		mockCache := cacheMocks.NewCache(t)
-		mockCache.On("Get", mock.Anything, accessTokenKey).Return(token, nil).Once()
-
 		mockUserSvc := userMock.NewUseCase(t)
-		mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, nil)
 
-		sut := auth.NewService(mockUserSvc, jwtSvc, mockCache)
+		sut := auth.NewService(mockUserSvc, auth.NewStaticProvider(secretKey, issuer))
 
 		// Action
 		user, err := sut.Authorize(context.Background(), token)
 
 		// Assert
 		assert.NoError(t, err)
-		assert.Equal(t, storedUser, user)
-	})
-
-	t.Run("check errors", func(t *testing.T) {
-		t.Parallel()
-
-		jwtSvc := jwt.NewService(secretKey)
-
-		storedUser, err := user.NewUser("User Name", "user@email.com.br", "secret123")
-
-		validToken, err := jwtSvc.Generate(context.Background(), storedUser, time.Now().Add(time.Hour))
-		assert.NoError(t, err)
-
-		tests := []struct {
-			about           string
-			mockUserError   error
-			mockCacheError  error
-			mockCacheReturn string
-			expectedError   string
-		}{
-			{
-				about:           "when token is valid but not match with cached token",
-				mockCacheReturn: "wrong-token",
-				expectedError:   auth.ErrTokenNotFound.Error(),
-			},
-			{
-				about:           "when token is valid but not match with cached token",
-				mockCacheReturn: "",
-				mockCacheError:  errors.New("cache error"),
-				expectedError:   "cache error",
-			},
-			{
-				about:           "when token is valid but not match with cached token",
-				mockCacheReturn: "",
-				mockCacheError:  errors.New("cache error"),
-				expectedError:   "cache error",
-			},
-		}
-
-		for _, tc := range tests {
-			tc := tc
-
-			t.Run(tc.about, func(t *testing.T) {
-				t.Parallel()
-
-				// Arrange
-				accessTokenKey := fmt.Sprintf("access-token-%s", storedUser.ID.String())
-
-				mockCache := cacheMocks.NewCache(t)
-				mockCache.On("Get", mock.Anything, accessTokenKey).Return(tc.mockCacheReturn, tc.mockCacheError).Once()
-
-				mockUserSvc := userMock.NewUseCase(t)
-				mockUserSvc.On("Get", mock.Anything, storedUser.ID).Return(storedUser, err).Maybe()
-
-				sut := auth.NewService(mockUserSvc, jwtSvc, mockCache)
-
-				// Action
-				u, err := sut.Authorize(context.Background(), validToken)
-
-				// Assert
-				assert.Equal(t, user.User{}, u)
-				assert.EqualError(t, err, tc.expectedError)
-			})
-		}
+		assert.Equal(t, storedUser.ID, user.ID)
+		assert.Equal(t, storedUser.Name, user.Name)
+		assert.Equal(t, storedUser.Email, user.Email)
 	})
 }

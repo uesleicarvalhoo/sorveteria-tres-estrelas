@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginPayload"
+                            "$ref": "#/definitions/auth.LoginPayload"
                         }
                     }
                 ],
@@ -88,7 +88,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenPayload"
+                            "$ref": "#/definitions/auth.RefreshTokenPayload"
                         }
                     }
                 ],
@@ -717,17 +717,32 @@ const docTemplate = `{
         "auth.JwtToken": {
             "type": "object",
             "properties": {
-                "access_token": {
-                    "type": "string"
-                },
                 "expiration": {
                     "type": "integer"
                 },
                 "grant_type": {
                     "type": "string"
                 },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LoginPayload": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.RefreshTokenPayload": {
+            "type": "object",
+            "properties": {
                 "refresh_token": {
-                    "description": "TODO: Remover o refresh token ou fazer alguma lógica para ele ser diferente do accessToken",
                     "type": "string"
                 }
             }
@@ -811,29 +826,10 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginPayload": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.MessageJSON": {
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.RefreshTokenPayload": {
-            "type": "object",
-            "properties": {
-                "refresh_token": {
                     "type": "string"
                 }
             }
