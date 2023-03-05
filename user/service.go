@@ -49,3 +49,7 @@ func (s *Service) GetByEmail(ctx context.Context, email string) (User, error) {
 
 	return u, nil
 }
+
+func (s *Service) Store(ctx context.Context, u User) error {
+	return s.r.Create(ctx, u)
+}

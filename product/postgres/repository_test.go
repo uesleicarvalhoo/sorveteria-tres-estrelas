@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/infrastructure/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product/postgres"
 	"gorm.io/gorm"

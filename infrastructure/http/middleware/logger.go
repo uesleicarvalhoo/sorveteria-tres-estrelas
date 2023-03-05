@@ -9,7 +9,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/logger"
 )
 
-func NewLogger(logger logger.Logger, serviceName, serviceVersion string) fiber.Handler {
+func NewFiberLogger(logger logger.Logger, serviceName, serviceVersion string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		if strings.Contains(c.Path(), "/health") {
 			return c.Next()

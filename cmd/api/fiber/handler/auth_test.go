@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/auth/mocks"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber/handler"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/dto"
 )
 

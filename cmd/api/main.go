@@ -1,4 +1,4 @@
-// @title Sorveteria três estrelas - API
+// @title Sorveteria três estrelas - Backend API
 // @version 1.0
 // @description API para o cadastro de produtos, controle de vendas e fluxo de caixa para a sorveteria três estrelas
 
@@ -7,11 +7,12 @@ package main
 import (
 	"context"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cache"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/http/fiber"
+	"github.com/kong/go-kong/kong"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/cmd/api/fiber"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/config"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/infrastructure/cache"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/infrastructure/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/infrastructure/http"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/ioc"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/logger"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/trace"
@@ -53,22 +54,27 @@ func main() {
 	}
 	defer provider.Close(context.Background())
 
+	kong, err := kong.NewClient(&cfg.KongURL, nil)
+	if err != nil {
+		logger.Fatalf("couldn't connect to kong: %s", err)
+	}
+
 	con, _ := db.DB()
 
 	healthSvc := ioc.NewHealthCheckService(cfg, con, cache)
-	authSvc := ioc.NewAuthService(cfg.SecretKey, db, cache)
 	saleSvc := ioc.NewSaleService(db)
 	productSvc := ioc.NewProductService(db)
 	usersSvc := ioc.NewUserService(db)
 	paymentSvc := ioc.NewPaymentService(db)
 	cashflowSvc := ioc.NewCashFlowService(db)
+	authSvc := ioc.NewAuthService(db, cache, kong, cfg.SecretKey, cfg.KongConsumer, cfg.KongJwtKey)
 
 	h := fiber.Handlers(
 		cfg.ServiceName,
 		cfg.ServiceVersion,
 		logger,
-		healthSvc,
 		authSvc,
+		healthSvc,
 		usersSvc,
 		productSvc,
 		saleSvc,

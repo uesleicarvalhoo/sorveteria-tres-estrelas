@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func NewOtel(serverName string) fiber.Handler {
+func NewFiberOtel(serverName string) fiber.Handler {
 	m := otelfiber.Middleware(serverName)
 
 	return func(c *fiber.Ctx) error {

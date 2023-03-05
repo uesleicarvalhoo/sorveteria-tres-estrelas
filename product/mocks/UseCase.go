@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	products "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
+	product "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/product"
 
 	uuid "github.com/google/uuid"
 )
@@ -31,18 +31,18 @@ func (_m *UseCase) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 // Get provides a mock function with given fields: ctx, id
-func (_m *UseCase) Get(ctx context.Context, id uuid.UUID) (products.Product, error) {
+func (_m *UseCase) Get(ctx context.Context, id uuid.UUID) (product.Product, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 products.Product
+	var r0 product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) (products.Product, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) (product.Product, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) products.Product); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) product.Product); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(products.Product)
+		r0 = ret.Get(0).(product.Product)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
@@ -55,19 +55,19 @@ func (_m *UseCase) Get(ctx context.Context, id uuid.UUID) (products.Product, err
 }
 
 // Index provides a mock function with given fields: ctx
-func (_m *UseCase) Index(ctx context.Context) ([]products.Product, error) {
+func (_m *UseCase) Index(ctx context.Context) ([]product.Product, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []products.Product
+	var r0 []product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]products.Product, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) ([]product.Product, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []products.Product); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) []product.Product); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]products.Product)
+			r0 = ret.Get(0).([]product.Product)
 		}
 	}
 
@@ -81,18 +81,18 @@ func (_m *UseCase) Index(ctx context.Context) ([]products.Product, error) {
 }
 
 // Store provides a mock function with given fields: ctx, name, varejoPrice, atacadoPrice, atacadoAmount
-func (_m *UseCase) Store(ctx context.Context, name string, varejoPrice float64, atacadoPrice float64, atacadoAmount int) (products.Product, error) {
+func (_m *UseCase) Store(ctx context.Context, name string, varejoPrice float64, atacadoPrice float64, atacadoAmount int) (product.Product, error) {
 	ret := _m.Called(ctx, name, varejoPrice, atacadoPrice, atacadoAmount)
 
-	var r0 products.Product
+	var r0 product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, float64, float64, int) (products.Product, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, float64, float64, int) (product.Product, error)); ok {
 		return rf(ctx, name, varejoPrice, atacadoPrice, atacadoAmount)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, float64, float64, int) products.Product); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, float64, float64, int) product.Product); ok {
 		r0 = rf(ctx, name, varejoPrice, atacadoPrice, atacadoAmount)
 	} else {
-		r0 = ret.Get(0).(products.Product)
+		r0 = ret.Get(0).(product.Product)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string, float64, float64, int) error); ok {
@@ -105,21 +105,21 @@ func (_m *UseCase) Store(ctx context.Context, name string, varejoPrice float64, 
 }
 
 // Update provides a mock function with given fields: ctx, id, payload
-func (_m *UseCase) Update(ctx context.Context, id uuid.UUID, payload products.UpdatePayload) (products.Product, error) {
+func (_m *UseCase) Update(ctx context.Context, id uuid.UUID, payload product.UpdatePayload) (product.Product, error) {
 	ret := _m.Called(ctx, id, payload)
 
-	var r0 products.Product
+	var r0 product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, products.UpdatePayload) (products.Product, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, product.UpdatePayload) (product.Product, error)); ok {
 		return rf(ctx, id, payload)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, products.UpdatePayload) products.Product); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, product.UpdatePayload) product.Product); ok {
 		r0 = rf(ctx, id, payload)
 	} else {
-		r0 = ret.Get(0).(products.Product)
+		r0 = ret.Get(0).(product.Product)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, products.UpdatePayload) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, product.UpdatePayload) error); ok {
 		r1 = rf(ctx, id, payload)
 	} else {
 		r1 = ret.Error(1)

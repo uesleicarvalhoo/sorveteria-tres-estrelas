@@ -22,7 +22,7 @@ func MigratePostgres(dbInstance *gorm.DB, database string) error {
 	}
 
 	migrations, err := migrate.NewWithDatabaseInstance(
-		"file://database/migrations",
+		"file://infrastructure/database/migrations",
 		database, driver)
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)

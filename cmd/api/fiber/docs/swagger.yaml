@@ -8,6 +8,8 @@ definitions:
       grant_type:
         type: string
       refresh_token:
+        description: 'TODO: Remover o refresh token ou fazer alguma lógica para ele
+          ser diferente do accessToken'
         type: string
     type: object
   cashflow.CashFlow:
@@ -175,7 +177,7 @@ info:
   contact: {}
   description: API para o cadastro de produtos, controle de vendas e fluxo de caixa
     para a sorveteria três estrelas
-  title: Sorveteria três estrelas - API
+  title: Sorveteria três estrelas - Backend API
   version: "1.0"
 paths:
   /auth/login:
