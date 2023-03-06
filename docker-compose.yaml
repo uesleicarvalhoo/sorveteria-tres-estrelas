@@ -84,7 +84,6 @@ services:
       retries: 5
       start_period: 5s
 
-
   frontend:
     container_name: frontend
     build:
@@ -95,13 +94,14 @@ services:
       VUE_APP_API_URL: http://backend
 
     ports:
-    - 8080:80
+      - 8080:80
 
     networks:
       - kong-net
 
   kong-gateway:
     image: kong/kong-gateway
+    container_name: kong-gateway
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yaml
