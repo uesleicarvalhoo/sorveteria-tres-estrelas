@@ -8,7 +8,7 @@ export
 ## @ Help
 .PHONY: help
 help: ## Display this help
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make [target]\033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_/-]+:.*?##/ { printf "\033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make [target]\033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_/-]+:.*?##/ { printf "\033[36m%-18s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
 ## @ Tools
 .PHONY: install-tools
@@ -27,7 +27,7 @@ format:  ## Format code
 	@gofumpt -e -l -w .
 
 ## @ Application
-.PHONY: swagger run compose
+.PHONY: swagger run
 cmd/api/fiber/docs/*: $(wildcard cmd/api/main.go) $(wildcard cmd/api/fiber/handler/*.go) $(wildcard */entity.go) $(wildcard */dto.go) ## Generate swagger docs
 	@swag init --generalInfo ./cmd/api/main.go --output ./cmd/api/fiber/docs
 
@@ -35,9 +35,6 @@ swagger: cmd/api/fiber/docs/*  ## Generate swagger docs
 
 run: swagger  ## Run backend server
 	@go run cmd/api/*.go
-
-compose:  ## Init containers with dev dependencies
-	@docker compose build && docker compose up -d
 
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks

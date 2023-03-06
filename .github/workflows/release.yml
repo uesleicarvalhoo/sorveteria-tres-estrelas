@@ -1,4 +1,4 @@
-name: build backedn docker image, publish to github packages and deploy in remote server
+name: build docker images, publish to github packages and deploy in remote server
 
 on:
   release:

@@ -1,4 +1,4 @@
-# sorveteria-tres-estrelas
+# Sorveteria Três Estrelas - Backend
 
 API para controle de vendas e fluxo de caixa da <https://www.instagram.com/sorveteria3estrelas_/>
 
@@ -6,7 +6,7 @@ API para controle de vendas e fluxo de caixa da <https://www.instagram.com/sorve
 
 - [Tabela de conteúdos](#tabela-de-conteúdos)
 - [Pré-requisitos](#pré-requisitos)
-- [Rodando a aplicação](#rodando-a-aplicação-🎲)
+- [Rodando a aplicação](#rodando-a-aplicação-)
 - [Contribuindo com o projeto](#contribuindo-com-o-projeto)
 - [Testes](#testes)
   - [Testes unitários](#testes-unitários)
@@ -29,20 +29,19 @@ Usage:
   make [target]
 
 Targets:
-help        Display this help
-install-tools  Instal mockery, gofumpt, swago and golangci-lint
-lint        Run golangci-lint
-format      Format code
-swagger     Generate swagger docs
-run         Run app
-compose     Init containers with dev dependencies
-generate-mocks  Generate mock files
-clean-mocks  Clean mock files
-test        Run tests all tests
-test/unit   Run unit tests
-test/integration  Run integration tests
-coverage    Run tests, make coverage report and display it into browser
-clean       Remove Cache files
+help                Display this help
+install-tools       Instal mockery, gofumpt, swago and golangci-lint
+lint                Run golangci-lint
+format              Format code
+swagger             Generate swagger docs
+run                 Run backend server
+generate-mocks      Generate mock files
+clean-mocks         Clean mock files
+test                Run tests all tests
+test/unit           Run unit tests
+test/integration    Run integration tests
+coverage            Run tests, make coverage report and display it into browser
+clean               Remove Cache files
 ```
 
 ## Rodando a aplicação 🎲
@@ -55,16 +54,21 @@ $ git clone <https://github.com/uesleicarvalhoo/sorveteria-tres-estrelas>
 $ cd sorveteria-tres-estrelas
 
 # Você pode facilmente iniciar as dependencias de desenvolvimento com o comando
-$ make compose
+$ docker compose up postgres redis zipkin kong-gateway
 
 # Isso vai iniciar alguns containers:
 # PostgreSQL    localhost:5432  -> Banco de dados da aplicação
-# Redis         localhost:6379
+# Redis         localhost:6379  -> Cache
+# Zipkin        localhost:9411  -> Exporter das métricas
+# Kong          localhost:8001  -> Kong para fazer o proxy e metrificar a aplicação
+
+# Depois de executar as dependencias de desenvolvimento, acesse a pasta onde está o backend
+$ cd backend
 
 # E para iniciar a aplicação em si, é só executar:
 $ make run
-# O servidor inciará na porta:8000 acesse <http://localhost:8000/>
-# O servidor já conta com documentação integrada, disponível no path /docs/swagger/index.html
+# O servidor inciará na porta:8000 acesse <http://localhost:8080/>
+# O servidor já conta com documentação integrada, disponível no path cmd/api/fiber/docs/swagger/index.html
 ```
 
 ## Contribuindo com o projeto
@@ -74,7 +78,7 @@ $ make run
 $ git clone <https://github.com/uesleicarvalhoo/sorveteria-tres-estrelas>
 
 # Acesse a pasta do projeto no terminal/cmd
-$ cd sorveteria-tres-estrelas
+$ cd sorveteria-tres-estrelas/backend
 
 # Faça suas alterações
 
@@ -111,4 +115,4 @@ TODO
 
 ## Deploy
 
-TODO
+Para realizar o deploy de uma nova versão, basta gerar uma nova release e a [action de deploy](https://github.com/uesleicarvalhoo/sorveteria-tres-estrelas/actions/workflows/release.yml) vai ser executada e fazer o deploy da nova tag no servidor remoto
