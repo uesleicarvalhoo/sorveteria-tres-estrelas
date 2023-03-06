@@ -11,7 +11,7 @@ type Config struct {
 	Environment    string `env:"ENVIRONMENT,default=dev"`
 
 	// HTTP Server
-	HTTPPort int `env:"HTTP_SERVER_PORT,default=8080"`
+	HTTPPort int `env:"HTTP_SERVER_PORT,default=5000"`
 
 	// Database
 	DBHost     string `env:"DATABASE_HOST,default=localhost"`
