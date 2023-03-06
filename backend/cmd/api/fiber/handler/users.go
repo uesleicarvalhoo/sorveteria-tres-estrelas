@@ -8,30 +8,7 @@ import (
 )
 
 func MakeUserRoutes(r fiber.Router, userSvc user.UseCase) {
-	r.Get("/me", getMe(userSvc))
 	r.Post("/", createUser(userSvc))
-}
-
-// @Summary     Get Me
-// @Description Get current user data
-// @Tags        User
-// @Accept      json
-// @Produce     json
-// @Success     200 {object} user.User
-// @Failure     500 {object} dto.MessageJSON "when an error occurs"
-// @Router      /user/me [get]
-func getMe(svc user.UseCase) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		_, span := trace.NewSpan(c.UserContext(), "get-me")
-		defer span.End()
-
-		u, _ := c.Locals("user").(*user.User)
-		if u == nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: "user not found"})
-		}
-
-		return c.JSON(u)
-	}
 }
 
 // @Summary     Create User

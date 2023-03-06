@@ -68,6 +68,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/me": {
+            "get": {
+                "description": "Get current user data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get Me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/refresh-token": {
             "post": {
                 "description": "Get a new access-token, this action will be expire the last one",
@@ -627,35 +656,6 @@ const docTemplate = `{
                 "responses": {
                     "202": {
                         "description": "Accepted"
-                    },
-                    "500": {
-                        "description": "when an error occurs",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/me": {
-            "get": {
-                "description": "Get current user data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get Me",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/user.User"
-                        }
                     },
                     "500": {
                         "description": "when an error occurs",
