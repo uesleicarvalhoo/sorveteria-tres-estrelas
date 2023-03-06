@@ -2,7 +2,6 @@ _format_version: "3.0"
 
 plugins:
   - name: jwt
-    enabled: false
     config:
       key_claim_name: iss
       claims_to_verify:
@@ -30,15 +29,19 @@ routes:
     service: auth
     paths:
       - /api/auth
+    plugins:
+      - name: jwt
+        enabled: false
 
   - name: backend-api
     service: backend
     paths:
       - /api
-    plugins:
-      - name: jwt
 
   - name: frontend-web
     service: frontend
     paths:
       - /
+    plugins:
+      - name: jwt
+        enabled: false
