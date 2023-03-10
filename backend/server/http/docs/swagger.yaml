@@ -171,10 +171,6 @@ definitions:
     type: object
 info:
   contact: {}
-  description: API para o cadastro de produtos, controle de vendas e fluxo de caixa
-    para a sorveteria três estrelas
-  title: Sorveteria três estrelas - Backend API
-  version: "1.0"
 paths:
   /auth/login:
     post:

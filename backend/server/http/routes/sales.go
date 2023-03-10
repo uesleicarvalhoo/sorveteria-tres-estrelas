@@ -1,4 +1,4 @@
-package handler
+package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -8,7 +8,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/trace"
 )
 
-func MakeSalesRoutes(r fiber.Router, svc sales.UseCase) {
+func Sales(r fiber.Router, svc sales.UseCase) {
 	r.Get("/", salesIndex(svc))
 	r.Post("/", registerSale(svc))
 	r.Delete("/:id", deleteSaleByID(svc))

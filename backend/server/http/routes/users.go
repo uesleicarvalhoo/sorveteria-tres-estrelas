@@ -1,4 +1,4 @@
-package handler
+package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -7,7 +7,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/user"
 )
 
-func MakeUserRoutes(r fiber.Router, userSvc user.UseCase) {
+func User(r fiber.Router, userSvc user.UseCase) {
 	r.Post("/", createUser(userSvc))
 }
 

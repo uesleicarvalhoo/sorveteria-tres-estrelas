@@ -1,6 +1,6 @@
 //go:build unit || all
 
-package handler_test
+package routes_test
 
 import (
 	"bytes"
@@ -17,10 +17,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/cmd/api/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/product"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/product/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/server/http/routes"
 )
 
 func TestProductsGet(t *testing.T) {
@@ -42,7 +42,7 @@ func TestProductsGet(t *testing.T) {
 		svc.On("Get", mock.Anything, storedProduct.ID).Return(storedProduct, nil).Once()
 
 		app := fiber.New()
-		handler.MakeProductsRoutes(app, svc)
+		routes.Products(app, svc)
 
 		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/%s", storedProduct.ID.String()), nil)
 
@@ -106,7 +106,7 @@ func TestProductsGet(t *testing.T) {
 				svc.On("Get", mock.Anything, storedProducts.ID).Return(tc.mockReturn, tc.mockError).Maybe()
 
 				app := fiber.New()
-				handler.MakeProductsRoutes(app, svc)
+				routes.Products(app, svc)
 
 				req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/%s", tc.id), nil)
 
@@ -150,7 +150,7 @@ func TestProductsIndex(t *testing.T) {
 		svc.On("Index", mock.Anything).Return(storedProducts, nil).Once()
 
 		app := fiber.New()
-		handler.MakeProductsRoutes(app, svc)
+		routes.Products(app, svc)
 
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
 
@@ -204,7 +204,7 @@ func TestProductsIndex(t *testing.T) {
 				svc.On("Index", mock.Anything).Return(tc.mockReturn, tc.mockError).Once()
 
 				app := fiber.New()
-				handler.MakeProductsRoutes(app, svc)
+				routes.Products(app, svc)
 
 				req := httptest.NewRequest(http.MethodGet, "/", nil)
 
@@ -249,7 +249,7 @@ func TestProductsStore(t *testing.T) {
 
 		app := fiber.New()
 
-		handler.MakeProductsRoutes(app, svc)
+		routes.Products(app, svc)
 
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
@@ -320,7 +320,7 @@ func TestProductsStore(t *testing.T) {
 
 				app := fiber.New()
 
-				handler.MakeProductsRoutes(app, svc)
+				routes.Products(app, svc)
 
 				payload, err := json.Marshal(tc.payload)
 				assert.NoError(t, err)

@@ -1,4 +1,4 @@
-package handler
+package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -8,7 +8,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/trace"
 )
 
-func MakePaymentsRoutes(router fiber.Router, service payment.UseCase) {
+func Payments(router fiber.Router, service payment.UseCase) {
 	router.Get("/", getPayments(service))
 	router.Post("/", createPayment(service))
 	router.Delete("/:id", deletePaymentByID(service))

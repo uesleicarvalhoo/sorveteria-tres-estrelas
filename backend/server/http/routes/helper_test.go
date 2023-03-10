@@ -1,6 +1,6 @@
 //go:build unit || all
 
-package handler_test
+package routes_test
 
 import (
 	"github.com/gofiber/fiber/v2"

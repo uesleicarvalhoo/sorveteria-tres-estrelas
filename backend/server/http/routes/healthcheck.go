@@ -1,4 +1,4 @@
-package handler
+package routes
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/healthcheck"
 )
 
-func MakeHealthCheckRoutes(r fiber.Router, svc healthcheck.UseCase) {
+func HealthCheck(r fiber.Router, svc healthcheck.UseCase) {
 	r.Get("/health", healthCheck(svc))
 }
 

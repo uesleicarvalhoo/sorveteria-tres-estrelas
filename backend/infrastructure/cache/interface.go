@@ -10,3 +10,8 @@ type Cache interface {
 	Get(ctx context.Context, key string) (string, error)
 	Del(ctx context.Context, key string) error
 }
+
+type PingableCache interface {
+	Cache
+	Ping(ctx context.Context) error
+}

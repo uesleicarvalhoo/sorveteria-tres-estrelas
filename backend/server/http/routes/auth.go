@@ -1,4 +1,4 @@
-package handler
+package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -7,7 +7,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/trace"
 )
 
-func MakeAuhtRoutes(r fiber.Router, authSvc auth.UseCase) {
+func Auth(r fiber.Router, authSvc auth.UseCase) {
 	r.Post("/login", login(authSvc))
 	r.Post("/refresh-token", refreshToken(authSvc))
 	r.Get("/me", getMe(authSvc))

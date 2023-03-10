@@ -2,66 +2,79 @@ package logger
 
 import "github.com/sirupsen/logrus"
 
-type Logrus struct {
-	logger *logrus.Logger
-}
-
-func NewLogrus(level string) (*Logrus, error) {
+func Configure(level string) error {
 	lvl, err := logrus.ParseLevel(level)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	logger := logrus.StandardLogger()
-	logger.SetFormatter(&logrus.JSONFormatter{
+	logrus.SetFormatter(&logrus.JSONFormatter{
 		FieldMap: logrus.FieldMap{
 			logrus.FieldKeyMsg: "message",
 		},
 	})
 
-	logger.SetLevel(lvl)
+	logrus.SetLevel(lvl)
 
-	return &Logrus{
-		logger: logger,
-	}, nil
+	return nil
 }
 
-func (l Logrus) Debugf(format string, args ...interface{}) {
-	l.logger.Debugf(format, args...)
+func Debugf(format string, args ...interface{}) {
+	logrus.Debugf(format, args...)
 }
 
-func (l Logrus) Infof(format string, args ...interface{}) {
-	l.logger.Infof(format, args...)
+func Infof(format string, args ...interface{}) {
+	logrus.Infof(format, args...)
 }
 
-func (l Logrus) Errorf(format string, args ...interface{}) {
-	l.logger.Errorf(format, args...)
+func Errorf(format string, args ...interface{}) {
+	logrus.Errorf(format, args...)
 }
 
-func (l Logrus) Warningf(format string, args ...interface{}) {
-	l.logger.Warningf(format, args...)
+func Warningf(format string, args ...interface{}) {
+	logrus.Warningf(format, args...)
 }
 
-func (l Logrus) Fatalf(format string, args ...interface{}) {
-	l.logger.Fatalf(format, args...)
+func Fatalf(format string, args ...interface{}) {
+	logrus.Fatalf(format, args...)
 }
 
-func (l Logrus) DebugJSON(e map[string]interface{}) {
-	l.logger.WithFields(e).Debug()
+func Debug(args ...interface{}) {
+	logrus.Debug(args...)
 }
 
-func (l Logrus) InfoJSON(e map[string]interface{}) {
-	l.logger.WithFields(e).Info()
+func Info(args ...interface{}) {
+	logrus.Info(args...)
 }
 
-func (l Logrus) ErrorJSON(e map[string]interface{}) {
-	l.logger.WithFields(e).Error()
+func Error(args ...interface{}) {
+	logrus.Error(args...)
 }
 
-func (l Logrus) WarningJSON(e map[string]interface{}) {
-	l.logger.WithFields(e).Warning(e)
+func Warning(args ...interface{}) {
+	logrus.Warning(args...)
 }
 
-func (l Logrus) FatalJSON(e map[string]interface{}) {
-	l.logger.WithFields(e).Fatal(e)
+func Fatal(args ...interface{}) {
+	logrus.Fatal(args...)
+}
+
+func DebugJSON(e map[string]interface{}) {
+	logrus.WithFields(e).Debug()
+}
+
+func InfoJSON(e map[string]interface{}) {
+	logrus.WithFields(e).Info()
+}
+
+func ErrorJSON(e map[string]interface{}) {
+	logrus.WithFields(e).Error()
+}
+
+func WarningJSON(e map[string]interface{}) {
+	logrus.WithFields(e).Warning(e)
+}
+
+func FatalJSON(e map[string]interface{}) {
+	logrus.WithFields(e).Fatal(e)
 }
