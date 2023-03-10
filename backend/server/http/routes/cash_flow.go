@@ -1,4 +1,4 @@
-package handler
+package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -7,7 +7,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/trace"
 )
 
-func MakeCashFlowHandler(r fiber.Router, svc cashflow.UseCase) {
+func CashFlow(r fiber.Router, svc cashflow.UseCase) {
 	r.Get("/", cashflowIndex(svc))
 }
 

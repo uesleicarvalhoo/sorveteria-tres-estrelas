@@ -1,4 +1,4 @@
-package handler
+package routes
 
 import (
 	"net/http"
@@ -10,7 +10,7 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/trace"
 )
 
-func MakeProductsRoutes(r fiber.Router, svc product.UseCase) {
+func Products(r fiber.Router, svc product.UseCase) {
 	r.Get("/:id", getProductByID(svc))
 	r.Get("/", getAllProducts(svc))
 	r.Post("/", createProduct(svc))

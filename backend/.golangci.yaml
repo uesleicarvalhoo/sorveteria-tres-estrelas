@@ -2,6 +2,13 @@ run:
   deadline: 5m
   tests: true
 
+issues:
+  exclude-rules:
+    - path: cmd
+      linters:
+        - gochecknoglobals
+        - gochecknoinits
+
 linters:
   enable-all: true
   disable:

@@ -1,6 +1,6 @@
 //go:build unit || all
 
-package handler_test
+package routes_test
 
 import (
 	"bytes"
@@ -15,10 +15,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/cmd/api/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/dto"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/sales"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/sales/mocks"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/server/http/routes"
 )
 
 func TestRegisterSale(t *testing.T) {
@@ -50,7 +50,7 @@ func TestRegisterSale(t *testing.T) {
 
 		app := fiber.New()
 
-		handler.MakeSalesRoutes(app, svc)
+		routes.Sales(app, svc)
 
 		resBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
@@ -107,7 +107,7 @@ func TestRegisterSale(t *testing.T) {
 
 				app := fiber.New()
 
-				handler.MakeSalesRoutes(app, svc)
+				routes.Sales(app, svc)
 
 				resBody, err := json.Marshal(tc.payload)
 				assert.NoError(t, err)

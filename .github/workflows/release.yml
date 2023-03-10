@@ -86,7 +86,8 @@ jobs:
             -e KONG_CONSUMER={{ secrets.KONG_CONSUMER }} \
             -e KONG_JWT_KEY={{ secrets.KONG_JWT_KEY }} \
             --network=${{ secrets.DOCKER_NETWORK }} \
-             ${{ env.REGISTRY }}/${{ BACKENDTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+             ${{ env.REGISTRY }}/${{ BACKENDTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }} \
+             http
 
   frontend-build-and-push-image:
     runs-on: ubuntu-latest

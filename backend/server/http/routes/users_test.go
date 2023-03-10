@@ -1,6 +1,6 @@
 //go:build unit || all
 
-package handler_test
+package routes_test
 
 import (
 	"bytes"
@@ -14,8 +14,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/cmd/api/fiber/handler"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/dto"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/server/http/routes"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/user"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/user/mocks"
 )
@@ -47,7 +47,7 @@ func TestCreateUser(t *testing.T) {
 		app := fiber.New()
 		app.Use(mockAuthMiddleware(currentUser.ID))
 
-		handler.MakeUserRoutes(app, svc)
+		routes.User(app, svc)
 
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
@@ -115,7 +115,7 @@ func TestCreateUser(t *testing.T) {
 
 				app := fiber.New()
 				app.Use(mockAuthMiddleware(currentUser.ID))
-				handler.MakeUserRoutes(app, svc)
+				routes.User(app, svc)
 
 				reqBody, err := json.Marshal(tc.payload)
 				assert.NoError(t, err)

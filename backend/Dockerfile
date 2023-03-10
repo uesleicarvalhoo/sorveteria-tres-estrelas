@@ -15,12 +15,11 @@ ADD go.mod go.sum $GOPATH/src/
 
 RUN GOOS=linux go mod download
 
-# Build api
-ARG ENTRYPOINT=cmd/api/*.go
+# Build backend
 
 COPY . $GOPATH/src
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/api ${ENTRYPOINT}
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/backend main.go
 
 # Deploy
 FROM scratch
@@ -34,10 +33,10 @@ COPY --from=builder /etc/timezone /etc/timezone
 COPY --from=builder /go/src/infrastructure/database/migrations/ /app/infrastructure/database/migrations/
 
 WORKDIR /app
-COPY --from=builder /go/bin/api .
+COPY --from=builder /go/bin/backend .
 
 ENV HTTP_SERVER_PORT 80
 
 EXPOSE ${HTTP_SERVER_PORT}
 
-CMD ["/app/api"]
+ENTRYPOINT ["/app/backend"]

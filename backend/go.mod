@@ -6,7 +6,6 @@ require (
 	github.com/dgraph-io/ristretto v0.1.1
 	github.com/go-redis/redis/extra/redisotel v0.3.0
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/gofiber/adaptor/v2 v2.1.29
 	github.com/gofiber/contrib/otelfiber v0.0.0-20221221212612-92599266f187
 	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/gofiber/swagger v0.1.6
@@ -21,7 +20,6 @@ require (
 	github.com/swaggo/swag v1.8.6
 	github.com/testcontainers/testcontainers-go v0.14.0
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.17
-	github.com/urfave/negroni v1.0.0
 	go.opentelemetry.io/otel v1.11.2
 	go.opentelemetry.io/otel/exporters/zipkin v1.11.2
 	go.opentelemetry.io/otel/sdk v1.11.2
@@ -63,6 +61,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
@@ -93,6 +92,8 @@ require (
 	github.com/openzipkin/zipkin-go v0.4.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.3 // indirect
+	github.com/spf13/cobra v1.6.1 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
