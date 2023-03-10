@@ -33,8 +33,8 @@ server/http/docs/*: $(wildcard server/http/server.go) $(wildcard server/http/rou
 
 swagger: server/http/docs/*  ## Generate swagger docs
 
-run: swagger  ## Run backend server
-	@go run cmd/api/*.go
+run: swagger  ## Run backend http server
+	@go run main.go http
 
 ## @ Tests
 .PHONY: test test/unit test/integration coverage clean-mocks generate-mocks

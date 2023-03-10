@@ -27,10 +27,6 @@ func TestCreateUser(t *testing.T) {
 		t.Parallel()
 
 		// Arrange
-		currentUser, err := user.NewUser(
-			"current user", "current.user@email.com", "passwd")
-		assert.NoError(t, err)
-
 		payload := dto.CreateUserPayload{
 			Name:     "User Lastname",
 			Email:    "user@email.com",
@@ -45,8 +41,6 @@ func TestCreateUser(t *testing.T) {
 			Return(storedUser, nil).Once()
 
 		app := fiber.New()
-		app.Use(mockAuthMiddleware(currentUser.ID))
-
 		routes.User(app, svc)
 
 		reqBody, err := json.Marshal(payload)
@@ -105,16 +99,11 @@ func TestCreateUser(t *testing.T) {
 				t.Parallel()
 
 				// Arrange
-				currentUser, err := user.NewUser(
-					"current user", "current.user@email.com", "passwd")
-				assert.NoError(t, err)
-
 				svc := mocks.NewUseCase(t)
 				svc.On("Create", mock.Anything, tc.payload.Name, tc.payload.Email, tc.payload.Password).
 					Return(tc.mockReturn, tc.mockError).Once()
 
 				app := fiber.New()
-				app.Use(mockAuthMiddleware(currentUser.ID))
 				routes.User(app, svc)
 
 				reqBody, err := json.Marshal(tc.payload)

@@ -46,6 +46,8 @@ services:
     container_name: backend
     build:
       context: backend
+    command: http
+
     environment:
       DATABASE_HOST: database
       DATABASE_PORT: 5432
@@ -100,7 +102,8 @@ services:
       - kong-net
 
   kong-gateway:
-    image: kong/kong-gateway
+    build:
+      dockerfile: .docker/Dockerfile.kong
     container_name: kong-gateway
     environment:
       KONG_DATABASE: "off"

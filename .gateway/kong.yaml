@@ -1,11 +1,11 @@
 _format_version: "3.0"
 
 plugins:
-  - name: jwt
+  - name: kong-jwt2header
+    enabled: false
     config:
-      key_claim_name: iss
-      claims_to_verify:
-        - exp
+      strip_claims: "false"
+      token_required: "true"
 
 consumers:
   - username: auth-consumer
@@ -29,19 +29,16 @@ routes:
     service: auth
     paths:
       - /api/auth
-    plugins:
-      - name: jwt
-        enabled: false
 
   - name: backend-api
     service: backend
     paths:
       - /api
+    plugins:
+      - name: kong-jwt2header
+        enabled: true
 
   - name: frontend-web
     service: frontend
     paths:
       - /
-    plugins:
-      - name: jwt
-        enabled: false

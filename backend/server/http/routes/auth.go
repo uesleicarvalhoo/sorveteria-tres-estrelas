@@ -10,7 +10,6 @@ import (
 func Auth(r fiber.Router, authSvc auth.UseCase) {
 	r.Post("/login", login(authSvc))
 	r.Post("/refresh-token", refreshToken(authSvc))
-	r.Get("/me", getMe(authSvc))
 }
 
 // @Summary     Login
@@ -79,34 +78,5 @@ func refreshToken(svc auth.UseCase) fiber.Handler {
 		}
 
 		return c.Status(fiber.StatusOK).JSON(token)
-	}
-}
-
-// @Summary     Get Me
-// @Description Get current user data
-// @Tags        User
-// @Accept      json
-// @Produce     json
-// @Success     200 {object} user.User
-// @Failure     500 {object} dto.MessageJSON "when an error occurs"
-// @Router      /auth/me [get]
-func getMe(svc auth.UseCase) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		ctx, span := trace.NewSpan(c.UserContext(), "get-me")
-		defer span.End()
-
-		authHeader := c.Get("Authorization")
-		if authHeader == "" {
-			return c.Status(fiber.StatusUnauthorized).JSON(dto.MessageJSON{Message: "missing 'Authorization' header"})
-		}
-
-		token := authHeader[len("Bearer "):]
-
-		u, err := svc.Authorize(ctx, token)
-		if err != nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(dto.MessageJSON{Message: err.Error()})
-		}
-
-		return c.JSON(u)
 	}
 }

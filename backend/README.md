@@ -34,7 +34,7 @@ install-tools       Instal mockery, gofumpt, swago and golangci-lint
 lint                Run golangci-lint
 format              Format code
 swagger             Generate swagger docs
-run                 Run backend server
+run                 Run backend http server
 generate-mocks      Generate mock files
 clean-mocks         Clean mock files
 test                Run tests all tests
