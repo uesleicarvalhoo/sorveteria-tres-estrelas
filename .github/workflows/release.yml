@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ env.BACKENDTEND_IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.BACKENDEND_IMAGE_NAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
@@ -57,7 +57,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker pull ${{ env.REGISTRY }}/${{ env.BACKENDTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+            docker pull ${{ env.REGISTRY }}/${{ env.BACKENDEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
             docker stop ${{ env.BACKEND_CONTAINER_NAME }} || true
             docker rm ${{ env.BACKEND_CONTAINER_NAME }} || true
             docker run -d --restart=always \
@@ -85,7 +85,7 @@ jobs:
             -e KONG_CONSUMER={{ secrets.KONG_CONSUMER }} \
             -e KONG_JWT_KEY={{ secrets.KONG_JWT_KEY }} \
             --network=${{ env.DOCKER_NETWORK }} \
-             ${{ env.REGISTRY }}/${{ env.BACKENDTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }} \
+             ${{ env.REGISTRY }}/${{ env.BACKENDEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }} \
              http
 
   frontend-build-and-push-image:
