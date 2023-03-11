@@ -1,7 +1,10 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "API para o cadastro de produtos, controle de vendas e fluxo de caixa para a sorveteria três estrelas",
+        "title": "Sorveteria três estrelas - Backend API",
+        "contact": {},
+        "version": "1.0"
     },
     "paths": {
         "/auth/login": {
@@ -45,35 +48,6 @@
                         "description": "when payload is invalid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    },
-                    "500": {
-                        "description": "when an error occurs",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/me": {
-            "get": {
-                "description": "Get current user data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get Me",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/user.User"
                         }
                     },
                     "500": {
@@ -644,6 +618,35 @@
                 "responses": {
                     "202": {
                         "description": "Accepted"
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/me": {
+            "get": {
+                "description": "Get current user data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get Me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
                     },
                     "500": {
                         "description": "when an error occurs",

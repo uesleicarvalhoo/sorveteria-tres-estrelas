@@ -171,6 +171,10 @@ definitions:
     type: object
 info:
   contact: {}
+  description: API para o cadastro de produtos, controle de vendas e fluxo de caixa
+    para a sorveteria três estrelas
+  title: Sorveteria três estrelas - Backend API
+  version: "1.0"
 paths:
   /auth/login:
     post:
@@ -206,25 +210,6 @@ paths:
       summary: Login
       tags:
       - Auth
-  /auth/me:
-    get:
-      consumes:
-      - application/json
-      description: Get current user data
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/user.User'
-        "500":
-          description: when an error occurs
-          schema:
-            $ref: '#/definitions/dto.MessageJSON'
-      summary: Get Me
-      tags:
-      - User
   /auth/refresh-token:
     post:
       consumes:
@@ -601,6 +586,25 @@ paths:
       summary: Delete Sale by ID
       tags:
       - Sale
+  /user/me:
+    get:
+      consumes:
+      - application/json
+      description: Get current user data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Get Me
+      tags:
+      - User
   /users:
     post:
       consumes:
