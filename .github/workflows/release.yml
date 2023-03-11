@@ -9,9 +9,7 @@ env:
   REGISTRY: ghcr.io
   RELEASE_TAG: ${{ github.ref_name }}
   BACKEND_IMAGE_NAME: ${{ github.repository }}
-  BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}
   FRONTEND_IMAGE_NAME: ${{ github.repository }}-frontend
-  FRONTEND_CONTAINER_NAME: ${{ secrets.FRONTEND_CONTAINER_NAME }}
 
 jobs:
   backend-build-and-push-image:
@@ -48,6 +46,7 @@ jobs:
 
   backend-deploy:
     runs-on: ubuntu-latest
+    environment: production
     needs: backend-build-and-push-image
     steps:
       - name: Run docker container in remote server
@@ -62,12 +61,12 @@ jobs:
             docker stop ${{ env.BACKEND_CONTAINER_NAME }} || true
             docker rm ${{ env.BACKEND_CONTAINER_NAME }} || true
             docker run -d --restart=always \
-            --health-cmd="curl --fail localhost:${{ secrets.HTTP_SERVER_PORT }}/health" \
+            --health-cmd="curl --fail localhost:${{ env.BACKEND_HTTP_SERVER_PORT }}/health" \
             --health-interval=10s \
             --health-timeout=5s \
             --health-retries=3 \
             --name ${{ env.BACKEND_CONTAINER_NAME }} \
-            -p ${{ secrets.HTTP_SERVER_PORT }}:${{ secrets.HTTP_SERVER_PORT }} \
+            -p ${{ env.BACKEND_HTTP_SERVER_PORT }}:${{ env.BACKEND_HTTP_SERVER_PORT }} \
             -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
             -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
             -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
@@ -76,16 +75,16 @@ jobs:
             -e CACHE_URI=${{ secrets.CACHE_URI }} \
             -e CACHE_PASSWORD=${{ secrets.CACHE_PASSWORD }} \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            -e LOG_LEVEL=${{ secrets.LOG_LEVEL }} \
-            -e SERVICE_NAME=${{ secrets.BACKEND_SERVICE_NAME }} \
+            -e LOG_LEVEL=${{ env.LOG_LEVEL }} \
+            -e SERVICE_NAME=${{ env.BACKEND_SERVICE_NAME }} \
             -e SERVICE_VERSION=${{ env.RELEASE_TAG }} \
-            -e HTTP_SERVER_PORT=${{ secrets.HTTP_SERVER_PORT }} \
-            -e TRACER_ENDPOINT=${{ secrets.TRACER_ENDPOINT }} \
-            -e TRACER_ENABLED=${{ secrets.TRACER_ENABLED }} \
-            -e KONG_URL=${{ secrets.KONG_URL }} \
+            -e HTTP_SERVER_PORT=${{ env.HTTP_SERVER_PORT }} \
+            -e TRACER_ENDPOINT=${{ env.TRACER_ENDPOINT }} \
+            -e TRACER_ENABLED=${{ env.TRACER_ENABLED }} \
+            -e KONG_URL=${{ env.KONG_URL }} \
             -e KONG_CONSUMER={{ secrets.KONG_CONSUMER }} \
             -e KONG_JWT_KEY={{ secrets.KONG_JWT_KEY }} \
-            --network=${{ secrets.DOCKER_NETWORK }} \
+            --network=${{ env.DOCKER_NETWORK }} \
              ${{ env.REGISTRY }}/${{ BACKENDTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }} \
              http
 
@@ -123,6 +122,7 @@ jobs:
 
   frontend-deploy:
     runs-on: ubuntu-latest
+    environment: production
     needs: frontend-build-and-push-image
     steps:
       - name: Run docker container in remote server
@@ -138,7 +138,7 @@ jobs:
             docker rm ${{ env.FRONTEND_CONTAINER_NAME }} || true
             docker run -d \
             --name ${{ env.FRONTEND_CONTAINER_NAME }} \
-            -p ${{ secrets.HTTP_SERVER_PORT }}:80 \
-            -e VUE_APP_API_URL=${{ secrets.BACKEND_URL }} \
-            --network=${{ secrets.DOCKER_NETWORK }} \
+            -p ${{ env.FRONTEND_HTTP_SERVER_PORT }}:80 \
+            -e VUE_APP_API_URL=${{ env.BACKEND_URL }} \
+            --network=${{ env.DOCKER_NETWORK }} \
              ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }}

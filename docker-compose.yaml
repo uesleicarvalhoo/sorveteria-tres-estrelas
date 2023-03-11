@@ -80,7 +80,7 @@ services:
       - cache-net
 
     healthcheck:
-      test: [ "CMD-SHELL", "curl", "http://localhost/healthcheck" ]
+      test: [ "CMD-SHELL", "curl", "http://localhost/health" ]
       timeout: 30s
       interval: 10s
       retries: 5
