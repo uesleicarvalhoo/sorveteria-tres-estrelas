@@ -29,7 +29,7 @@ format:  ## Format code
 ## @ Application
 .PHONY: swagger run
 server/http/docs/*: $(wildcard server/http/server.go) $(wildcard server/http/routes/*.go) $(wildcard */entity.go) $(wildcard */dto.go) ## Generate swagger docs
-	@swag init --generalInfo ./cmd/api/main.go --output ./server/http/docs
+	@swag init --generalInfo ./server/http/server.go --output ./server/http/docs
 
 swagger: server/http/docs/*  ## Generate swagger docs
 
