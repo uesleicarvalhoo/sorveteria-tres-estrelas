@@ -106,6 +106,7 @@ func createPayment(svc payment.UseCase) fiber.Handler {
 func deletePaymentByID(svc payment.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "delete-payment")
+		defer span.End()
 
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {

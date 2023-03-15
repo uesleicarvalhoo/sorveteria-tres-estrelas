@@ -28,6 +28,7 @@ func Sales(r fiber.Router, svc sales.UseCase) {
 func salesIndex(svc sales.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "get-sales")
+		defer span.End()
 
 		var payload dto.GetSalesByPeriodQuery
 		if err := c.QueryParser(&payload); err != nil {
@@ -105,6 +106,7 @@ func registerSale(svc sales.UseCase) fiber.Handler {
 func deleteSaleByID(svc sales.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "delete-sale-by-id")
+		defer span.End()
 
 		id, err := uuid.Parse(c.Params("id"))
 		if err != nil {

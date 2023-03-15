@@ -36,6 +36,7 @@ linters:
     - goerr113
     - contextcheck
     - godot
+    - dupl
 
 linters-settings:
   tagliatelle:

@@ -1,14 +1,23 @@
 _format_version: "3.0"
 
-plugins:
-  - name: kong-jwt2header
-    enabled: false
-    config:
-      strip_claims: "false"
-      token_required: "true"
-
 consumers:
   - username: auth-consumer
+
+plugins:
+  - name: kong-jwt2header
+    config:
+      token_required: "false"
+  - name: request-transformer
+    config: 
+      remove:
+        headers:
+        - Authorization
+        - X-Kong-Jwt-Claim-Iss
+      rename:
+        headers:
+        - X-Kong-Jwt-Claim-Sub:X-User-ID
+        - X-Kong-Jwt-Claim-Name:X-User-Name
+        - X-Kong-Jwt-Claim-Email:X-User-Email
 
 jwt_secrets:
   - consumer: auth-consumer
@@ -17,28 +26,23 @@ jwt_secrets:
 services:
   - name: backend
     url: http://backend/
+    plugins:
+      - name: jwt
+    routes:
+      - name: backend-api
+        paths:
+          - /api
 
   - name: auth
     url: http://backend/auth
+    routes:
+      - name: auth-api
+        paths:
+          - /api/auth
 
   - name: frontend
     url: http://frontend/
-
-routes:
-  - name: auth-api
-    service: auth
-    paths:
-      - /api/auth
-
-  - name: backend-api
-    service: backend
-    paths:
-      - /api
-    plugins:
-      - name: kong-jwt2header
-        enabled: true
-
-  - name: frontend-web
-    service: frontend
-    paths:
-      - /
+    routes:
+      - name: web
+        paths:
+          - /
