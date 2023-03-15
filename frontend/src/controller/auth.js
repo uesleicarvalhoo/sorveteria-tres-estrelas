@@ -1,8 +1,9 @@
-import { authService } from "../../services"
+import { authService } from "../services"
 import { dispatchNotification, dispatchApiError } from "./notification"
 import { context, storage } from "../helpers"
 import { dispatchGetMe, dispatchLoadLocalStorageUser } from "./users"
 import { router } from "../routers"
+import { createSpan } from "../helpers/tracer"
 
 async function actionLoggedIn (data) {
   context.commit("accessToken", data)
@@ -17,8 +18,8 @@ async function actionLogout () {
   storage.removeAccessToken()
 }
 
-async function actionRefresh () {
-  const response = await authService.refreshAcessToken(context.state.refreshToken)
+async function actionRefresh (span) {
+  const response = await authService.refreshAcessToken(span)
   const data = response.data
 
   if (data) {
@@ -32,9 +33,9 @@ export const dispatchLogout = async () => {
   await actionLogout()
 }
 
-export const dispatchLogin = async (email, password) => {
+export const dispatchLogin = async (span, email, password) => {
   try {
-    const response = await authService.loginGetToken(email, password)
+    const response = await authService.getAcessToken(span, email, password)
     const data = response.data
 
     if (data) {
@@ -43,7 +44,7 @@ export const dispatchLogin = async (email, password) => {
       dispatchNotification("Erro ao obter token", "Ocorreu um problema ao obter o seu Token de acesso, por favor entre em contato com o administrador do sistema", "danger")
     }
 
-    await dispatchGetMe()
+    await dispatchGetMe(span)
     router.push({ name: "home" })
   } catch (error) {
     await dispatchApiError(error)
@@ -51,9 +52,18 @@ export const dispatchLogin = async (email, password) => {
   }
 }
 
-export const dispatchRefreshToken = async () => {
+export const dispatchCheckTokenExpiration = async () => {
+  const now = Date.now() / 1000
+  if ((now - 60) > context.state.expireTokenTime) {
+    await createSpan("refresh-access-token", async (span) => {
+      await dispatchRefreshToken(span)
+    })
+  }
+}
+
+export const dispatchRefreshToken = async (span) => {
   try {
-    await actionRefresh()
+    await actionRefresh(span)
   } catch (error) {
     await dispatchApiError(error)
     await dispatchLogout()

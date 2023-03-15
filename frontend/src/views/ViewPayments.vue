@@ -20,6 +20,7 @@ import { dispatchGetPayments, dispatchRemovePayment, dispatchUpdatePayment } fro
 import { reactive } from "vue"
 import FormPayment from "./components/FormPayment.vue"
 import ModalView from "./components/ModalView.vue"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "ViewPayments",
@@ -32,27 +33,34 @@ export default {
     FormPayment
   },
   methods: {
-    async view(payment) {
+    async view (payment) {
       this.modal.active = true
       Object.assign(this.modal.data, payment)
     },
-    async updatePayment(payment) {
-      dispatchUpdatePayment(payment)
+    async updatePayment (payment) {
+      await createSpan("update-payment", async (span) => {
+        await dispatchUpdatePayment(span, payment)
+      })
     },
-    async removePayment(payment) {
-      await dispatchRemovePayment(payment)
+    async removePayment (payment) {
+      await createSpan("delete-payment", async (span) => {
+        await dispatchRemovePayment(span, payment)
+      })
     }
   },
-  async created() {
-    await dispatchGetPayments()
+  async created () {
+    await createSpan("view-payments", async (span) => {
+      await dispatchGetPayments(span)
+    })
   },
-  setup() {
+  setup () {
     const modal = reactive({
-      active: false, data: {
-        "id": null,
-        "created_at": "",
-        "description": "",
-        "value": 0
+      active: false,
+      data: {
+        id: null,
+        created_at: "",
+        description: "",
+        value: 0
       }
     })
 

@@ -49,7 +49,7 @@ import { mdiEye, mdiTrashCan } from "@mdi/js"
 import Level from "./Level.vue"
 import JbButtons from "./JbButtons.vue"
 import JbButton from "./JbButton.vue"
-import { itemsPerPage } from "../../../config"
+import { itemsPerPage } from "../../config"
 
 export default {
   name: "TableItem",

@@ -31,6 +31,7 @@ import JbButton from "./components/JbButton.vue"
 import JbButtons from "./components/JbButtons.vue"
 import { dispatchLogin } from "../controller/auth"
 import { reactive } from "@vue/reactivity"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "Login",
@@ -49,7 +50,9 @@ export default {
   },
   methods: {
     async submit () {
-      await dispatchLogin(this.form.email, this.form.password)
+      await createSpan("login", async (span) => {
+        await dispatchLogin(span, this.form.email, this.form.password)
+      })
     }
   },
   setup () {

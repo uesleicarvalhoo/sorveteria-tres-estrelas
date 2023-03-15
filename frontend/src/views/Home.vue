@@ -8,7 +8,7 @@
       <card-widget color="text-red-500" :icon="mdiChartTimelineVariant" :number="balance" prefix="R$"
         label="Balanço geral" />
     </div>
-    <calendar v-on:submit="getCashFlowBetween" v-on:clear="dispatchGetCashFlow"> </calendar>
+    <!-- <calendar v-on:submit="getCashFlowBetween" v-on:clear="dispatchGetCashFlow"> </calendar> -->
     <card-component title="Movimentações do mês" has-table>
       <table-balance :actions="false" />
     </card-component>
@@ -28,9 +28,9 @@ import CardWidget from "./components/CardWidget.vue"
 import CardComponent from "./components/CardComponent.vue"
 import TableBalance from "./components/TableBalance.vue"
 import Calendar from "./components/Calendar.vue"
-import { dispatchGetMe } from "../controller/users"
 import { dispatchGetSales } from "../controller/sales"
 import { dispatchGetCashFlow, dispatchGetCashFlowBetween } from "../controller/cashflow"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "Home",
@@ -43,13 +43,16 @@ export default {
   },
   methods: {
     async getCashFlowBetween (start, end) {
-      await dispatchGetCashFlowBetween(start, end)
+      await createSpan("get-cashflow-between", async (span) => {
+        await dispatchGetCashFlowBetween(span, start, end)
+      })
     }
   },
   async created () {
-    await dispatchGetMe()
-    await dispatchGetSales()
-    await dispatchGetCashFlow()
+    await createSpan("home", async (span) => {
+      await dispatchGetSales(span)
+      await dispatchGetCashFlow(span)
+    })
   },
   setup () {
     const context = useStore()
@@ -61,6 +64,7 @@ export default {
     const balance = computed(() => context.state.cashFlow.balance)
 
     const darkMode = computed(() => context.state.darkMode)
+
     return {
       totalPayments,
       totalSales,

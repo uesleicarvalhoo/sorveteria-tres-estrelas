@@ -1,10 +1,11 @@
 import { createApp } from "vue"
 
-import App from "./app/App.vue"
-import router from "./app/routers"
-import { context } from "./app/helpers/context"
+import App from "./App.vue"
+import router from "./routers"
+import { context } from "./helpers/context"
 
-import "./app/styles/css/main.css"
+import "./styles/css/main.css"
+import "./helpers/tracer"
 
 /* Collapse mobile aside menu on route change */
 router.beforeEach(to => {

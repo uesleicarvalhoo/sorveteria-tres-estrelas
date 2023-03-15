@@ -28,7 +28,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in form.items">
+          <tr v-for="(item, index) in form.items" v-bind:key="index">
             <td data-label="Descrição" class="text-center">{{ item.name }}</td>
             <td data-label="Código" class="text-center">{{ item.amount }}</td>
             <td data-label="Valor" class="text-center">R$ {{ item.unit_price.toFixed(2) }}</td>
@@ -102,10 +102,10 @@ export default {
     }
   },
   emits: ["submit"],
-  async created() {
+  async created () {
     await dispatchGetProducts()
   },
-  setup(props, { emit }) {
+  setup (props, { emit }) {
     const form = ref(props.data)
 
     const context = useStore()

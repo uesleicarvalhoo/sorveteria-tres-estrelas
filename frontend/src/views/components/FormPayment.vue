@@ -61,13 +61,13 @@ export default {
         reactive({
           id: null,
           value: null,
-          description: null,
+          description: null
         })
-    },
+    }
   },
   emits: ["submit"],
 
-  setup(props, { emit }) {
+  setup (props, { emit }) {
     const warningModal = reactive({
       active: false,
       text: ""

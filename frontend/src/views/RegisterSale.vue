@@ -6,6 +6,7 @@
 import FormSale from "./components/FormSale.vue"
 import { dispatchRegisterSale } from "../controller/sales"
 import router from "../routers"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "RegisterSale",
@@ -14,8 +15,10 @@ export default {
   },
   methods: {
     async registerSale (sale) {
-      await dispatchRegisterSale(sale)
-      router.push({ name: "view-sales" })
+      await createSpan("register-sale", async (span) => {
+        await dispatchRegisterSale(span, sale)
+        router.push({ name: "view-sales" })
+      })
     }
   }
 }

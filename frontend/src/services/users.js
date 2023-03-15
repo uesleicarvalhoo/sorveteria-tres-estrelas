@@ -1,10 +1,10 @@
 import axios from "axios"
 import { apiUrl } from "../config"
-import { authHeaders } from "./auth"
+import { getContextHeaders } from "./utils"
 
 export const userService = {
-  async getMe(token) {
-    const res = await axios.get(`${apiUrl}/auth/me`, authHeaders(token))
+  async getMe (span) {
+    const res = await axios.get(`${apiUrl}/user/me`, { headers: getContextHeaders(span) })
     return res.data
   }
 }

@@ -19,12 +19,9 @@ import HeroBar from "./components/HeroBar.vue"
 import TableSale from "./components/TableSale.vue"
 import FormSale from "./components/FormSale.vue"
 import ModalView from "./components/ModalView.vue"
-import {
-  dispatchGetSales,
-  dispatchRemoveSale
-} from "../controller/sales"
-
+import { dispatchGetSales, dispatchRemoveSale } from "../controller/sales"
 import { dispatchNotification } from "../controller/notification"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "ViewSale",
@@ -37,26 +34,31 @@ export default {
     ModalView
   },
   methods: {
-    async removeSale(sale) {
-      await dispatchRemoveSale(sale)
+    async removeSale (sale) {
+      await createSpan("delete-sale", async () => {
+        await dispatchRemoveSale(sale)
+      })
     },
 
-    async updateSale(sale) {
-      dispatchNotification(
-        "Função desabilitada",
-        "Ops! Ainda não configurei a função de atualizar as vendas, mas você pode remover e cadastrar novamente.",
-        "warning")
+    async updateSale (sale) {
+      await createSpan("update-sale", async () => {
+        dispatchNotification(
+          "Função desabilitada",
+          "Ops! Ainda não configurei a função de atualizar as vendas, mas você pode remover e cadastrar novamente.",
+          "warning")
+      })
     },
-
-    viewSale(sale) {
+    viewSale (sale) {
       Object.assign(this.modal.data, sale)
       this.modal.active = true
     }
   },
-  async created() {
-    await dispatchGetSales()
+  async created () {
+    await createSpan("view-sales", async () => {
+      await dispatchGetSales()
+    })
   },
-  setup() {
+  setup () {
     const modal = reactive({
       active: false,
       data: {
