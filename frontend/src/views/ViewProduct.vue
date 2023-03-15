@@ -20,6 +20,7 @@ import HeroBar from "./components/HeroBar.vue"
 import FormProduct from "./components/FormProduct.vue"
 import ModalView from "./components/ModalView.vue"
 import { dispatchGetProducts, dispatchRemoveProduct, dispatchUpdateProduct } from "../controller/products"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "ViewItem",
@@ -32,23 +33,30 @@ export default {
     ModalView
   },
   methods: {
-    viewProduct(item) {
+    viewProduct (item) {
       this.modal.active = true
       Object.assign(this.modal.data, item)
     },
-    async removeProduct(item) {
-      await dispatchRemoveProduct(item)
+    async removeProduct (item) {
+      await createSpan("delete-product", async () => {
+        await dispatchRemoveProduct(item)
+      })
     },
-    async updateProduct(item) {
-      await dispatchUpdateProduct(item)
+    async updateProduct (item) {
+      await createSpan("update-product", async () => {
+        await dispatchUpdateProduct(item)
+      })
     }
   },
-  async created() {
-    await dispatchGetProducts()
+  async created () {
+    await createSpan("view-products", async () => {
+      await dispatchGetProducts()
+    })
   },
-  setup() {
+  setup () {
     const modal = reactive({
-      active: false, data: {
+      active: false,
+      data: {
         id: null,
         name: "",
         price_varejo: 0,

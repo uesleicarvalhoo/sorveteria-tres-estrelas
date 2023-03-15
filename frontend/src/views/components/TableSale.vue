@@ -2,28 +2,32 @@
   <table>
     <thead>
       <tr>
-        <th class="text-center">Operação</th>
-        <th class="text-center">Valor</th>
         <th class="text-center">Descrição</th>
+        <th class="text-center">Tipo de pagamento</th>
+        <th class="text-center">Total</th>
         <th class="text-center">Data</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="balance in itemsPaginated" :key="balance.id"
-        :class='[balance.type == "Venda" ? "text-green-500" : "text-red-500"]'>
-        <td class="text-center" data-label="Operação">{{ balance.type }}</td>
-        <td class="text-center" data-label="Valor" color="red">
-          R$ {{ balance.value.toFixed(2) }}
-        </td>
+      <tr v-for="sale in itemsPaginated" :key="sale.id">
         <td class="text-center" data-label="Descrição">
-          {{ balance.description }}
+          {{ sale.description }}
+        </td>
+        <td class="text-center" data-label="Tipo de pagamento">
+          {{ sale.payment_type }}
+        </td>
+        <td class="text-center" data-label="Total">
+          R$
+          {{ sale.total.toFixed(2) }}
         </td>
         <td class="text-center" data-label="Data">
-          {{ new Date(balance.date).toLocaleDateString() }}
+          {{ new Date(sale.date).toLocaleDateString() }}
         </td>
         <td class="actions-cell" v-if="actions">
           <jb-buttons type="justify-start lg:justify-end" no-wrap>
-            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', balance)" />
+            <jb-button class="mr-3" color="success" :icon="mdiEye" :to="{ name: 'view-sales' }" small
+              @click="emitEvent('view', sale)" />
+            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', sale)" />
           </jb-buttons>
         </td>
       </tr>
@@ -43,14 +47,14 @@
 <script>
 import { computed, ref } from "vue"
 import { useStore } from "vuex"
-import { mdiTrashCan } from "@mdi/js"
+import { mdiEye, mdiTrashCan } from "@mdi/js"
 import Level from "./Level.vue"
 import JbButtons from "./JbButtons.vue"
 import JbButton from "./JbButton.vue"
-import { itemsPerPage } from "../../../config"
+import { itemsPerPage } from "../../config"
 
 export default {
-  name: "TableBalance",
+  name: "TableSale",
   components: {
     Level,
     JbButtons,
@@ -59,16 +63,17 @@ export default {
   props: {
     actions: { type: Boolean, default: true }
   },
-  emits: ["remove"],
+  emits: ["view", "remove"],
 
   setup (props, { emit }) {
     const context = useStore()
 
     const darkMode = computed(() => context.state.darkMode)
 
-    const items = computed(() => context.state.cashFlow.details)
+    const items = computed(() => context.state.sales)
 
     const perPage = ref(itemsPerPage)
+
     const currentPage = ref(0)
 
     const itemsPaginated = computed(() =>
@@ -106,6 +111,7 @@ export default {
       numPages,
       itemsPaginated,
       pagesList,
+      mdiEye,
       mdiTrashCan
     }
   }

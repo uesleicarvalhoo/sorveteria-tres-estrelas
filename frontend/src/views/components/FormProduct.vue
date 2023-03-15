@@ -66,14 +66,14 @@ export default {
           name: null,
           price_varejo: null,
           price_atacado: null,
-          atacado_amount: null,
+          atacado_amount: null
         })
     },
-    title: { type: String, default: () => "Formulário de produtos" },
+    title: { type: String, default: () => "Formulário de produtos" }
   },
   emits: ["submit"],
 
-  setup(props, { emit }) {
+  setup (props, { emit }) {
     const warningModal = reactive({
       active: false,
       text: ""

@@ -2,32 +2,26 @@
   <table>
     <thead>
       <tr>
+        <th class="text-center">Valor</th>
         <th class="text-center">Descrição</th>
-        <th class="text-center">Tipo de pagamento</th>
-        <th class="text-center">Total</th>
         <th class="text-center">Data</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="sale in itemsPaginated" :key="sale.id">
+      <tr v-for="payment in itemsPaginated" :key="payment.id">
+        <td class="text-center" data-label="Valor">
+          R$ {{ payment.value.toFixed(2) }}
+        </td>
         <td class="text-center" data-label="Descrição">
-          {{ sale.description }}
-        </td>
-        <td class="text-center" data-label="Tipo de pagamento">
-          {{ sale.payment_type }}
-        </td>
-        <td class="text-center" data-label="Total">
-          R$
-          {{ sale.total.toFixed(2) }}
+          {{ payment.description }}
         </td>
         <td class="text-center" data-label="Data">
-          {{ new Date(sale.date).toLocaleDateString() }}
+          {{ new Date(payment.created_at).toLocaleDateString() }}
         </td>
         <td class="actions-cell" v-if="actions">
           <jb-buttons type="justify-start lg:justify-end" no-wrap>
-            <jb-button class="mr-3" color="success" :icon="mdiEye" :to="{ name: 'view-sales' }" small
-              @click="emitEvent('view', sale)" />
-            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', sale)" />
+            <jb-button class="mr-3" color="success" :icon="mdiEye" small @click="emitEvent('view', payment)" />
+            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', payment)" />
           </jb-buttons>
         </td>
       </tr>
@@ -51,10 +45,10 @@ import { mdiEye, mdiTrashCan } from "@mdi/js"
 import Level from "./Level.vue"
 import JbButtons from "./JbButtons.vue"
 import JbButton from "./JbButton.vue"
-import { itemsPerPage } from "../../../config"
+import { itemsPerPage } from "../../config"
 
 export default {
-  name: "TableSale",
+  name: "TablePayment",
   components: {
     Level,
     JbButtons,
@@ -70,7 +64,7 @@ export default {
 
     const darkMode = computed(() => context.state.darkMode)
 
-    const items = computed(() => context.state.sales)
+    const items = computed(() => context.state.payments)
 
     const perPage = ref(itemsPerPage)
 
@@ -111,8 +105,8 @@ export default {
       numPages,
       itemsPaginated,
       pagesList,
-      mdiEye,
-      mdiTrashCan
+      mdiTrashCan,
+      mdiEye
     }
   }
 }

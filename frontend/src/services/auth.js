@@ -1,5 +1,6 @@
 import axios from "axios"
 import { apiUrl } from "../config"
+import { getContextHeaders } from "./utils"
 
 export function authHeaders (token) {
   return {
@@ -10,13 +11,14 @@ export function authHeaders (token) {
 }
 
 export const authService = {
-  async loginGetToken (email, password) {
+  async getAcessToken (span, email, password) {
     const params = new URLSearchParams()
     params.append("email", email)
     params.append("password", password)
-    return await axios.post(`${apiUrl}/auth/login`, params)
+
+    return await axios.post(`${apiUrl}/auth/login`, params, { headers: getContextHeaders(span) })
   },
-  async refreshAcessToken (token) {
-    return await axios.post(`${apiUrl}/auth/refresh-token`, { refresh_token: token }, authHeaders(token))
+  async refreshAcessToken (span, token) {
+    return await axios.post(`${apiUrl}/auth/refresh-token`, { refresh_token: token }, { headers: getContextHeaders(span) })
   }
 }

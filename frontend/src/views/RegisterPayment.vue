@@ -6,6 +6,7 @@
 import FormPayment from "./components/FormPayment.vue"
 import { dispatchCreatePayment } from "../controller/payments"
 import router from "../routers"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "CreateBalanceForm",
@@ -14,8 +15,10 @@ export default {
   },
   methods: {
     async createPayment (payment) {
-      await dispatchCreatePayment(payment)
-      router.push({ name: "view-payments" })
+      await createSpan("register-payment", async (span) => {
+        await dispatchCreatePayment(span, payment)
+        router.push({ name: "view-payments" })
+      })
     }
   }
 }

@@ -6,6 +6,7 @@
 import FormProduct from "./components/FormProduct.vue"
 import { dispatchCreateProduct } from "../controller/products"
 import router from "../routers"
+import { createSpan } from "../helpers/tracer"
 
 export default {
   name: "CreateItemForm",
@@ -14,8 +15,10 @@ export default {
   },
   methods: {
     async createProduct (item) {
-      await dispatchCreateProduct(item)
-      router.push({ name: "view-products" })
+      await createSpan("create-product", async (span) => {
+        await dispatchCreateProduct(span, item)
+        router.push({ name: "view-products" })
+      })
     }
   }
 }

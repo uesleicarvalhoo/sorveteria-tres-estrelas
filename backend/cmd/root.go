@@ -37,7 +37,7 @@ func Execute() {
 			ServiceName:    cfg.ServiceName,
 			ServiceVersion: cfg.ServiceVersion,
 			Environment:    cfg.Environment,
-			Disabled:       cfg.TraceEnabled,
+			Disabled:       !cfg.TraceEnabled,
 		})
 	if err != nil {
 		logger.Fatalf("couldn't connect to provider: %s", err)

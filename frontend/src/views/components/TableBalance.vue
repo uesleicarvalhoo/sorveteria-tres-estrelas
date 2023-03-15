@@ -2,26 +2,28 @@
   <table>
     <thead>
       <tr>
+        <th class="text-center">Operação</th>
         <th class="text-center">Valor</th>
         <th class="text-center">Descrição</th>
         <th class="text-center">Data</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="payment in itemsPaginated" :key="payment.id">
-        <td class="text-center" data-label="Valor">
-          R$ {{ payment.value.toFixed(2) }}
+      <tr v-for="balance in itemsPaginated" :key="balance.id"
+        :class='[balance.type == "Venda" ? "text-green-500" : "text-red-500"]'>
+        <td class="text-center" data-label="Operação">{{ balance.type }}</td>
+        <td class="text-center" data-label="Valor" color="red">
+          R$ {{ balance.value.toFixed(2) }}
         </td>
         <td class="text-center" data-label="Descrição">
-          {{ payment.description }}
+          {{ balance.description }}
         </td>
         <td class="text-center" data-label="Data">
-          {{ new Date(payment.created_at).toLocaleDateString() }}
+          {{ new Date(balance.date).toLocaleDateString() }}
         </td>
         <td class="actions-cell" v-if="actions">
           <jb-buttons type="justify-start lg:justify-end" no-wrap>
-            <jb-button class="mr-3" color="success" :icon="mdiEye" small @click="emitEvent('view', payment)" />
-            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', payment)" />
+            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', balance)" />
           </jb-buttons>
         </td>
       </tr>
@@ -41,14 +43,14 @@
 <script>
 import { computed, ref } from "vue"
 import { useStore } from "vuex"
-import { mdiEye, mdiTrashCan } from "@mdi/js"
+import { mdiTrashCan } from "@mdi/js"
 import Level from "./Level.vue"
 import JbButtons from "./JbButtons.vue"
 import JbButton from "./JbButton.vue"
-import { itemsPerPage } from "../../../config"
+import { itemsPerPage } from "../../config"
 
 export default {
-  name: "TablePayment",
+  name: "TableBalance",
   components: {
     Level,
     JbButtons,
@@ -57,17 +59,16 @@ export default {
   props: {
     actions: { type: Boolean, default: true }
   },
-  emits: ["view", "remove"],
+  emits: ["remove"],
 
   setup (props, { emit }) {
     const context = useStore()
 
     const darkMode = computed(() => context.state.darkMode)
 
-    const items = computed(() => context.state.payments)
+    const items = computed(() => context.state.cashFlow.details)
 
     const perPage = ref(itemsPerPage)
-
     const currentPage = ref(0)
 
     const itemsPaginated = computed(() =>
@@ -105,8 +106,7 @@ export default {
       numPages,
       itemsPaginated,
       pagesList,
-      mdiTrashCan,
-      mdiEye
+      mdiTrashCan
     }
   }
 }

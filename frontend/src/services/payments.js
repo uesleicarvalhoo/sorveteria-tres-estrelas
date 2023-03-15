@@ -1,39 +1,38 @@
 import axios from "axios"
 import { apiUrl } from "../config"
-import { authHeaders } from "./auth"
+import { getContextHeaders } from "./utils"
 
 export const paymentsService = {
-  async registerPayment (token, payload) {
-    const res = await axios.post(`${apiUrl}/payments/`, payload, authHeaders(token))
+  async registerPayment (span, payload) {
+    const res = await axios.post(`${apiUrl}/payments/`, payload, { headers: getContextHeaders(span) })
 
     return res.data
   },
 
-  async deletePayment (token, id) {
-    const res = await axios.delete(`${apiUrl}/payments/${id}`, authHeaders(token))
+  async deletePayment (span, id) {
+    const res = await axios.delete(`${apiUrl}/payments/${id}`, { headers: getContextHeaders(span) })
 
     return res.data
   },
 
-  async updatePayment (token, payload) {
-    console.log(payload)
-    const res = await axios.post(`${apiUrl}/payments/${payload.id}`, payload, authHeaders(token))
+  async updatePayment (span, payload) {
+    const res = await axios.post(`${apiUrl}/payments/${payload.id}`, payload, { headers: getContextHeaders(span) })
     return res.data
   },
 
-  async getBetween (start, end, token) {
-    const headers = authHeaders(token)
-
-    headers.params = {
-      startAt: start,
-      endAt: end
-    }
-    const res = await axios.get(`${apiUrl}/payments/`, headers)
+  async getBetween (span, start, end) {
+    const res = await axios.get(`${apiUrl}/payments/`, {
+      headers: getContextHeaders(span),
+      params: {
+        startAt: start,
+        endAt: end
+      }
+    })
 
     return res.data
   },
-  async getAll (token) {
-    const res = await axios.get(`${apiUrl}/payments/`, authHeaders(token))
+  async getAll (span) {
+    const res = await axios.get(`${apiUrl}/payments/`, { headers: getContextHeaders(span) })
     return res.data
   }
 }

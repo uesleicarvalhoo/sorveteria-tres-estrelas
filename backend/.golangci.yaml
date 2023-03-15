@@ -25,7 +25,6 @@ linters:
     - structcheck
     # Disabled becasue generics
     - rowserrcheck
-    - sqlclosecheck
     - wastedassign
     # Only Disabled
     - funlen

@@ -1,21 +1,21 @@
 import axios from "axios"
 import { apiUrl } from "../config"
-import { authHeaders } from "./auth"
+import { getContextHeaders } from "./utils"
 
 export const cashFlowService = {
-  async getBetween (start, end, token) {
-    const headers = authHeaders(token)
-
-    headers.params = {
-      startAt: start,
-      endAt: end
-    }
-    const res = await axios.get(`${apiUrl}/cashflow/`, headers)
+  async getBetween (span, start, end) {
+    const res = await axios.get(`${apiUrl}/cashflow/`, {
+      params: {
+        startAt: start,
+        endAt: end
+      },
+      headers: getContextHeaders(span)
+    })
 
     return res.data
   },
-  async getAll (token) {
-    const res = await axios.get(`${apiUrl}/cashflow/`, authHeaders(token))
+  async getAll (span) {
+    const res = await axios.get(`${apiUrl}/cashflow/`, { headers: getContextHeaders(span) })
     return res.data
   }
 }
