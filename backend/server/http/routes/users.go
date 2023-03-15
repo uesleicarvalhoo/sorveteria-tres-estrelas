@@ -8,11 +8,11 @@ import (
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/user"
 )
 
-const UserIDHeader = "X-Kong-Jwt-Claim-Sub"
+const UserIDHeader = "X-User-ID"
 
 func User(r fiber.Router, userSvc user.UseCase) {
 	r.Post("/", createUser(userSvc))
-	r.Get("/", getMe(userSvc))
+	r.Get("/me", getMe(userSvc))
 }
 
 // @Summary     Create User
@@ -66,12 +66,12 @@ func getMe(svc user.UseCase) fiber.Handler {
 
 		userID, err := uuid.Parse(sub)
 		if err != nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(dto.MessageJSON{Message: "user not found"})
+			return c.Status(fiber.StatusNotFound).JSON(dto.MessageJSON{Message: "user not found"})
 		}
 
 		u, err := svc.Get(ctx, userID)
 		if err != nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(dto.MessageJSON{Message: err.Error()})
+			return c.Status(fiber.StatusInternalServerError).JSON(dto.MessageJSON{Message: err.Error()})
 		}
 
 		return c.JSON(u)
