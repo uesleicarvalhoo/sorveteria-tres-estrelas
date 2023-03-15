@@ -7,18 +7,16 @@ import (
 )
 
 type Service struct {
-	cfg   *config.Config
-	db    DatabasePing
-	cache CachePing
+	cfg *config.Config
+	db  DatabasePing
 }
 
 var _ UseCase = Service{}
 
-func NewService(cfg *config.Config, db DatabasePing, cache CachePing) Service {
+func NewService(cfg *config.Config, db DatabasePing) Service {
 	return Service{
-		cfg:   cfg,
-		db:    db,
-		cache: cache,
+		cfg: cfg,
+		db:  db,
 	}
 }
 
@@ -33,13 +31,6 @@ func (s Service) HealthCheck(ctx context.Context) HealthStatus {
 		status.Status = StatusDown
 	} else {
 		status.Database = StatusUp
-	}
-
-	if err := s.cache.Ping(ctx); err != nil {
-		status.Cache = StatusDown
-		status.Status = StatusDown
-	} else {
-		status.Cache = StatusUp
 	}
 
 	return status

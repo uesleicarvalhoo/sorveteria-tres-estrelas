@@ -72,8 +72,6 @@ jobs:
             -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
             -e DATABASE_PORT=${{ secrets.DATABASE_PORT }} \
             -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
-            -e CACHE_URI=${{ secrets.CACHE_URI }} \
-            -e CACHE_PASSWORD=${{ secrets.CACHE_PASSWORD }} \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             -e LOG_LEVEL=${{ env.LOG_LEVEL }} \
             -e SERVICE_NAME=${{ env.BACKEND_SERVICE_NAME }} \

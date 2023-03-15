@@ -20,10 +20,6 @@ type Config struct {
 	DBUser     string `env:"DATABASE_USER,default=postgres"`
 	DBPassword string `env:"DATABASE_PASSWORD,default=secret"`
 
-	// Cache
-	CacheURI      string `env:"CACHE_URI,default=localhost:6379"`
-	CachePassword string `env:"CACHE_PASSWORD"`
-
 	// Tracer
 	TraceEndpoint string `env:"TRACER_ENDPOINT,default=http://localhost:9411/api/v2/spans"`
 	TraceEnabled  bool   `env:"TRACE_ENABLED,default=false"`

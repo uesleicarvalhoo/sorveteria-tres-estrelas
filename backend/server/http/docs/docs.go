@@ -854,9 +854,6 @@ const docTemplate = `{
         "healthcheck.HealthStatus": {
             "type": "object",
             "properties": {
-                "cache": {
-                    "type": "string"
-                },
                 "database": {
                     "type": "string"
                 },

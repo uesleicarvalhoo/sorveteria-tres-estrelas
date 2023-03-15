@@ -41,11 +41,10 @@ $ git clone <https://github.com/uesleicarvalhoo/sorveteria-tres-estrelas>
 $ cd sorveteria-tres-estrelas
 
 # Você pode facilmente iniciar as dependencias de desenvolvimento com o comando
-$ docker compose up -d postgres redis zipkin kong-gateway backend
+$ docker compose up -d postgres zipkin kong-gateway backend
 
 # Isso vai iniciar alguns containers:
 # PostgreSQL    localhost:5432  -> Banco de dados da aplicação
-# Redis         localhost:6379  -> Cache
 # Zipkin        localhost:9411  -> Exporter das métricas
 # Kong          localhost:8001  -> Kong para fazer o proxy e metrificar a aplicação
 # backend       localhost:5000  -> backend da aplicação

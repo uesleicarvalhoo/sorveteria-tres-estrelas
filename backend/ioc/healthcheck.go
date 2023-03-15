@@ -6,7 +6,7 @@ import (
 )
 
 func NewHealthCheckService(
-	cfg *config.Config, db healthcheck.DatabasePing, cache healthcheck.CachePing,
+	cfg *config.Config, db healthcheck.DatabasePing,
 ) healthcheck.Service {
-	return healthcheck.NewService(cfg, db, cache)
+	return healthcheck.NewService(cfg, db)
 }

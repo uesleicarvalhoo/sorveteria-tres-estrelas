@@ -89,8 +89,6 @@ definitions:
     type: object
   healthcheck.HealthStatus:
     properties:
-      cache:
-        type: string
       database:
         type: string
       status:
