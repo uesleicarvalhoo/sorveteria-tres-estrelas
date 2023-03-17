@@ -3,16 +3,31 @@ package cmd
 import (
 	"context"
 
+	"github.com/kong/go-kong/kong"
 	"github.com/spf13/cobra"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/config"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/logger"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/trace"
+	"gorm.io/gorm"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "backend",
-	Short: "backend server",
-	Long:  "backend api for sales and cashflow control",
+type application struct {
+	db     *gorm.DB
+	config *config.Config
+	kong   *kong.Client
+}
+
+func (app *application) execute() error {
+	cmd := &cobra.Command{
+		Use:   "backend",
+		Short: "backend server",
+		Long:  "backend api for sales and cashflow control",
+	}
+
+	cmd.AddCommand(app.httpServer())
+
+	return cmd.Execute()
 }
 
 func Execute() {
@@ -44,7 +59,24 @@ func Execute() {
 	}
 	defer provider.Close(context.Background())
 
-	if err := httpCommand.Execute(); err != nil {
-		logger.Fatalf("error while executing command %v", err)
+	// Dependencies
+	db, err := database.NewPostgresConnectionWithMigration(cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBHost, cfg.DBPort)
+	if err != nil {
+		logger.Fatalf("error when connect to database: %s", err)
+	}
+
+	kong, err := kong.NewClient(&cfg.KongURL, nil)
+	if err != nil {
+		logger.Fatalf("error when connect to kong: %s", err)
+	}
+
+	app := application{
+		db:     db,
+		kong:   kong,
+		config: cfg,
+	}
+
+	if err := app.execute(); err != nil {
+		logger.Fatalf("error while executing command: %v", err)
 	}
 }
