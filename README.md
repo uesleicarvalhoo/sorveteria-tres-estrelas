@@ -24,7 +24,6 @@ $ docker compose build && docker compose up -d
 
 # Isso vai iniciar alguns containers:
 # PostgreSQL    localhost:5432  -> Banco de dados da aplicação
-# Redis         localhost:6379  -> Cache
 # Zipkin        localhost:9411  -> Exporter das métricas
 # Kong          localhost:8001  -> Kong para fazer o proxy e metrificar a aplicação
 # backend       localhost:5000  -> backend da aplicação
@@ -66,4 +65,7 @@ Olá, sou Ueslei Carvalho 👋🏻 criador e mantenedor deste projeto. Caso quei
 
 - [ ] Desenhar a arquitetura
 - [ ] Adicionar uma lógica para a criação do primeiro usuário no Backend
-
+- [ ] Adicionar prints mostrando o sistema
+- [ ] Adicionar prints do trace do back pro front
+- [ ] Adicionar workflows de lint para o frontend
+- [ ] Adicionar logica para rodar o lint/testes do front e back só quando o repositório do projeto for alterado

@@ -9,7 +9,3 @@ type UseCase interface {
 type DatabasePing interface {
 	Ping() error
 }
-
-type CachePing interface {
-	Ping(ctx context.Context) error
-}

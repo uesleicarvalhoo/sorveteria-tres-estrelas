@@ -14,8 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/kong/go-kong/kong"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/config"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/infrastructure/cache"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/infrastructure/database"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/ioc"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/logger"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/server/http/middleware"
@@ -37,11 +36,6 @@ func StartServer() {
 		logger.Fatalf("error when connect to database: %s", err)
 	}
 
-	cache, err := cache.NewRedis(cfg.CacheURI, cfg.CachePassword)
-	if err != nil {
-		logger.Fatalf("error when connect to redis: %s", err)
-	}
-
 	kong, err := kong.NewClient(&cfg.KongURL, nil)
 	if err != nil {
 		logger.Fatalf("error when connect to kong: %s", err)
@@ -53,13 +47,13 @@ func StartServer() {
 	}
 
 	// Services
-	healthSvc := ioc.NewHealthCheckService(cfg, con, cache)
+	healthSvc := ioc.NewHealthCheckService(cfg, con)
 	salesSvc := ioc.NewSaleService(db)
 	productSvc := ioc.NewProductService(db)
 	userSvc := ioc.NewUserService(db)
 	paymentSvc := ioc.NewPaymentService(db)
 	cashflowSvc := ioc.NewCashFlowService(db)
-	authSvc := ioc.NewAuthService(db, cache, kong, cfg.SecretKey, cfg.KongConsumer, cfg.KongJwtKey)
+	authSvc := ioc.NewAuthService(db, kong, cfg.SecretKey, cfg.KongConsumer, cfg.KongJwtKey)
 
 	// Server
 	app := fiber.New(fiber.Config{

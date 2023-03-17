@@ -16,7 +16,6 @@ func TestService(t *testing.T) {
 
 	tests := []struct {
 		about          string
-		cacheErr       error
 		dbErr          error
 		version        string
 		expectedStatus healthcheck.HealthStatus
@@ -28,7 +27,6 @@ func TestService(t *testing.T) {
 				Version:  "0.0.0",
 				Status:   healthcheck.StatusUp,
 				Database: healthcheck.StatusUp,
-				Cache:    healthcheck.StatusUp,
 			},
 		},
 		{
@@ -39,18 +37,6 @@ func TestService(t *testing.T) {
 				Version:  "0.0.0",
 				Status:   healthcheck.StatusDown,
 				Database: healthcheck.StatusDown,
-				Cache:    healthcheck.StatusUp,
-			},
-		},
-		{
-			about:    "when cache is down",
-			cacheErr: errors.New("cache error"),
-			version:  "0.0.0",
-			expectedStatus: healthcheck.HealthStatus{
-				Version:  "0.0.0",
-				Status:   healthcheck.StatusDown,
-				Database: healthcheck.StatusUp,
-				Cache:    healthcheck.StatusDown,
 			},
 		},
 	}
@@ -69,9 +55,7 @@ func TestService(t *testing.T) {
 				ServiceVersion: tc.version,
 			}
 
-			cacheMock := mocks.NewCachePing(t)
-			cacheMock.On("Ping", context.Background()).Return(tc.cacheErr)
-			svc := healthcheck.NewService(cfg, dbMock, cacheMock)
+			svc := healthcheck.NewService(cfg, dbMock)
 
 			// Action
 			status := svc.HealthCheck(context.Background())

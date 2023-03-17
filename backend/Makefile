@@ -43,7 +43,6 @@ generate-mocks: clean-mocks  ## Generate mock files
 	@mockery --dir sales --output sales/mocks --all
 	@mockery --dir user --output user/mocks --all
 	@mockery --dir auth --output auth/mocks --all
-	@mockery --dir cache --output cache/mocks --all
 	@mockery --dir healthcheck --output healthcheck/mocks --all
 	@mockery --dir payment --output payment/mocks --all
 	@mockery --dir cashflow --output cashflow/mocks --all
@@ -53,7 +52,6 @@ clean-mocks:  ## Clean mock files
 	@rm -rf sales/mocks/*
 	@rm -rf user/mocks/*
 	@rm -rf auth/mocks/*
-	@rm -rf cache/mocks/*
 	@rm -rf healthcheck/mocks/*
 	@rm -rf payment/mocks/*
 	@rm -rf cashflow/mocks/*

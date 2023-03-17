@@ -11,5 +11,4 @@ type HealthStatus struct {
 	Version  string `json:"version"`
 	Status   Status `json:"status"`
 	Database Status `json:"database"`
-	Cache    Status `json:"cache"`
 }
