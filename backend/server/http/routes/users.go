@@ -22,7 +22,7 @@ func User(r fiber.Router, userSvc user.UseCase) {
 // @Produce     json
 // @Param       payload body dto.CreateUserPayload true "the user data"
 // @Success     201 {object} user.User
-// @Failure     422 {object} dto.MessageJSON "when payload is invalid"
+// @Failure     400 {object} dto.MessageJSON "when X-User-ID has an invalid uuid"
 // @Failure     500 {object} dto.MessageJSON "when an error occurs"
 // @Router      /users [post]
 func createUser(svc user.UseCase) fiber.Handler {
@@ -66,7 +66,7 @@ func getMe(svc user.UseCase) fiber.Handler {
 
 		userID, err := uuid.Parse(sub)
 		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(dto.MessageJSON{Message: "user not found"})
+			return c.Status(fiber.StatusBadRequest).JSON(dto.MessageJSON{Message: "invalid user"})
 		}
 
 		u, err := svc.Get(ctx, userID)
