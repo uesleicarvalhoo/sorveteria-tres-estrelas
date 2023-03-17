@@ -3,10 +3,6 @@ package http
 import (
 	"context"
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,33 +10,18 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/kong/go-kong/kong"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/config"
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/database"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/ioc"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/logger"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/server/http/middleware"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/server/http/routes"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/shutdown"
+	"gorm.io/gorm"
 )
 
 // @title Sorveteria três estrelas - Backend API
 // @version 1.0
 // @description API para o cadastro de produtos, controle de vendas e fluxo de caixa para a sorveteria três estrelas
-func StartServer() {
-	// Dependencies
-	cfg, err := config.NewFromEnv()
-	if err != nil {
-		logger.Fatalf("error when reading config: %s", err)
-	}
-
-	db, err := database.NewPostgresConnectionWithMigration(cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBHost, cfg.DBPort)
-	if err != nil {
-		logger.Fatalf("error when connect to database: %s", err)
-	}
-
-	kong, err := kong.NewClient(&cfg.KongURL, nil)
-	if err != nil {
-		logger.Fatalf("error when connect to kong: %s", err)
-	}
-
+func StartServer(cfg *config.Config, db *gorm.DB, kong *kong.Client) {
 	con, err := db.DB()
 	if err != nil {
 		logger.Fatalf("error when getting db connection: %s", err)
@@ -78,22 +59,18 @@ func StartServer() {
 	routes.Payments(app.Group("/payments"), paymentSvc)
 	routes.CashFlow(app.Group("/cashflow"), cashflowSvc)
 
-	go func() {
-		logger.Fatal(app.Listen(fmt.Sprintf(":%d", cfg.HTTPPort)))
-	}()
-
-	logger.Infof("http server running on port: %d", cfg.HTTPPort)
-
 	// Graceful shutdown
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
+	shutdown.Subscribe(func(ctx context.Context) error {
+		logger.Infof("http server running on port: %d", cfg.HTTPPort)
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGALRM)
+		return app.Listen(fmt.Sprintf(":%d", cfg.HTTPPort))
+	}, func(ctx context.Context) error {
+		if err := app.Server().ShutdownWithContext(ctx); err != nil {
+			logger.Errorf("graceful shutdown failed: %s", err)
 
-	<-quit
+			return err
+		}
 
-	if err := app.Server().ShutdownWithContext(ctx); err != nil {
-		logger.Errorf("graceful shutdown failed: %s", err)
-	}
+		return nil
+	})
 }
