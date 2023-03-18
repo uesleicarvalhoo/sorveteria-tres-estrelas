@@ -697,8 +697,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/user.User"
                         }
                     },
-                    "422": {
-                        "description": "when payload is invalid",
+                    "400": {
+                        "description": "when X-User-ID has an invalid uuid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
                         }
