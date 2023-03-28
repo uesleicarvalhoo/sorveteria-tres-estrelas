@@ -628,36 +628,7 @@
                 }
             }
         },
-        "/user/me": {
-            "get": {
-                "description": "Get current user data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get Me",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/user.User"
-                        }
-                    },
-                    "500": {
-                        "description": "when an error occurs",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageJSON"
-                        }
-                    }
-                }
-            }
-        },
-        "/users": {
+        "/user": {
             "post": {
                 "description": "Create a new user and return user data",
                 "consumes": [
@@ -692,6 +663,35 @@
                         "description": "when X-User-ID has an invalid uuid",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    },
+                    "500": {
+                        "description": "when an error occurs",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageJSON"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/me": {
+            "get": {
+                "description": "Get current user data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get Me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
                         }
                     },
                     "500": {
@@ -738,6 +738,17 @@
                 }
             }
         },
+        "cashflow.BalanceType": {
+            "type": "string",
+            "enum": [
+                "Venda",
+                "Pagamento"
+            ],
+            "x-enum-varnames": [
+                "SaleBalance",
+                "BalancePayment"
+            ]
+        },
         "cashflow.CashFlow": {
             "type": "object",
             "properties": {
@@ -768,7 +779,7 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
+                    "$ref": "#/definitions/cashflow.BalanceType"
                 },
                 "value": {
                     "type": "number"
@@ -838,7 +849,7 @@
                     }
                 },
                 "payment_type": {
-                    "type": "string"
+                    "$ref": "#/definitions/sales.PaymentType"
                 }
             }
         },
@@ -846,15 +857,26 @@
             "type": "object",
             "properties": {
                 "database": {
-                    "type": "string"
+                    "$ref": "#/definitions/healthcheck.Status"
                 },
                 "status": {
-                    "type": "string"
+                    "$ref": "#/definitions/healthcheck.Status"
                 },
                 "version": {
                     "type": "string"
                 }
             }
+        },
+        "healthcheck.Status": {
+            "type": "string",
+            "enum": [
+                "UP",
+                "DOWN"
+            ],
+            "x-enum-varnames": [
+                "StatusUp",
+                "StatusDown"
+            ]
         },
         "payment.Payment": {
             "type": "object",
@@ -924,6 +946,25 @@
                 }
             }
         },
+        "sales.PaymentType": {
+            "type": "string",
+            "enum": [
+                "Pagamento no PIX",
+                "Pagamento no Dinheiro",
+                "Pagamento no Cartão",
+                "Pagamento de funcionarios",
+                "Pagamento de fornecedores",
+                "Outros pagamentos"
+            ],
+            "x-enum-varnames": [
+                "PixPayment",
+                "CashPayment",
+                "CardPayment",
+                "EmployersPayment",
+                "SuppliersPayment",
+                "AnotherPayments"
+            ]
+        },
         "sales.Sale": {
             "type": "object",
             "properties": {
@@ -943,7 +984,7 @@
                     }
                 },
                 "payment_type": {
-                    "type": "string"
+                    "$ref": "#/definitions/sales.PaymentType"
                 },
                 "total": {
                     "type": "number"

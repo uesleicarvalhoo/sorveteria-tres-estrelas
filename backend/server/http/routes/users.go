@@ -24,7 +24,7 @@ func User(r fiber.Router, userSvc user.UseCase) {
 // @Success     201 {object} user.User
 // @Failure     400 {object} dto.MessageJSON "when X-User-ID has an invalid uuid"
 // @Failure     500 {object} dto.MessageJSON "when an error occurs"
-// @Router      /users [post]
+// @Router      /user [post]
 func createUser(svc user.UseCase) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx, span := trace.NewSpan(c.UserContext(), "create-user")
