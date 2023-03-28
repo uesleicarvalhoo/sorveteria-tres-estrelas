@@ -80,8 +80,8 @@ jobs:
             -e TRACER_ENDPOINT=${{ vars.TRACER_ENDPOINT }} \
             -e TRACER_ENABLED=${{ vars.TRACER_ENABLED }} \
             -e KONG_URL=${{ vars.KONG_URL }} \
-            -e KONG_CONSUMER={{ secrets.KONG_CONSUMER }} \
-            -e KONG_JWT_KEY={{ secrets.KONG_JWT_KEY }} \
+            -e KONG_CONSUMER=${{ secrets.KONG_CONSUMER }} \
+            -e KONG_JWT_KEY=${{ secrets.KONG_JWT_KEY }} \
             --network=${{ vars.DOCKER_NETWORK }} \
              ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }} \
              http
