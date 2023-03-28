@@ -20,6 +20,14 @@ definitions:
       refresh_token:
         type: string
     type: object
+  cashflow.BalanceType:
+    enum:
+    - Venda
+    - Pagamento
+    type: string
+    x-enum-varnames:
+    - SaleBalance
+    - BalancePayment
   cashflow.CashFlow:
     properties:
       balance:
@@ -40,7 +48,7 @@ definitions:
       description:
         type: string
       type:
-        type: string
+        $ref: '#/definitions/cashflow.BalanceType'
       value:
         type: number
     type: object
@@ -85,17 +93,25 @@ definitions:
           $ref: '#/definitions/sales.CartItem'
         type: array
       payment_type:
-        type: string
+        $ref: '#/definitions/sales.PaymentType'
     type: object
   healthcheck.HealthStatus:
     properties:
       database:
-        type: string
+        $ref: '#/definitions/healthcheck.Status'
       status:
-        type: string
+        $ref: '#/definitions/healthcheck.Status'
       version:
         type: string
     type: object
+  healthcheck.Status:
+    enum:
+    - UP
+    - DOWN
+    type: string
+    x-enum-varnames:
+    - StatusUp
+    - StatusDown
   payment.Payment:
     properties:
       created_at:
@@ -141,6 +157,22 @@ definitions:
       unit_price:
         type: number
     type: object
+  sales.PaymentType:
+    enum:
+    - Pagamento no PIX
+    - Pagamento no Dinheiro
+    - Pagamento no Cartão
+    - Pagamento de funcionarios
+    - Pagamento de fornecedores
+    - Outros pagamentos
+    type: string
+    x-enum-varnames:
+    - PixPayment
+    - CashPayment
+    - CardPayment
+    - EmployersPayment
+    - SuppliersPayment
+    - AnotherPayments
   sales.Sale:
     properties:
       date:
@@ -154,7 +186,7 @@ definitions:
           $ref: '#/definitions/sales.Item'
         type: array
       payment_type:
-        type: string
+        $ref: '#/definitions/sales.PaymentType'
       total:
         type: number
     type: object
@@ -584,26 +616,7 @@ paths:
       summary: Delete Sale by ID
       tags:
       - Sale
-  /user/me:
-    get:
-      consumes:
-      - application/json
-      description: Get current user data
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/user.User'
-        "500":
-          description: when an error occurs
-          schema:
-            $ref: '#/definitions/dto.MessageJSON'
-      summary: Get Me
-      tags:
-      - User
-  /users:
+  /user:
     post:
       consumes:
       - application/json
@@ -631,6 +644,25 @@ paths:
           schema:
             $ref: '#/definitions/dto.MessageJSON'
       summary: Create User
+      tags:
+      - User
+  /user/me:
+    get:
+      consumes:
+      - application/json
+      description: Get current user data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Get Me
       tags:
       - User
 swagger: "2.0"

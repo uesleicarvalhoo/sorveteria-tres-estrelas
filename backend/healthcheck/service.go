@@ -20,7 +20,7 @@ func NewService(cfg *config.Config, db DatabasePing) Service {
 	}
 }
 
-func (s Service) HealthCheck(ctx context.Context) HealthStatus {
+func (s Service) HealthCheck(_ context.Context) HealthStatus {
 	status := HealthStatus{
 		Version: s.cfg.ServiceVersion,
 		Status:  StatusUp,
