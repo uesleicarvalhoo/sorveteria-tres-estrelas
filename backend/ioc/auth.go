@@ -7,7 +7,7 @@ import (
 )
 
 func NewAuthService(
-	db *gorm.DB, kongCli *kong.Client, secret, kongConsumer, kongJwtKey string,
+	db *gorm.DB, kongCli *kong.Client, _, kongConsumer, kongJwtKey string,
 ) auth.UseCase {
 	userSvc := NewUserService(db)
 	provider := auth.NewKongProvider(kongCli, kongConsumer, kongJwtKey)
