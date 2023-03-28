@@ -30,7 +30,7 @@ COPY --from=builder /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 COPY --from=builder /etc/timezone /etc/timezone
 
 # Copy migrations and execulatable
-COPY --from=builder /go/src/infrastructure/database/migrations/ /app/infrastructure/database/migrations/
+COPY --from=builder /go/src/database/migrations/ /app/database/migrations/
 
 WORKDIR /app
 COPY --from=builder /go/bin/backend .
