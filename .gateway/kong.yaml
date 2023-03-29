@@ -34,6 +34,8 @@ plugins:
         - Content-Type
         - Date
         - X-Auth-Token
+        - Traceparent
+        - Authorization
       exposed_headers:
         - X-Auth-Token
       credentials: true
@@ -45,7 +47,7 @@ jwt_secrets:
 
 services:
   - name: backend
-    url: http://backend/
+    url: http://backend:5000/
     plugins:
       - name: jwt
     routes:
@@ -54,7 +56,7 @@ services:
           - /api
 
   - name: auth
-    url: http://backend/auth
+    url: http://backend:5000/auth
     routes:
       - name: auth-api
         paths:
