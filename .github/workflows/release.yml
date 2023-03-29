@@ -116,7 +116,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             "VUE_APP_API_URL=${{ vars.BACKEND_URL }}"
-            "VUE_APP_OTEL_URL=${{ vars.TRACER_ENDPOINT }}"
+            "VUE_APP_OTEL_URL=${{ vars.FRONTEND_TRACER_URL }}"
             "VUE_APP_SERVICE_NAME=${{ vars.FRONTEND_CONTAINER_NAME }}"
             "VUE_APP_SERVICE_VERSION=${{ env.RELEASE_TAG }}"
 
