@@ -38,19 +38,19 @@ export default {
       Object.assign(this.modal.data, item)
     },
     async removeProduct (item) {
-      await createSpan("delete-product", async () => {
-        await dispatchRemoveProduct(item)
+      await createSpan("delete-product", async (span) => {
+        await dispatchRemoveProduct(span, item)
       })
     },
     async updateProduct (item) {
-      await createSpan("update-product", async () => {
-        await dispatchUpdateProduct(item)
+      await createSpan("update-product", async (span) => {
+        await dispatchUpdateProduct(span, item)
       })
     }
   },
   async created () {
-    await createSpan("view-products", async () => {
-      await dispatchGetProducts()
+    await createSpan("view-products", async (span) => {
+      await dispatchGetProducts(span)
     })
   },
   setup () {
