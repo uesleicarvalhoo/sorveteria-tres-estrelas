@@ -22,7 +22,7 @@ type Config struct {
 
 	// Tracer
 	TraceEndpoint string `env:"TRACER_ENDPOINT,default=http://localhost:9411/api/v2/spans"`
-	TraceEnabled  bool   `env:"TRACE_ENABLED,default=false"`
+	TraceEnabled  bool   `env:"TRACE_ENABLED,default=true"`
 
 	// Kong
 	KongURL      string `env:"KONG_URL,default=http://localhost:8001"`

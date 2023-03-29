@@ -61,10 +61,6 @@ jobs:
             docker stop ${{ vars.BACKEND_CONTAINER_NAME }} || true
             docker rm ${{ vars.BACKEND_CONTAINER_NAME }} || true
             docker run -d --restart=always \
-            --health-cmd="curl --fail localhost:${{ vars.BACKEND_HTTP_SERVER_PORT }}/health" \
-            --health-interval=10s \
-            --health-timeout=5s \
-            --health-retries=3 \
             --name ${{ vars.BACKEND_CONTAINER_NAME }} \
             -p ${{ vars.BACKEND_HTTP_SERVER_PORT }}:${{ vars.BACKEND_HTTP_SERVER_PORT }} \
             -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
