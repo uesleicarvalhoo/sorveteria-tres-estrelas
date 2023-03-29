@@ -70,7 +70,7 @@ jobs:
             -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             -e LOG_LEVEL=${{ vars.LOG_LEVEL }} \
-            -e SERVICE_NAME=${{ vars.BACKEND_SERVICE_NAME }} \
+            -e SERVICE_NAME=${{ vars.BACKEND_CONTAINER_NAME }} \
             -e SERVICE_VERSION=${{ env.RELEASE_TAG }} \
             -e HTTP_SERVER_PORT=${{ vars.BACKEND_HTTP_SERVER_PORT }} \
             -e TRACER_ENDPOINT=${{ vars.TRACER_ENDPOINT }} \
@@ -134,6 +134,8 @@ jobs:
             --name ${{ vars.FRONTEND_CONTAINER_NAME }} \
             -p ${{ vars.FRONTEND_HTTP_SERVER_PORT }}:80 \
             -e VUE_APP_API_URL=${{ vars.BACKEND_URL }} \
-            -e OTEL_URL=${{ vars.TRACER_ENDPOINT }} \
+            -e VUE_APP_OTEL_URL=${{ vars.TRACER_ENDPOINT }} \
+            -e VUE_APP_SERVICE_NAME=${{ vars.FRONTEND_CONTAINER_NAME }} \
+            -e VUE_APP_SERVICE_VERSION=${{ env.RELEASE_TAG }} \
             --network=${{ vars.DOCKER_NETWORK }} \
              ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
