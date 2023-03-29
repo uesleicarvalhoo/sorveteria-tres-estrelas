@@ -84,6 +84,7 @@ jobs:
 
   frontend-build-and-push-image:
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       packages: write
