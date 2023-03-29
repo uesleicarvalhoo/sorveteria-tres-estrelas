@@ -8,16 +8,36 @@ plugins:
     config:
       token_required: "false"
   - name: request-transformer
-    config: 
+    config:
       remove:
         headers:
-        - Authorization
-        - X-Kong-Jwt-Claim-Iss
+          - Authorization
+          - X-Kong-Jwt-Claim-Iss
       rename:
         headers:
-        - X-Kong-Jwt-Claim-Sub:X-User-ID
-        - X-Kong-Jwt-Claim-Name:X-User-Name
-        - X-Kong-Jwt-Claim-Email:X-User-Email
+          - X-Kong-Jwt-Claim-Sub:X-User-ID
+          - X-Kong-Jwt-Claim-Name:X-User-Name
+          - X-Kong-Jwt-Claim-Email:X-User-Email
+  - name: cors
+    config:
+      origins:
+        - https://www.sorveteriatresestrelas.com.br
+        - https://sorveteriatresestrelas.com.br
+      methods:
+        - GET
+        - POST
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - X-Auth-Token
+      exposed_headers:
+        - X-Auth-Token
+      credentials: true
+      max_age: 3600
 
 jwt_secrets:
   - consumer: auth-consumer

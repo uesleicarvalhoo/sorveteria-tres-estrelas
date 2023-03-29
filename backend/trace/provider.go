@@ -3,6 +3,7 @@ package trace
 import (
 	"context"
 
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/logger"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/zipkin"
@@ -31,6 +32,8 @@ func NewProvider(config ProviderConfig) (Provider, error) {
 	serviceName = config.ServiceName
 
 	if config.Disabled {
+		logger.Warning("tracing disabled")
+
 		return Provider{Provider: trace.NewNoopTracerProvider()}, nil
 	}
 

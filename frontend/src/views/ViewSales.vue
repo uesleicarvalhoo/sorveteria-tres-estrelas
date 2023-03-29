@@ -41,7 +41,7 @@ export default {
     },
 
     async updateSale (sale) {
-      await createSpan("update-sale", async () => {
+      await createSpan("update-sale", async (span) => {
         dispatchNotification(
           "Função desabilitada",
           "Ops! Ainda não configurei a função de atualizar as vendas, mas você pode remover e cadastrar novamente.",
@@ -54,8 +54,8 @@ export default {
     }
   },
   async created () {
-    await createSpan("view-sales", async () => {
-      await dispatchGetSales()
+    await createSpan("view-sales", async (span) => {
+      await dispatchGetSales(span)
     })
   },
   setup () {
