@@ -25,6 +25,12 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copy from the stag builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+ENV VUE_APP_ITEMS_PER_PAGE 10
+ENV VUE_APP_API_URL ""
+ENV VUE_APP_SERVICE_NAME "frontend"
+ENV VUE_APP_SERVICE_VERSION "0.0.0"
+ENV VUE_APP_OTEL_URL "http://localhost:9411/api/v2/spans"
+
 EXPOSE 80
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
