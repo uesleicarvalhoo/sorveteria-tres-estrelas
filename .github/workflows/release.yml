@@ -62,7 +62,7 @@ jobs:
             docker rm ${{ vars.BACKEND_CONTAINER_NAME }} || true
             docker run -d --restart=always \
             --name ${{ vars.BACKEND_CONTAINER_NAME }} \
-            -p ${{ vars.BACKEND_HTTP_SERVER_PORT }}:${{ vars.BACKEND_HTTP_SERVER_PORT }} \
+            -p ${{ vars.BACKEND_HTTP_SERVER_PORT }}:80 \
             -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
             -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
             -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
@@ -72,7 +72,6 @@ jobs:
             -e LOG_LEVEL=${{ vars.LOG_LEVEL }} \
             -e SERVICE_NAME=${{ vars.BACKEND_CONTAINER_NAME }} \
             -e SERVICE_VERSION=${{ env.RELEASE_TAG }} \
-            -e HTTP_SERVER_PORT=${{ vars.BACKEND_HTTP_SERVER_PORT }} \
             -e TRACER_ENDPOINT=${{ vars.TRACER_ENDPOINT }} \
             -e TRACER_ENABLED=${{ vars.TRACER_ENABLED }} \
             -e KONG_URL=${{ vars.KONG_URL }} \

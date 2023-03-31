@@ -14,7 +14,7 @@ import (
 const TIMEOUT = time.Second * 30
 
 func Subscribe(start, stop func(ctx context.Context) error) {
-	ctx, cancel := context.WithTimeout(context.Background(), TIMEOUT)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	go func() {
@@ -32,6 +32,8 @@ func Subscribe(start, stop func(ctx context.Context) error) {
 
 	g.Go(func() error {
 		<-gCtx.Done()
+		ctx, cancel := context.WithTimeout(ctx, TIMEOUT)
+		defer cancel()
 
 		return stop(ctx)
 	})

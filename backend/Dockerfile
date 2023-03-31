@@ -29,14 +29,19 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
 COPY --from=builder /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 COPY --from=builder /etc/timezone /etc/timezone
 
+COPY --from=ghcr.io/tarampampam/curl:8.0.1 /bin/curl /bin/curl
+
 # Copy migrations and execulatable
 COPY --from=builder /go/src/database/migrations/ /app/database/migrations/
 
 WORKDIR /app
+
 COPY --from=builder /go/bin/backend .
 
 ENV HTTP_SERVER_PORT 80
 
-EXPOSE ${HTTP_SERVER_PORT}
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=2s --retries=3 --start-period=5s CMD ["curl", "-f", "http://localhost/health"]
 
 ENTRYPOINT ["/app/backend"]
