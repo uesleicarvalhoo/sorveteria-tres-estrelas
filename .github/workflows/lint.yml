@@ -15,7 +15,7 @@ jobs:
       - name: golangci-lint
         uses:  golangci/golangci-lint-action@v3
         with:
-          version: 1.52.1
+          version: v1.53
           working-directory: backend
           skip-pkg-cache: false
           skip-build-cache: false
