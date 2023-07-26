@@ -63,6 +63,7 @@ jobs:
             docker run -d --restart=always \
             --name ${{ vars.BACKEND_CONTAINER_NAME }} \
             -p ${{ vars.BACKEND_HTTP_SERVER_PORT }}:80 \
+            -e TZ=${{ vars.TIMEZONE }} \
             -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
             -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
             -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
@@ -137,6 +138,7 @@ jobs:
             docker rm ${{ vars.FRONTEND_CONTAINER_NAME }} || true
             docker run -d \
             --name ${{ vars.FRONTEND_CONTAINER_NAME }} \
+            -e TZ=${{ vars.TIMEZONE }} \
             -p ${{ vars.FRONTEND_HTTP_SERVER_PORT }}:80 \
             --network=${{ vars.DOCKER_NETWORK }} \
              ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ env.RELEASE_TAG }}

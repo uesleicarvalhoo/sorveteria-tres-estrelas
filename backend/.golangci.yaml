@@ -23,9 +23,6 @@ linters:
     - varcheck
     - nosnakecase
     - structcheck
-    # Disabled becasue generics
-    - rowserrcheck
-    - wastedassign
     # Only Disabled
     - funlen
     - exhaustruct
@@ -36,6 +33,8 @@ linters:
     - contextcheck
     - godot
     - dupl
+    - depguard
+    - tagalign
 
 linters-settings:
   tagliatelle:
