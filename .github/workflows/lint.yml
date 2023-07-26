@@ -11,12 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: golangci-lint
         uses:  golangci/golangci-lint-action@v3.4.0
         with:
           working-directory: backend
           skip-pkg-cache: false
           skip-build-cache: false
-          skip-go-installation: false
           only-new-issues: false
