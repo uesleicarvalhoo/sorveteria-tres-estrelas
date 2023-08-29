@@ -35,8 +35,8 @@ export default {
   },
   methods: {
     async removeSale (sale) {
-      await createSpan("delete-sale", async () => {
-        await dispatchRemoveSale(sale)
+      await createSpan("delete-sale", async (span) => {
+        await dispatchRemoveSale(span, sale)
       })
     },
 
