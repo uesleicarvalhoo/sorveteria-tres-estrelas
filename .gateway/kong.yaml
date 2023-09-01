@@ -26,6 +26,7 @@ plugins:
       methods:
         - GET
         - POST
+        - DELETE
       headers:
         - Accept
         - Accept-Version
