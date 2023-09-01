@@ -24,7 +24,7 @@ export async function dispatchGetPaymentsBetween (span, start, end) {
 export async function dispatchRemovePayment (span, payload) {
   try {
     await paymentsService.deletePayment(span, payload.id)
-    await dispatchGetPayments()
+    await dispatchGetPayments(span)
     await dispatchNotification("Remoção do pagamento", "Pagamento removido com sucesso!", "success")
   } catch (error) {
     await dispatchApiError(error)
