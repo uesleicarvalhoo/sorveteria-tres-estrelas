@@ -46,6 +46,7 @@ generate-mocks: clean-mocks  ## Generate mock files
 	@mockery --dir healthcheck --output healthcheck/mocks --all
 	@mockery --dir payment --output payment/mocks --all
 	@mockery --dir cashflow --output cashflow/mocks --all
+	@mockery --dir transaction --output transaction/mocks --all
 
 clean-mocks:  ## Clean mock files
 	@rm -rf product/mocks/*
@@ -55,6 +56,7 @@ clean-mocks:  ## Clean mock files
 	@rm -rf healthcheck/mocks/*
 	@rm -rf payment/mocks/*
 	@rm -rf cashflow/mocks/*
+	@rm -rf transaction/mocks/*
 
 test:  ## Run tests all tests
 	@go test ./... -race -v -count=1 -tags="all" -coverprofile=$(COVERAGE_OUTPUT)
