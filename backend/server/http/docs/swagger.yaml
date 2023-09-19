@@ -20,14 +20,6 @@ definitions:
       refresh_token:
         type: string
     type: object
-  cashflow.BalanceType:
-    enum:
-    - Venda
-    - Pagamento
-    type: string
-    x-enum-varnames:
-    - SaleBalance
-    - BalancePayment
   cashflow.CashFlow:
     properties:
       balance:
@@ -48,13 +40,6 @@ definitions:
       description:
         type: string
       type:
-        $ref: '#/definitions/cashflow.BalanceType'
-      value:
-        type: number
-    type: object
-  dto.CreatePaymentPayload:
-    properties:
-      description:
         type: string
       value:
         type: number
@@ -68,6 +53,13 @@ definitions:
       price_atacado:
         type: number
       price_varejo:
+        type: number
+    type: object
+  dto.CreateTransactionPayload:
+    properties:
+      description:
+        type: string
+      value:
         type: number
     type: object
   dto.CreateUserPayload:
@@ -93,35 +85,16 @@ definitions:
           $ref: '#/definitions/sales.CartItem'
         type: array
       payment_type:
-        $ref: '#/definitions/sales.PaymentType'
+        type: string
     type: object
   healthcheck.HealthStatus:
     properties:
       database:
-        $ref: '#/definitions/healthcheck.Status'
+        type: string
       status:
-        $ref: '#/definitions/healthcheck.Status'
+        type: string
       version:
         type: string
-    type: object
-  healthcheck.Status:
-    enum:
-    - UP
-    - DOWN
-    type: string
-    x-enum-varnames:
-    - StatusUp
-    - StatusDown
-  payment.Payment:
-    properties:
-      created_at:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      value:
-        type: number
     type: object
   product.Product:
     properties:
@@ -157,22 +130,6 @@ definitions:
       unit_price:
         type: number
     type: object
-  sales.PaymentType:
-    enum:
-    - Pagamento no PIX
-    - Pagamento no Dinheiro
-    - Pagamento no Cartão
-    - Pagamento de funcionarios
-    - Pagamento de fornecedores
-    - Outros pagamentos
-    type: string
-    x-enum-varnames:
-    - PixPayment
-    - CashPayment
-    - CardPayment
-    - EmployersPayment
-    - SuppliersPayment
-    - AnotherPayments
   sales.Sale:
     properties:
       date:
@@ -186,8 +143,21 @@ definitions:
           $ref: '#/definitions/sales.Item'
         type: array
       payment_type:
-        $ref: '#/definitions/sales.PaymentType'
+        type: string
       total:
+        type: number
+    type: object
+  transaction.Transaction:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      type:
+        type: string
+      value:
         type: number
     type: object
   user.User:
@@ -317,114 +287,6 @@ paths:
       summary: Health Cehck
       tags:
       - Health check
-  /payments:
-    get:
-      consumes:
-      - application/json
-      description: get payments
-      parameters:
-      - description: name search by q
-        format: dateTime
-        in: query
-        name: start_at
-        type: string
-      - description: name search by q
-        format: dateTime
-        in: query
-        name: end_at
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/payment.Payment'
-            type: array
-        "500":
-          description: when an error occurs
-          schema:
-            $ref: '#/definitions/dto.MessageJSON'
-      summary: List payments
-      tags:
-      - Payment
-    post:
-      consumes:
-      - application/json
-      description: Create a new payment and return payment data
-      parameters:
-      - description: the payload data
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreatePaymentPayload'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/payment.Payment'
-        "422":
-          description: when payload is invalid
-          schema:
-            $ref: '#/definitions/dto.MessageJSON'
-        "500":
-          description: when an error occurs
-          schema:
-            $ref: '#/definitions/dto.MessageJSON'
-      summary: Register a new payment
-      tags:
-      - Payment
-  /payments/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete payment
-      parameters:
-      - description: the id of payment
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "202":
-          description: Accepted
-        "500":
-          description: when an error occurs
-          schema:
-            $ref: '#/definitions/dto.MessageJSON'
-      summary: Delete Payment by ID
-      tags:
-      - Payment
-    post:
-      consumes:
-      - application/json
-      description: Update payment data
-      parameters:
-      - description: the id of payment
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/payment.Payment'
-        "500":
-          description: when an error occurs
-          schema:
-            $ref: '#/definitions/dto.MessageJSON'
-      summary: Update Payment by ID
-      tags:
-      - Payment
   /products/:
     get:
       consumes:
@@ -616,6 +478,90 @@ paths:
       summary: Delete Sale by ID
       tags:
       - Sale
+  /transactions:
+    get:
+      consumes:
+      - application/json
+      description: get transactions
+      parameters:
+      - description: name search by q
+        format: dateTime
+        in: query
+        name: start_at
+        type: string
+      - description: name search by q
+        format: dateTime
+        in: query
+        name: end_at
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/transaction.Transaction'
+            type: array
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: List transactions
+      tags:
+      - Transaction
+    post:
+      consumes:
+      - application/json
+      description: Create a new transaction and return transaction data
+      parameters:
+      - description: the payload data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/transaction.Transaction'
+        "422":
+          description: when payload is invalid
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Register a new transaction
+      tags:
+      - Transaction
+  /transactions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete payment
+      parameters:
+      - description: the id of payment
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: when an error occurs
+          schema:
+            $ref: '#/definitions/dto.MessageJSON'
+      summary: Delete Transaction by ID
+      tags:
+      - Transaction
   /user:
     post:
       consumes:

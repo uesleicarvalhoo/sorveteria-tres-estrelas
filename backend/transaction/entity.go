@@ -1,4 +1,4 @@
-package payment
+package transaction
 
 import (
 	"time"
@@ -6,9 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type Payment struct {
+type Type string
+
+const (
+	Credit Type = "credit"
+	Debit  Type = "debit"
+)
+
+type Transaction struct {
 	ID          uuid.UUID `json:"id"`
 	Value       float32   `json:"value"`
+	Type        Type      `json:"type"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 }
