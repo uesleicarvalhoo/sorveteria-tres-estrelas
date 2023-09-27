@@ -2,6 +2,9 @@
   <main-section>
     <title-sub-bar :icon="mdiBallotOutline" title="Novo registro de Caixa" />
     <card-component :title="title" :icon="mdiBallot" @submit.prevent="submit" form>
+      <field label="Tipo de Pagamento">
+        <control :options="transactionTypes" v-model="form.transactionType" required />
+      </field>
       <field label="Valor">
         <control type="number" placeholder="00.00" v-model="form.value" step="0.01" required />
       </field>
@@ -22,7 +25,7 @@
 </template>
 
 <script>
-import { reactive, ref } from "vue"
+import { reactive, ref, computed } from "vue"
 import {
   mdiBallot,
   mdiBallotOutline,
@@ -39,6 +42,7 @@ import Field from "./Field.vue"
 import Control from "./Control.vue"
 import TitleSubBar from "./TitleSubBar.vue"
 import ModalBox from "./ModalBox.vue"
+import { context } from "../../helpers"
 
 export default {
   name: "FormPayment",
@@ -54,13 +58,14 @@ export default {
     JbButtons
   },
   props: {
-    title: { type: String, default: "Novo pagamento" },
+    title: { type: String, default: "Nova Transação" },
     data: {
       type: Object,
       default: () =>
         reactive({
           id: null,
           value: null,
+          transactionType: null,
           description: null
         })
     }
@@ -73,12 +78,15 @@ export default {
       text: ""
     })
 
+    const transactionTypes = computed(() => context.state.transactionTypes)
+
     const form = ref(props.data)
 
     const submit = () => {
       const data = {
         id: form.value.id,
         value: form.value.value,
+        type: form.value.transactionType,
         description: form.value.description
       }
       emit("submit", data)
@@ -89,6 +97,7 @@ export default {
     }
 
     const reset = () => {
+      form.value.transactionType = null
       form.value.value = null
       form.value.description = ""
     }
@@ -96,6 +105,7 @@ export default {
     return {
       form,
       submit,
+      transactionTypes,
       warningModal,
       mdiBallot,
       mdiBallotOutline,

@@ -74,7 +74,6 @@ import { dispatchGetProducts } from "../../controller/products"
 import { useStore } from "vuex"
 import { createSpan } from "../../helpers/tracer"
 
-
 export default {
   name: "FormSale",
   components: {
@@ -104,13 +103,12 @@ export default {
     }
   },
   emits: ["submit"],
-  async created() {
+  async created () {
     await createSpan("create-sale-form", async (span) => {
       await dispatchGetProducts(span)
     })
-
   },
-  setup(props, { emit }) {
+  setup (props, { emit }) {
     const form = ref(props.data)
 
     const context = useStore()

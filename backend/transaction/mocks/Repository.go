@@ -4,11 +4,11 @@ package mocks
 
 import (
 	context "context"
+	time "time"
 
 	mock "github.com/stretchr/testify/mock"
-	sales "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/sales"
 
-	time "time"
+	transaction "github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/transaction"
 
 	uuid "github.com/google/uuid"
 )
@@ -18,13 +18,13 @@ type Repository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, s
-func (_m *Repository) Create(ctx context.Context, s sales.Sale) error {
-	ret := _m.Called(ctx, s)
+// Create provides a mock function with given fields: ctx, _a1
+func (_m *Repository) Create(ctx context.Context, _a1 transaction.Transaction) error {
+	ret := _m.Called(ctx, _a1)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, sales.Sale) error); ok {
-		r0 = rf(ctx, s)
+	if rf, ok := ret.Get(0).(func(context.Context, transaction.Transaction) error); ok {
+		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -47,19 +47,19 @@ func (_m *Repository) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *Repository) GetAll(ctx context.Context) ([]sales.Sale, error) {
+func (_m *Repository) GetAll(ctx context.Context) ([]transaction.Transaction, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []sales.Sale
+	var r0 []transaction.Transaction
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]sales.Sale, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) ([]transaction.Transaction, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []sales.Sale); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) []transaction.Transaction); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]sales.Sale)
+			r0 = ret.Get(0).([]transaction.Transaction)
 		}
 	}
 
@@ -72,25 +72,25 @@ func (_m *Repository) GetAll(ctx context.Context) ([]sales.Sale, error) {
 	return r0, r1
 }
 
-// Search provides a mock function with given fields: ctx, start, end
-func (_m *Repository) Search(ctx context.Context, start time.Time, end time.Time) ([]sales.Sale, error) {
-	ret := _m.Called(ctx, start, end)
+// GetBetween provides a mock function with given fields: ctx, startAt, endAt
+func (_m *Repository) GetBetween(ctx context.Context, startAt time.Time, endAt time.Time) ([]transaction.Transaction, error) {
+	ret := _m.Called(ctx, startAt, endAt)
 
-	var r0 []sales.Sale
+	var r0 []transaction.Transaction
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) ([]sales.Sale, error)); ok {
-		return rf(ctx, start, end)
+	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) ([]transaction.Transaction, error)); ok {
+		return rf(ctx, startAt, endAt)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []sales.Sale); ok {
-		r0 = rf(ctx, start, end)
+	if rf, ok := ret.Get(0).(func(context.Context, time.Time, time.Time) []transaction.Transaction); ok {
+		r0 = rf(ctx, startAt, endAt)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]sales.Sale)
+			r0 = ret.Get(0).([]transaction.Transaction)
 		}
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, time.Time, time.Time) error); ok {
-		r1 = rf(ctx, start, end)
+		r1 = rf(ctx, startAt, endAt)
 	} else {
 		r1 = ret.Error(1)
 	}

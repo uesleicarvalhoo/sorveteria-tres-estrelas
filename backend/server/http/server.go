@@ -32,7 +32,7 @@ func StartServer(cfg *config.Config, db *gorm.DB, kong *kong.Client) {
 	salesSvc := ioc.NewSaleService(db)
 	productSvc := ioc.NewProductService(db)
 	userSvc := ioc.NewUserService(db)
-	paymentSvc := ioc.NewPaymentService(db)
+	transactionSvc := ioc.NewTransactionService(db)
 	cashflowSvc := ioc.NewCashFlowService(db)
 	authSvc := ioc.NewAuthService(db, kong, cfg.SecretKey, cfg.KongConsumer, cfg.KongJwtKey)
 
@@ -56,8 +56,8 @@ func StartServer(cfg *config.Config, db *gorm.DB, kong *kong.Client) {
 	routes.User(app.Group("/user"), userSvc)
 	routes.Sales(app.Group("/sales"), salesSvc)
 	routes.Products(app.Group("/products"), productSvc)
-	routes.Payments(app.Group("/payments"), paymentSvc)
 	routes.CashFlow(app.Group("/cashflow"), cashflowSvc)
+	routes.Transacation(app.Group("/transaction"), transactionSvc)
 
 	// Graceful shutdown
 	shutdown.Subscribe(func(ctx context.Context) error {

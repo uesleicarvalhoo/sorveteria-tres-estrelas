@@ -6,8 +6,8 @@ import (
 )
 
 func NewCashFlowService(db *gorm.DB) cashflow.UseCase {
-	paymentSvc := NewPaymentService(db)
 	saleSvc := NewSaleService(db)
+	transactionSvc := NewTransactionService(db)
 
-	return cashflow.NewService(paymentSvc, saleSvc)
+	return cashflow.NewService(saleSvc, transactionSvc)
 }

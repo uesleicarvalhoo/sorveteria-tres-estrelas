@@ -6,19 +6,19 @@ import (
 	"sort"
 	"time"
 
-	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/payment"
 	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/sales"
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/transaction"
 )
 
 type Service struct {
-	payments payment.UseCase
-	sales    sales.UseCase
+	sales        sales.UseCase
+	transactions transaction.UseCase
 }
 
-func NewService(paymentSvc payment.UseCase, salesSvc sales.UseCase) Service {
+func NewService(salesSvc sales.UseCase, transactionSvc transaction.UseCase) Service {
 	return Service{
-		payments: paymentSvc,
-		sales:    salesSvc,
+		sales:        salesSvc,
+		transactions: transactionSvc,
 	}
 }
 
@@ -28,12 +28,12 @@ func (s Service) GetCashFlow(ctx context.Context) (CashFlow, error) {
 		return CashFlow{}, err
 	}
 
-	payments, err := s.payments.GetAll(ctx)
+	transactions, err := s.transactions.GetTransactions(ctx)
 	if err != nil {
 		return CashFlow{}, err
 	}
 
-	return s.parseCashFlow(payments, sales), nil
+	return s.parseCashFlow(sales, transactions), nil
 }
 
 func (s Service) GetCashFlowBetween(ctx context.Context, startAt, endAt time.Time) (CashFlow, error) {
@@ -42,15 +42,15 @@ func (s Service) GetCashFlowBetween(ctx context.Context, startAt, endAt time.Tim
 		return CashFlow{}, err
 	}
 
-	payments, err := s.payments.GetByPeriod(ctx, startAt, endAt)
+	transactions, err := s.transactions.GetByPeriod(ctx, startAt, endAt)
 	if err != nil {
 		return CashFlow{}, err
 	}
 
-	return s.parseCashFlow(payments, sales), nil
+	return s.parseCashFlow(sales, transactions), nil
 }
 
-func (s Service) parseCashFlow(payments []payment.Payment, sales []sales.Sale) CashFlow {
+func (s Service) parseCashFlow(sales []sales.Sale, transactions []transaction.Transaction) CashFlow {
 	var totalSales, totalPayments float32
 
 	details := []Detail{}
@@ -66,14 +66,23 @@ func (s Service) parseCashFlow(payments []payment.Payment, sales []sales.Sale) C
 		})
 	}
 
-	for _, p := range payments {
-		totalPayments += p.Value
+	for _, t := range transactions {
+		var operation BalanceType
+
+		switch t.Type {
+		case transaction.Credit:
+			totalSales += t.Value
+			operation = SaleBalance
+		case transaction.Debit:
+			totalPayments += t.Value
+			operation = PaymentBalance
+		}
 
 		details = append(details, Detail{
-			Description: p.Description,
-			Value:       p.Value,
-			Type:        BalancePayment,
-			Date:        p.CreatedAt,
+			Description: t.Description,
+			Value:       t.Value,
+			Type:        operation,
+			Date:        t.CreatedAt,
 		})
 	}
 

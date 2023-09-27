@@ -7,8 +7,8 @@ import (
 type BalanceType string
 
 const (
+	PaymentBalance BalanceType = "Pagamento"
 	SaleBalance    BalanceType = "Venda"
-	BalancePayment BalanceType = "Pagamento"
 )
 
 type Detail struct {
