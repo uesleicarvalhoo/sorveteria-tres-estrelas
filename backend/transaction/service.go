@@ -43,6 +43,10 @@ func (s *Service) GetByPeriod(ctx context.Context, startAt, endAt time.Time) ([]
 func (s *Service) RegisterTransaction(
 	ctx context.Context, value float32, operation Type, desc string,
 ) (Transaction, error) {
+	if err := operation.Validate(); err != nil {
+		return Transaction{}, err
+	}
+
 	tr := Transaction{
 		ID:          uuid.New(),
 		Value:       value,

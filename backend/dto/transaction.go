@@ -1,6 +1,10 @@
 package dto
 
-import "time"
+import (
+	"time"
+
+	"github.com/uesleicarvalhoo/sorveteria-tres-estrelas/backend/transaction"
+)
 
 type GetTransactionByPeriodQuery struct {
 	StartAt time.Time `query:"startAt"`
@@ -8,6 +12,7 @@ type GetTransactionByPeriodQuery struct {
 }
 
 type CreateTransactionPayload struct {
-	Value       float32 `json:"value"`
-	Description string  `json:"description"`
+	Type        transaction.Type `json:"type"`
+	Value       float32          `json:"value"`
+	Description string           `json:"description"`
 }

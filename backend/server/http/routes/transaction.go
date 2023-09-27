@@ -74,7 +74,7 @@ func createTransaction(svc transaction.UseCase) fiber.Handler {
 		ctx, span := trace.NewSpan(c.UserContext(), "register-payment")
 		defer span.End()
 
-		var payload transaction.Transaction
+		var payload dto.CreateTransactionPayload
 
 		if err := c.BodyParser(&payload); err != nil {
 			trace.AddSpanError(span, err)

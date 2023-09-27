@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,20 @@ import (
 type Type string
 
 const (
-	Credit Type = "credit"
-	Debit  Type = "debit"
+	Credit Type = "Venda"
+	Debit  Type = "Pagamento"
 )
+
+func (t Type) Validate() error {
+	switch t {
+	case Credit:
+		return nil
+	case Debit:
+		return nil
+	default:
+		return fmt.Errorf("'%s' is not a valid operation type", t)
+	}
+}
 
 type Transaction struct {
 	ID          uuid.UUID `json:"id"`
