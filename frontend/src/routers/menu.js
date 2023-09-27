@@ -42,16 +42,16 @@ export default [
       ]
     },
     {
-      label: "Pagamentos",
+      label: "Transações",
       icon: mdiCurrencyUsd,
       menu: [
         {
-          label: "Visualizar",
-          to: { name: "view-payments" }
+          label: "Registrar",
+          to: { name: "register-transaction" }
         },
         {
-          label: "Registrar",
-          to: { name: "register-payment" }
+          label: "Visualizar",
+          to: { name: "view-transaction" }
         }
       ]
     }

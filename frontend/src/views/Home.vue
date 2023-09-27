@@ -27,7 +27,6 @@ import MainSection from "./components/MainSection.vue"
 import CardWidget from "./components/CardWidget.vue"
 import CardComponent from "./components/CardComponent.vue"
 import TableBalance from "./components/TableBalance.vue"
-import Calendar from "./components/Calendar.vue"
 import { dispatchGetSales } from "../controller/sales"
 import { dispatchGetCashFlow, dispatchGetCashFlowBetween } from "../controller/cashflow"
 import { createSpan } from "../helpers/tracer"
@@ -38,8 +37,7 @@ export default {
     MainSection,
     CardComponent,
     TableBalance,
-    CardWidget,
-    Calendar
+    CardWidget
   },
   methods: {
     async getCashFlowBetween (start, end) {
@@ -59,7 +57,7 @@ export default {
 
     const totalSales = computed(() => (context.state.cashFlow.total_sales))
 
-    const totalPayments = computed(() => (context.state.cashFlow.total_sales))
+    const totalPayments = computed(() => (context.state.cashFlow.total_payments))
 
     const balance = computed(() => context.state.cashFlow.balance)
 

@@ -28,16 +28,13 @@ export const context = createStore({
     /* Sale */
     sales: [],
 
-    /* Payments */
-    payments: [],
+    /* Transactions */
+    transactions: [],
 
     /* Constants */
-    paymentTypes: [
-      "Pagamento no PIX",
-      "Pagamento em dinheiro",
-      "Outros meios de pagamento",
-      "Pagamento no cartão de crédito",
-      "Pagamento no cartão de débito"
+    transactionTypes: [
+      "Venda",
+      "Pagamento"
     ],
 
     /* Notification */
@@ -95,6 +92,9 @@ export const context = createStore({
     },
     showNotification (state, payload) {
       state.showNotification = payload
+    },
+    transactions (state, payload) {
+      state.transactions = payload
     }
   },
   actions: {

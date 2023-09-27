@@ -47,20 +47,21 @@ const routes = [
   },
   {
     meta: {
-      title: "Pagamentos"
+      title: "Transações"
     },
-    path: "/pagamentso/registrar",
-    name: "register-payment",
-    component: () => import("../views/RegisterPayment")
+    path: "/transacao/",
+    name: "view-transaction",
+    component: () => import("../views/ViewTransactions")
   },
   {
     meta: {
-      title: "Pagamentos"
+      title: "Transações"
     },
-    path: "/pagamentos",
-    name: "view-payments",
-    component: () => import("../views/ViewPayments")
+    path: "/transacao/registrar",
+    name: "register-transaction",
+    component: () => import("../views/RegisterTransaction")
   },
+
   {
     meta: {
       title: "Login",

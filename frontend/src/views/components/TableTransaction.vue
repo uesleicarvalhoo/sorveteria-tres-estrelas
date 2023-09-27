@@ -3,25 +3,29 @@
     <thead>
       <tr>
         <th class="text-center">Valor</th>
+        <th class="text-center">Tipo</th>
         <th class="text-center">Descrição</th>
         <th class="text-center">Data</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="payment in itemsPaginated" :key="payment.id">
+      <tr v-for="transaction in itemsPaginated" :key="transaction.id"
+        :class='[transaction.type == "Venda" ? "text-green-500" : "text-red-500"]'>
         <td class="text-center" data-label="Valor">
-          R$ {{ payment.value.toFixed(2) }}
+          R$ {{ transaction.value.toFixed(2) }}
         </td>
         <td class="text-center" data-label="Descrição">
-          {{ payment.description }}
+          {{ transaction.type }}
+        </td>
+        <td class="text-center" data-label="Descrição">
+          {{ transaction.description }}
         </td>
         <td class="text-center" data-label="Data">
-          {{ new Date(payment.created_at).toLocaleDateString() }}
+          {{ new Date(transaction.created_at).toLocaleDateString() }}
         </td>
         <td class="actions-cell" v-if="actions">
           <jb-buttons type="justify-start lg:justify-end" no-wrap>
-            <jb-button class="mr-3" color="success" :icon="mdiEye" small @click="emitEvent('view', payment)" />
-            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', payment)" />
+            <jb-button color="danger" :icon="mdiTrashCan" small @click="emitEvent('remove', transaction)" />
           </jb-buttons>
         </td>
       </tr>
@@ -30,8 +34,8 @@
   <div class="table-pagination">
     <level>
       <jb-buttons>
-        <jb-button v-for="page in pagesList" @click="currentPage = page" :active="page === currentPage"
-          :label="page + 1" :key="page" :outline="darkMode" small />
+        <jb-button v-for="page in pagesList" @click="currentPage = page" :active="page === currentPage" :label="page + 1"
+          :key="page" :outline="darkMode" small />
       </jb-buttons>
       <small>Pagina {{ currentPageHuman }} de {{ numPages }}</small>
     </level>
@@ -48,7 +52,7 @@ import JbButton from "./JbButton.vue"
 import { itemsPerPage } from "../../config"
 
 export default {
-  name: "TablePayment",
+  name: "TableTransaction",
   components: {
     Level,
     JbButtons,
@@ -64,7 +68,7 @@ export default {
 
     const darkMode = computed(() => context.state.darkMode)
 
-    const items = computed(() => context.state.payments)
+    const items = computed(() => context.state.transactions)
 
     const perPage = ref(itemsPerPage)
 
